@@ -1,0 +1,32 @@
+{
+  "id": 288,
+  "guid": "6b1c5e38-edae-4190-a575-73dddbb65349",
+  "name": "Sample - AWS Get-EC2Instance",
+  "type": "COMMAND",
+  "change_description": null,
+  "fulfillment_rule": null,
+  "add_owner_as_admin": false,
+  "auto_deploy": false,
+  "users": [],
+  "organizations": [],
+  "target_type": "VIRTUAL_MACHINE",
+  "info_messages": [],
+  "prompt_message": null,
+  "system_version": "8.9.1 (1007140080)",
+  "steps": [
+    {
+      "name": "AWS Get-EC2Instance",
+      "type": "EMBEDDED_SCRIPT",
+      "condition": null,
+      "data": {
+        "credentials": null,
+        "failure_action": "FAIL_STEP",
+        "script_contents": "<#\nSample Get AWS EC2 Instance\n*Requires PS module AWSPowershell.Netcore on the Commander server. \n*Commander 8.6.0 or higher\n*Advanced property \"embotics.workflow.script.credentials\" must be set to \"true\"\n#>\n \n$AccessKey = (Get-Item Env:AWS_ACCESS_KEY_ID).value\n$SecretKey = (Get-Item Env:AWS_SECRET_ACCESS_KEY).value\n$InstanceID = \"#{target.remoteId}\"\n$Region = \"#{target.region.name}\"\n\nif(!($Accesskey) -or !($SecretKey) -or !($Region) -or !($InstanceID)){\n        Write-error \"Please provide AWS Login information\"\n        Exit 1\n        } \n        \n#Remove white space for older versions of powershell\n$Accesskey = $Accesskey -replace \"\\s\", \"\"\n$SecretKey = $SecretKey -replace \"\\s\", \"\"\n\n#Check for Module\n    $Module = \"AWSPowerShell.NetCore\"\n    if (Get-Module -ListAvailable -Name $Module) {\n        Import-Module AWSPowershell.netcore\n        Write-Debug \"Module $Module is installed.\"\n    } \n    else {\n        Write-Error \"Module $module does not appear to be installed, Please install and run again.\"\n        Exit 1\n    }\n\n#Login\n    Set-AWSCredentials -AccessKey $AccessKey -SecretKey $SecretKey -StoreAs SnowCommander\n    $Connect = Initialize-AWSDefaults -ProfileName SnowCommander -Region $Region\n\n#Setup Ingress Rule\n    $InstanceData = Get-EC2Instance -Region $Region -InstanceId $InstanceID\n    Write-host $InstanceData",
+        "script_arguments": "",
+        "timeout": 300,
+        "executable": "powershell.exe",
+        "capture_output": true
+      }
+    }
+  ]
+}

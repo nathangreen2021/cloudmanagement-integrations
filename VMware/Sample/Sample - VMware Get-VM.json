@@ -1,0 +1,32 @@
+{
+  "id": 290,
+  "guid": "e03a1fa5-0361-4c85-902f-6c2ec38d9a9d",
+  "name": "Sample - VMware Get-VM",
+  "type": "COMMAND",
+  "change_description": null,
+  "fulfillment_rule": null,
+  "add_owner_as_admin": false,
+  "auto_deploy": false,
+  "users": [],
+  "organizations": [],
+  "target_type": "VIRTUAL_MACHINE",
+  "info_messages": [],
+  "prompt_message": null,
+  "system_version": "8.9.1 (1007140080)",
+  "steps": [
+    {
+      "name": "VMware Get-VM",
+      "type": "EMBEDDED_SCRIPT",
+      "condition": null,
+      "data": {
+        "credentials": null,
+        "failure_action": "FAIL_STEP",
+        "script_contents": "$Username = (Get-Item Env:VMWARE_USERNAME).value;\n$Password = (Get-Item Env:VMWARE_PASSWORD).value;\n$VIServer = '#{target.cloudAccount.address}';\n$vmrId =\"#{target.remoteId}\"\n$Module = \"VMware.VimAutomation.Core\"\n\nif(!($VIServer) -or !($Username) -or !($Password) -or !($vmrId)-or !($Module)){\n        Write-error \"Please provide vCenter Login information\"\n        #Exit 1\n        }\n\n#Check for Module\n    if (Get-Module -ListAvailable -Name \"$Module\") {\n        Import-Module $Module\n        Write-Debug \"Module $Module is installed.\"\n        } \n        else {\n            Write-Error \"Module $Module does not appear to be installed, Please install and run again.\"\n            Exit 1\n        }\n\n#Setup Credential\n    $Credential= New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList \"$Username\",(\"$Password\" | ConvertTo-SecureString -AsPlainText -Force) \n\n#Connect to vCenter       \n    $Status = Connect-VIServer -Server $VIServer -Credential $credential -Force\n\n#Get-VMdata\n    $VMid = \"VirtualMachine-\"+$VMRid\n    $VmData = VMware.VimAutomation.Core\\Get-VM -Id $vmId\n    Write-host $VmData  \n\n\n",
+        "script_arguments": "",
+        "timeout": 300,
+        "executable": "powershell.exe",
+        "capture_output": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "id": 289,
+  "guid": "19b77fb7-0007-4aad-983c-bb37b3af5e61",
+  "name": "Sample - Azure Get-AzVM",
+  "type": "COMMAND",
+  "change_description": null,
+  "fulfillment_rule": null,
+  "add_owner_as_admin": false,
+  "auto_deploy": false,
+  "users": [],
+  "organizations": [],
+  "target_type": "VIRTUAL_MACHINE",
+  "info_messages": [],
+  "prompt_message": null,
+  "system_version": "8.9.1 (1007140080)",
+  "steps": [
+    {
+      "name": "Azure Get-AzVM",
+      "type": "EMBEDDED_SCRIPT",
+      "condition": null,
+      "data": {
+        "credentials": null,
+        "failure_action": "FAIL_STEP",
+        "script_contents": "<#\nRequires PS module AZ on the Commander server.\n*Commander 8.6.0 or higher\n*Advanced property \"embotics.workflow.script.credentials\" must be set to \"true\"\n#> \n\n$subscriptionId = (Get-Item Env:AZURE_SUBSCRIPTION_ID).value\n$tenantId = (Get-Item Env:AZURE_TENANT_ID).value\n$apiKey = (Get-Item Env:AZURE_API_KEY).value\n$ApplicationId = (Get-Item Env:AZURE_APPLICATION_ID).value\n$InstanceId =\"#{target.remoteId}\"\n$Module = \"AZ\"\n$RG = \"#{target.resourceGroup.name}\"\n\nif(!($subscriptionId) -or !($tenantId) -or !($apiKey) -or !($ApplicationId)-or !($Module) -or !($InstanceId)-or !($RG)){\n        Write-error \"Please provide Azure Login information\"\n        #Exit 1\n        }\n\n#Remove white space for older versions of powershell\n    $subscriptionId = $subscriptionId -replace \"\\s\", \"\"\n    $tenantId = $tenantId -replace \"\\s\", \"\"\n    $apiKey = $apiKey -replace \"\\s\", \"\"\n    $ApplicationId = $ApplicationId -replace \"\\s\", \"\" \n\n #Check for Module\n    if (Get-Module -ListAvailable -Name \"$Module.*\") {\n        Import-Module $Module\n        Write-Debug \"Module $Module is installed.\"\n        } \n        else {\n            Write-Error \"Module $module does not appear to be installed, Please install and run again.\"\n            Exit 1\n        }\n\n#Credential Object\n    [pscredential]$Credential= New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList \"$ApplicationId\",(\"$apiKey\" | ConvertTo-SecureString -AsPlainText -Force) \n\n#Connect to Azure\n    $Connect = Connect-AzAccount -Credential $Credential -Subscription $subscriptionId -Tenant $tenantId -ServicePrincipal -Confirm:$false\n    if($Connect){\n        Write-Debug \"Connected to $($Connect[0].Context.Environment.name)\"\n    }\n\n#Get-VMdata\n    $VmName = $InstanceId.Split('/') | select -Last 1\n    $VmData = Get-AzVM -Name $vmname -ResourceGroupName $RG\n    Write-host $VmData",
+        "script_arguments": "",
+        "timeout": 300,
+        "executable": "powershell.exe",
+        "capture_output": true
+      }
+    }
+  ]
+}
