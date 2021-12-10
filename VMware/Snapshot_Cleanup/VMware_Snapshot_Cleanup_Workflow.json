@@ -1,0 +1,30 @@
+{
+  "id": "",
+  "guid": "",
+  "name": "Run VMware Snapshot Cleanup Module",
+  "type": "COMMAND",
+  "change_description": null,
+  "fulfillment_rule": null,
+  "add_owner_as_admin": false,
+  "auto_deploy": false,
+  "users": [],
+  "organizations": [],
+  "target_type": "NO_INVENTORY_TARGET",
+  "info_messages": [],
+  "prompt_message": null,
+  "system_version": "8.9.1 (1007140080)",
+  "steps": [
+    {
+      "name": "Run Snapshot Cleanup Module",
+      "type": "MODULE",
+      "condition": null,
+      "data": {
+        "Attribute_Target": "SnapshotPolicy:Yes",
+        "bypass_Cert": "Yes",
+        "SnapshotAge": "8",
+        "module_name": "Snapshot Cleanup for vCenter via Restpi",
+        "CommanderBaseURL": "localhost"
+      }
+    }
+  ]
+}

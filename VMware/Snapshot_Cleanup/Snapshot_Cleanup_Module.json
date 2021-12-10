@@ -1,0 +1,57 @@
+{
+  "id": "",
+  "guid": "",
+  "name": "Snapshot Cleanup for vCenter via Restpi",
+  "description": "* Requires a VM List Attribute called \"SnapshotPolicy\" with Available Values {Yes:No}\n* Commander 8.6.0 or higher\n* Advanced property \"embotics.workflow.script.credentials\" must be set to \"true\"\n* A Credential in the credential library that can be used to talk to the Commandeer API",
+  "type": "COMMAND",
+  "change_description": null,
+  "target_type": "NO_INVENTORY_TARGET",
+  "input_variables": [
+    {
+      "name": "Commander Base URL",
+      "variable": "CommanderBaseURL",
+      "description": "Base url for Commander: localhost",
+      "required": true,
+      "default_value": "localhost"
+    },
+    {
+      "name": "Snapshot Age",
+      "variable": "SnapshotAge",
+      "description": "Age in days... this number represents the age of a snapshot.. if it's older than this number of days the sanpshot is deleted. ",
+      "required": true,
+      "default_value": "8"
+    },
+    {
+      "name": "Attribute to target",
+      "variable": "Attribute_Target",
+      "description": "Attribute name and value:TargetSnapshotPolicy:Yes \n",
+      "required": true,
+      "default_value": "SnapshotPolicy:Yes"
+    },
+    {
+      "name": "Bypass Unsigned Certificate",
+      "variable": "bypass_Cert",
+      "description": "ByPass unsigned Certificate: {yes/no}",
+      "required": true,
+      "default_value": "yes"
+    }
+  ],
+  "info_messages": [],
+  "system_version": "8.9.1 (1007140080)",
+  "steps": [
+    {
+      "name": "Delete Snaphosts on vm's with SnapshotPolicy attri",
+      "type": "EMBEDDED_SCRIPT",
+      "condition": null,
+      "data": {
+        "credentials": null,
+        "failure_action": "FAIL_STEP",
+        "script_contents": "$Snapshotage = \"#{inputVariable['SnapshotAge']}\"\n$vCommanderServer = \"#{inputVariable['CommanderBaseURL']}\" \n$user = (Get-Item Env:SELECTED_CREDENTIALS_USERNAME ).value;\n$pass = (Get-Item Env:SELECTED_CREDENTIALS_PASSWORD).value;\n$Attrib = \"#{inputVariable['Attribute_Target']}\" \n$BypassCert = \"#{inputVariable['bypass_Cert']}\" \n\n#Check All Variables Present\nif(!($Snapshotage) -or !($vCommanderServer) -or !($user) -or !($pass) -or !($Attrib)){\n        Write-error \"Please provide all required input variables to execute this workflow\"\n        Exit 1} \n\n    $ErrorActionPreference = \"Stop\"\n#Setup Credential\n        $Credential= New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList \"$User\",(\"$Pass\" | ConvertTo-SecureString -AsPlainText -Force)  \n        write-host  \"Cred object created for $user\"\n        \n#Bypass unsigned SSL for Localhost\nif ($BypassCert -eq \"yes\"){\nWrite-host \"- Ignoring invalid Certificate\" -ForegroundColor Green\n\n# Create a compilation environment\n $Provider=New-Object Microsoft.CSharp.CSharpCodeProvider\n $Compiler=$Provider.CreateCompiler()\n $Params=New-Object System.CodeDom.Compiler.CompilerParameters\n $Params.GenerateExecutable=$False\n $Params.GenerateInMemory=$True\n $Params.IncludeDebugInformation=$False\n $Params.ReferencedAssemblies.Add(\"System.DLL\") > $null\n $TASource=@'\n   namespace Local.ToolkitExtensions.Net.CertificatePolicy {\n     public class TrustAll : System.Net.ICertificatePolicy {\n       public TrustAll() { \n       }\n       public bool CheckValidationResult(System.Net.ServicePoint sp,\n         System.Security.Cryptography.X509Certificates.X509Certificate cert, \n         System.Net.WebRequest req, int problem) {\n         return true;\n       }\n     }\n   }\n'@ \n $TAResults=$Provider.CompileAssemblyFromSource($Params,$TASource)\n $TAAssembly=$TAResults.CompiledAssembly\n $TrustAll=$TAAssembly.CreateInstance(\"Local.ToolkitExtensions.Net.CertificatePolicy.TrustAll\")\n [System.Net.ServicePointManager]::CertificatePolicy=$TrustAll\n}\n#Parse Attribute and value from Variable\n    $Attribname = $Attrib.Split(\":\")[0]\n    $AttribValue = $Attrib.Split(\":\")[1] \n\n#Get VMs with Attrib setloop throughthe vm's 1000 at a time \n    $Page = 1\n    $Maxcount = 1000\n    $Snapage = (Get-Date).AddDays(-$Snapshotage)\n\nDo {$VMendpoint = \"https://$vCommanderServer\"+\"/rest/v3/virtual-machines?page_size=1000&page_number=$Page&filter=(attribute:$Attribname -eq $AttribValue) -and (cloud_account_type -eq VMWARE_VCENTER)\"\n        $VMresults = Invoke-Restmethod -Method GET -Uri $VMendpoint -Credential $Credential \n        $Count = $VMresults.items.count\n        Write-host \"Page $Page with $count VM's\"\n        $Page = [int]$Page += 1\n\n    #loop through VM's by ID\n        $VMIDs = $VMresults.items.id | Sort-Object | Get-Unique\n       \n        ForEach($VMid in $VMIDs){\n               Write-Debug \"Checking VM with ID $VMid\"\n               # Return the list of VM snapshots\n               $fullURI = \"https://$vCommanderServer/webservices/services/rest/v2/vms/$vmId/snapshots\"\n               $vmSnapshotData = $Snapcount = $SnapIDs = $VMSnapshots = $null\n               $VMSnapshots = Invoke-WebRequest -UseBasicParsing -Uri $fullURI -Method GET -Credential $Credential -ContentType \"application/xml\"\n               [xml]$parsedsnapData = ($VMSnapshots.content).Replace('<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>',\"\") \n               $SnapIDs = $parsedsnapData.VirtualMachineSnapshotCollection.items | Select-object -ExpandProperty id\n                if($SnapIDs.count){\n                    $Snapcount = $SnapIDs.count\n                     Write-Debug \"Snapshot Count: $Snapcount\"\n                    }\n               \n                IF($Snapcount -ge 1){\n                    foreach ($snapshot in ($parsedsnapData.VirtualMachineSnapshotCollection.items)){\n                        $snapID = $postParams = $snapName = $snapDate = $RemoveSnapTaskResult = $RemoveTaskID = $RemoveSnapTask = $null\n                        $snapName = $snapshot.name\n                        $snapDate = (new-object DateTime 1970,1,1,0,0,0,([DateTimeKind]::Utc)).AddSeconds([math]::Round($snapshot.createTime/1000))\n                        $snapID = $snapshot.id\n                        #Write-host \"Checking Snapshot ID - $SnapID\"\n                        if($snapDate -lt $Snapage){\n                            $postParams = @{}\n                            $postParams.Add(\"snapshotId\", $snapID)\n                            $DeleteURI = \"https://$vCommanderServer/webservices/services/rest/v2/vms/$vmId/action/deletesnapshot\"\n                            $RemoveSnapTaskResult = Invoke-WebRequest -UseBasicParsing -Uri $DeleteURI -Method POST -Body $postParams -Credential $Credential -ContentType \"application/x-www-form-urlencoded\" \n                            [xml]$RemoveSnapTask = ($RemoveSnapTaskResult.content).Replace('<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>',\"\") \n                            \n                            $RemoveTaskID = $RemoveSnapTask.TaskInfo.id\n                            $VMname = $RemoveSnapTask.TaskInfo.source\n                            $Snapname = $RemoveSnapTask.TaskInfo.destination\n                            Write-host \"Snapshot remove task $RemoveTaskID has been submitted for $VMname with snapshot: $Snapname\"\n                            }\n                        }\n                    }           \n                }\n            }\n    Until($Count -eq 0) \n\n",
+        "script_arguments": "",
+        "timeout": 900,
+        "executable": "powershell.exe",
+        "capture_output": true
+      }
+    }
+  ]
+}
