@@ -17,6 +17,9 @@ Installation and Setup:
 6. Run the Command workflow and Check the Comments of the resulting workflow. 
 7. If Sucessful this can be Schedualed on a regular basis to keep your Environment as Snapshot free as you wish. 
 
+Policy Configuration:
+1. Create a policy to automatically set the Attribute value when new workloads are deployed on parts of your infrastructure.
+
 Notes: 
 * If you have backup software which is snapshot based we do not recommend schedualing the workflow during your backup window. 
 
