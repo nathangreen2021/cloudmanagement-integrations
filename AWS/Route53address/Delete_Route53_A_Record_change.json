@@ -1,0 +1,57 @@
+{
+  "id": 76,
+  "guid": "bda07099-6dea-4fcd-9946-09458d16561b",
+  "name": "Delete \"A\" record Route 53 change",
+  "description": null,
+  "type": "CHANGE_COMPLETION",
+  "change_description": null,
+  "target_type": null,
+  "input_variables": [
+    {
+      "name": "Commander Address",
+      "variable": "Commander",
+      "description": "Commander address",
+      "required": true,
+      "default_value": "localhost"
+    },
+    {
+      "name": "Elastic IP configured Attribute",
+      "variable": "ElasticIPconf",
+      "description": "Used to display Yes/No if elastic IP configured",
+      "required": true,
+      "default_value": "AWS Elastic IP set"
+    },
+    {
+      "name": "Elastic IP address assigned Attribute",
+      "variable": "AssignedElasticAddress",
+      "description": "AWS Elastic IP Assigned",
+      "required": false,
+      "default_value": "AWS Elastic IP Address"
+    },
+    {
+      "name": "Route53 Address Attribute",
+      "variable": "R53addressAttrib",
+      "description": "Used to store the route 53 address for visibility in portal and can be used for Automating Cleanup",
+      "required": true,
+      "default_value": "AWS Route53 DNS Address"
+    }
+  ],
+  "info_messages": [],
+  "system_version": "8.9.1 (1007140080)",
+  "steps": [
+    {
+      "name": "Add R53 Record",
+      "type": "EMBEDDED_SCRIPT",
+      "condition": "(\"#{target.type}\"\" -eq \"Virtual Machine\") -and  (\"#{target.cloudAccount.type}\"\" -eq \"amazon_aws\")",
+      "data": {
+        "credentials": null,
+        "failure_action": "FAIL_STEP",
+        "script_contents": "<# \nScript to Delete a Route53 address in AWS\n Requires PS modules \"VCommanderRestClient\",\"VCommander\",\"AWSPowerShell\" on the Commander server. \n* Commander 8.6.0 or higher\n* Advanced property \"embotics.workflow.script.credentials\" must be set to \"true\"\n#>\n\n#AWS Information\n$AccessKey = (Get-Item Env:AWS_ACCESS_KEY_ID).value\n$SecretKey = (Get-Item Env:AWS_SECRET_ACCESS_KEY).value\n$Region = '#{target.region.name}' \n\n#Commander Information\n$user = (Get-Item Env:SELECTED_CREDENTIALS_USERNAME ).value;\n$pass = (Get-Item Env:SELECTED_CREDENTIALS_PASSWORD).value;\n$CommanderServer = \"#{inputVariable['Commander']}\"  \n$vCmdrID = '#{target.id}' \n\n# Attributes Created if they don't exist already\n$Attrib = \"#{inputVariable['R53addressAttrib']}\"     # used to store the route 53 address for visability in portal and automated cleanup.\n$Attrib1 = \"#{inputVariable['ElasticIPconf']}\"         # Yes/No of elastic IP configured\n$Attrib2 =  \"#{inputVariable['AssignedElasticAddress']}\"    # AWS Elastic IP Assigned\n\nif(!($Accesskey) -or !($SecretKey) -or !($Region)){\n        Write-error \"Please provide the required AWS information\"\n        Exit 1\n        } \n\nif (!($CommanderServer) -or !($vCmdrID) -or !($Attrib) -or !($Attrib1) -or !($Attrib2) -or !($user) -or !($pass)) {\n        Write-error \"Please provide the required Commander information\"\n        Exit 1\n        }   \n\n#Remove and re-add the modules \n        Write-Host \"Loading Modules\"\n        $module = @(\"VCommanderRestClient\",\"VCommander\",\"AWSPowerShell\" )\n        ForEach($Modulename in $module){\n                If (-not (Get-Module -name $moduleName)) {Import-Module -Name $moduleName \n                } else {Remove-Module $moduleName\n                        Import-Module -Name $moduleName\n                        }\n                        Start-Sleep 1\n                }\n\n#Connect to AWS in the specified region. \n    $AWSCred = (Set-AWSCredentials -AccessKey $AccessKey -SecretKey $SecretKey -StoreAs vCommander)\n    Set-DefaultAWSRegion -Region $Region\n    Initialize-AWSDefaults -ProfileName vCommander -Region $Region\n\n#Setup Credential\n    $Credential= New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList \"$User\",(\"$Pass\" | ConvertTo-SecureString -AsPlainText -Force)  \n    write-host  \"Cred object created for $user\"\n\n#Connecting to vCommander\n    $Global:SERVICE_HOST = $CommanderServer\n    $Global:REQUEST_HEADERS =@{}\n    $Global:BASE_SERVICE_URI = $Global:BASE_SERVICE_URI_PATTERN.Replace(\"{service_host}\",$Global:SERVICE_HOST)   \n    $Global:CREDENTIAL = $Credential\n    VCommander\\Set-IgnoreSslErrors\n    $Connect = Connect-Client\n    if($Connect -ne \"True\"){\n        Write-Host \"Not Connected to vCommander, please perform Login to continue\"\n        Exit 1;\n        }\n\n#Pull Domain from R53address variable\n    $vmDnsarray = @($R53Address.split(\".\",2))\n    $Domain = $vmDnsarray[1]\n\n#Check if domain has trailing dot,else add it\n    if ($Domain.Substring($Domain.Length-1) -ne \".\") {\n        $DomainDot = $Domain + \".\"\n    } else {\n        $DomainDot = $Domain\n    }\n\n#Check if Record has trailing dot,else add it\n    if ($R53Address.Substring($R53Address.Length-1) -ne \".\") {\n        $R53AddressDot = $R53Address + \".\"\n    } else {\n        $R53AddressDot = $R53Address\n    }\n\n#Check Route53 for the asddress to continue.\n    $zones = Get-R53HostedZones | Select-Object name,ID | Where-Object {$_.Name -eq $DomainDot}\n    $ZoneID = (($Zones.id).Split('/'))[2]\n    $ZoneRecords  = (Get-R53ResourceRecordSet -HostedZoneId $ZoneID).ResourceRecordSets.Name\n    IF ($ZoneRecords -contains $R53AddressDot){\n        }\n        Else{Write-Host \"Domain Record for $R53AddressDot does not exist in $DomainDot\"\n             Exit 0\n             }\n\n#Verify DNS object in Route 53 \n    $RecordSets = Get-R53ResourceRecordSet -HostedZoneId $Zones.ID -startRecordName $R53Address -MaxItems 1 \n        if($RecordSets.ResourceRecordSets -and $RecordSets.ResourceRecordSets.Name -eq \"$R53AddressDot\" )\n        {   $CurrentIP = $RecordSets.ResourceRecordSets.ResourceRecords.Value\n\t        $CurrentTTL = $RecordSets.ResourceRecordSets.TTL\n\t        $RecordType = $RecordSets.ResourceRecordSets.Type.Value\n\t        Write-Output \"$Fqdn's IP address is currently $CurrentIP .... Proceeding to modification process!\";\n        }\n        else{\n\t        Write-Output \"$R53AddressDot no found! Nothing to do.\";\n\t        Exit 0;\n            }\n\n#Construct objects to identify current record\n        $TargetRecord = $RecordSets.ResourceRecordSets;\n        $rr = New-Object Amazon.Route53.Model.ResourceRecord\n        $rr.Value = $currentIP\n        $rrs = New-Object Amazon.Route53.Model.ResourceRecordSet\n        $rrs.Name = $R53AddressDot\n        $rrs.Type = $RecordType\n        $rrs.TTL = $CurrentTTL\n        $rrs.ResourceRecords = $rr\n \n#Deletes the record set\n        $Status = Edit-R53ResourceRecordSet -HostedZoneId $Zones.ID  -ChangeBatch_Changes @( @{Action=\"DELETE\";ResourceRecordSet=$rrs} ) \n\n#Verify Deletion\n        [int]$CurIteration = 0;\n        [bool]$DeleteConfirmed = $false;\n        do{\n\t        $RecordSets = Get-R53ResourceRecordSet -HostedZoneId $Zones.ID -startRecordName $R53AddressDot -MaxItems 1\n\t        if($RecordSets.ResourceRecordSets -and $RecordSets.ResourceRecordSets.Name -eq \"$R53AddressDot\")\n\t        {$CurIteration+=1;\n\t\t     Write-Output \"Waiting before trying to verify that Record was deleted... \"\n\t\t     Start-Sleep -Seconds 3;\n\t        }\n\t        else\n\t        {\n\t\t    #Record is deleted!\n\t\t    $DeleteConfirmed = $true;\n\t\t    Write-Output \"Record: $R53AddressDot was successfully deleted!\"\n\n            # Set Custom attribute value in vCommander for the Instance\n            Try{$attributeDTO = New-DTOTemplateObject -DTOTagName \"CustomAttribute\"\n                $attributeDTO.CustomAttribute.allowedValues = @() #not important\n                $attributeDTO.CustomAttribute.description = $null #not important\n                $attributeDTO.CustomAttribute.targetManagedObjectTypes = @()  #not important\n                $attributeDTO.CustomAttribute.name= \"$Attrib\"\n                $attributeDTO.CustomAttribute.value = \"\"\n                Set-Attribute -vmId $vCmdrID -customAttributeDTo $attributeDTO\n\n                #Set Custom attribute if Elastic IP set \n                $attributeDTO1 = New-DTOTemplateObject -DTOTagName \"CustomAttribute\"\n                $attributeDTO1.CustomAttribute.allowedValues = @() #not important\n                $attributeDTO1.CustomAttribute.description = $null #not important\n                $attributeDTO1.CustomAttribute.targetManagedObjectTypes = @()  #not important\n                $attributeDTO1.CustomAttribute.name= $Attrib1\n                $attributeDTO1.CustomAttribute.value = \"No\"\n                $result = Set-Attribute -vmId  $vCmdrID -customAttributeDTo $attributeDTO1\n\n                #Set Custom attribute of Route 53 DNS Address  \n                $attributeDTO2 = New-DTOTemplateObject -DTOTagName \"CustomAttribute\"\n                $attributeDTO2.CustomAttribute.allowedValues = @() #not important\n                $attributeDTO2.CustomAttribute.description = $null #not important\n                $attributeDTO2.CustomAttribute.targetManagedObjectTypes = @()  #not important\n                $attributeDTO2.CustomAttribute.name= $Attrib2\n                $attributeDTO2.CustomAttribute.value = \"\"\n                $result = Set-Attribute -vmId  $vCmdrID -customAttributeDTo $attributeDTO2\n                }\n                Catch{\n                    Write-host \"Failed to set $Attrib value. $result\"\n                    $error[0] | Format-List -Force\n                    Exit 1;\n                }\n\t        }\n            }\n        while($CurIteration -lt 60 -and $DeleteConfirmed -eq $false)\n        if($CurIteration -ge 60)\n            {\n\t        Write-Output \"Failed to detect whether or not DNS record was deleted. Process timed-out.\";\n\t        Exit 1;\n            }",
+        "script_arguments": "",
+        "timeout": 300,
+        "executable": "Powershell.exe",
+        "capture_output": true
+      }
+    }
+  ]
+}

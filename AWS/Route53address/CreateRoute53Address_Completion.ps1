@@ -35,10 +35,10 @@ if(!($Accesskey) -or !($SecretKey) -or !($Region) -or !($Instance) -or !($ForceC
         Exit 1
         } 
 
-if(!($vCommanderServer) -or !($vCmdrID) -or !($VMname) -or !($Attrib)-or !($Attrib1)-or !($Attrib2)){
+if (!($CommanderServer) -or !($vCmdrID) -or !($Attrib) -or !($Attrib1) -or !($Attrib2) -or !($user) -or !($pass)) {
         Write-error "Please provide the required Commander information"
         Exit 1
-        }   
+        } 
 
 if(!($Domain) -or !($Type) -or !($TTL) -or !($Comment)){
         Write-error "Please provide the required Route53 information"

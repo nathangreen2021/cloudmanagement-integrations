@@ -1,6 +1,9 @@
-# Commander Integrations Create Route53 Address in Completion Workflow
+# Commander Integrations Create/Delete/Change Route53 Address in Completion Workflow
 
-A completion workflow module sample, which connects to AWS and Commander using "VCommanderRestClient","VCommander","AWSPowerShell" Powershell modules and Creates an Elastic IP for the instance and an A record in Route53.
+Workflow module samples which connect to AWS and Commander using "VCommanderRestClient","VCommander","AWSPowerShell" Powershell modules.
+1. Creates an Elastic IP for the instance and an A record in Route53.
+2. Delete an A record in AWS Route53. 
+3. Change Completion Module to Delete an A record in AWS Route53. 
 
 * Requires PS modules "VCommanderRestClient","VCommander","AWSPowerShell" on the Commander server. 
 * Commander 8.6.0 or higher
