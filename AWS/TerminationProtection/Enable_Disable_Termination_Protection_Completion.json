@@ -1,0 +1,36 @@
+{
+  "id": "",
+  "guid": "",
+  "name": "Enable/Disable Termination Protection",
+  "description": null,
+  "type": "COMPONENT_COMPLETION",
+  "change_description": null,
+  "target_type": null,
+  "input_variables": [
+    {
+      "name": "Termination Protection",
+      "variable": "TermProValue",
+      "description": "Action Value {Enable:Disable} \n",
+      "required": true,
+      "default_value": "Enable"
+    }
+  ],
+  "info_messages": [],
+  "system_version": "8.9.1 (1007140080)",
+  "steps": [
+    {
+      "name": "Set Termination Protection",
+      "type": "EMBEDDED_SCRIPT",
+      "condition": null,
+      "data": {
+        "credentials": null,
+        "failure_action": "FAIL_STEP",
+        "script_contents": " <#\nScript to Enable/Disable Termination protection on an AWS EC2 instance\n* Requires PS modules \"AWSPowerShell.netcore\" on the Commander server. \n* Commander 8.6.0 or higher\n* Advanced property \"embotics.workflow.script.credentials\" must be set to \"true\"\n#>\n\n\n#AWS Information\n$AccessKey = (Get-Item Env:AWS_ACCESS_KEY_ID).value\n$SecretKey = (Get-Item Env:AWS_SECRET_ACCESS_KEY).value\n$Instance = '#{target.remoteId}' \n$Region = '#{target.region.name}' \n$Action = \"#{inputVariable['TermProValue']}\" #Action Value {Enable:Disable}\n\nif(!($Accesskey) -or !($SecretKey) -or !($Region) -or !($Instance) -or !($Action)){\n        Write-error \"Please provide the required AWS information\"\n        Exit 1\n        } \n\n#Remove and re-add the modules \n        Write-Host \"Loading Modules\"\n        $module = @(\"AWSPowerShell.netcore\" )\n        ForEach($Modulename in $module){\n                If (-not (Get-Module -name $moduleName)) {Import-Module -Name $moduleName \n                } else {Remove-Module $moduleName\n                        Import-Module -Name $moduleName\n                        }\n                        Start-Sleep 1\n                }\n\n#Connect to AWS in the specified region. \n    Set-AWSCredentials -AccessKey $AccessKey -SecretKey $SecretKey -StoreAs vCommander\n    Set-DefaultAWSRegion -Region $Region\n    Initialize-AWSDefaults -ProfileName vCommander -Region $Region\n\n#Get-Instance Termination status\n    $InstanceTermination = (Get-EC2InstanceAttribute -InstanceId $Instance -Region $Region -Attribute DisableApiTermination).DisableApiTermination\n\n#Enable Instance Ternination\n    Try{\n        IF($InstanceTermination -eq $False -and $Action -eq \"Enabled\"){\n             Edit-EC2InstanceAttribute -InstanceId $Instance -DisableApiTermination $true -Region $Region\n             #Small wait just to be sure the api updates\n             Start-sleep $APIwait \n             $TermValue = (Get-EC2InstanceAttribute -InstanceId $Instance -Region $Region -Attribute DisableApiTermination).DisableApiTermination\n                Switch($TermValue)\n                    {\n                    $true {$TermValue = \"Enabled\"}\n                    $False {$TermValue = \"Disabled\"}\n                    }\n\t         Write-Host \"Termination Protection on instance $Instance has been set to $TermValue\" -ForegroundColor Green\n        }\n\n#Disable Instance Ternination\n         ElseIF ($InstanceTermination -eq $True -and $Action -eq \"Disable\"){\n             Edit-EC2InstanceAttribute -InstanceId $Instance -DisableApiTermination $false -Region $Region\n             #Small wait just to be sure the api updates\n             Start-sleep $APIwait \n             $TermValue = (Get-EC2InstanceAttribute -InstanceId $Instance -Region $Region -Attribute DisableApiTermination).DisableApiTermination\n                Switch($TermValue)\n                    {\n                    $true {$TermValue = \"Enabled\"}\n                    $False {$TermValue = \"Disabled\"}\n                    }\n\t         Write-Host \"Termination Protection on instance $Instance has been set to $TermValue\" -ForegroundColor Green\n        }\n        Else{\n            Switch($TermValue)\n                    {\n                    $true {$TermValue = \"Enabled\"}\n                    $False {$TermValue = \"Disabled\"}\n                    }\n            Write-Host \"Termination Protection on instance $Instance Is already set to $TermValue\" -ForegroundColor Green\n        }\n    }\n    Catch{\n        $error[0] | Format-List -Force\n        Exit 1;\n    }\n\n#EOF \n",
+        "script_arguments": "",
+        "timeout": 300,
+        "executable": "Powershell.exe",
+        "capture_output": true
+      }
+    }
+  ]
+}
