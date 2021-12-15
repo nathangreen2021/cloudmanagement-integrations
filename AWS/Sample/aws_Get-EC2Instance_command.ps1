@@ -11,8 +11,6 @@ $SecretKey = (Get-Item Env:AWS_SECRET_ACCESS_KEY).value
 $InstanceID = "#{target.remoteId}"
 $Region = "#{target.region.name}"
 
- 
- 
 if(!($Accesskey) -or !($SecretKey) -or !($Region) -or !($InstanceID)){
         Write-error "Please provide AWS Login information"
         Exit 1

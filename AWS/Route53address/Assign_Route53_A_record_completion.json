@@ -1,0 +1,92 @@
+{
+  "id": "",
+  "guid": "",
+  "name": "Assign \"A\" record Route 53 with public address",
+  "description": null,
+  "type": "COMPONENT_COMPLETION",
+  "change_description": null,
+  "target_type": null,
+  "input_variables": [
+    {
+      "name": "Elastic IP address assigned Attribute",
+      "variable": "AssignedElasticAddress",
+      "description": "AWS Elastic IP Assigned",
+      "required": false,
+      "default_value": "AWS Elastic IP Address"
+    },
+    {
+      "name": "Elastic IP configured Attribute",
+      "variable": "ElasticIPconf",
+      "description": "Used to display Yes/No if elastic IP configured",
+      "required": true,
+      "default_value": "AWS Elastic IP set"
+    },
+    {
+      "name": "Route53 Domain Name",
+      "variable": "R53Domain",
+      "description": "Domain which the record will be created for. ",
+      "required": true,
+      "default_value": "Your.Route53.Domain"
+    },
+    {
+      "name": "Route53 Create Record Comment",
+      "variable": "R53RecordComment",
+      "description": null,
+      "required": true,
+      "default_value": "Created by Snow Commander"
+    },
+    {
+      "name": "Route53 Record type",
+      "variable": "R53RecordType",
+      "description": "DNS record type \"A\"",
+      "required": true,
+      "default_value": "A"
+    },
+    {
+      "name": "Record TTL",
+      "variable": "R53RecordTTL",
+      "description": null,
+      "required": true,
+      "default_value": "300"
+    },
+    {
+      "name": "ForceCreateFlag",
+      "variable": "ForceCreateFlag",
+      "description": "Create elastic IP if it does not exist. default on the target(yes)",
+      "required": false,
+      "default_value": "Yes"
+    },
+    {
+      "name": "Route53 Address Attribute",
+      "variable": "R53addressAttrib",
+      "description": "Used to store the route 53 address for visibility in portal and can be used for Automating Cleanup",
+      "required": true,
+      "default_value": "AWS Route53 DNS Address"
+    },
+    {
+      "name": "Commander Address",
+      "variable": "Commander",
+      "description": "Commander address",
+      "required": true,
+      "default_value": "localhost"
+    }
+  ],
+  "info_messages": [],
+  "system_version": "8.9.1 (1007140080)",
+  "steps": [
+    {
+      "name": "Add R53 Record",
+      "type": "EMBEDDED_SCRIPT",
+      "condition": "(\"#{target.type}\"\" -eq \"Virtual Machine\") -and  (\"#{target.cloudAccount.type}\"\" -eq \"amazon_aws\")",
+      "data": {
+        "credentials": null,
+        "failure_action": "FAIL_STEP",
+        "script_contents": "<# \nScript to assign a Route53 address along with ElasticIP to an AWS EC2 instance post deployment\n* Requires PS modules \"VCommanderRestClient\",\"VCommander\",\"AWSPowerShell\" on the Commander server. \n* Commander 8.6.0 or higher\n* Advanced property \"embotics.workflow.script.credentials\" must be set to \"true\"\n#>\n\n#AWS Information\n$AccessKey = (Get-Item Env:AWS_ACCESS_KEY_ID).value\n$SecretKey = (Get-Item Env:AWS_SECRET_ACCESS_KEY).value\n$Instance = '#{target.remoteId}' \n$Region = '#{target.region.name}' \n$ForceCreateFlag = \"#{inputVariable['ForceCreateFlag']}\"  #Create elastic IP if it does not exist. defaulton the target(yes)\n\n#Commander Information\n$user = (Get-Item Env:SELECTED_CREDENTIALS_USERNAME ).value;\n$pass = (Get-Item Env:SELECTED_CREDENTIALS_PASSWORD).value;\n$CommanderServer = \"#{inputVariable['Commander']}\"  \n$vCmdrID = '#{target.id}' \n$VMname = '#{target.deployedName}' \n\n# Attributes Created if they don't exist already\n$Attrib = \"#{inputVariable['R53addressAttrib']}\"     # used to store the route 53 address for visability in portal and automated cleanup.\n$Attrib1 = \"#{inputVariable['ElasticIPconf']}\"         # Yes/No of elastic IP configured\n$Attrib2 =  \"#{inputVariable['AssignedElasticAddress']}\"    # AWS Elastic IP Assigned\n\n#Route53 Entry Params\n$Domain = \"#{inputVariable['R53Domain']}\"\n$Type = \"#{inputVariable['R53RecordType']}\"\n$TTL = \"#{inputVariable['R53RecordTTL']}\"\n$Comment = \"#{inputVariable['R53RecordComment']}\"\n\nif(!($Accesskey) -or !($SecretKey) -or !($Region) -or !($Instance) -or !($ForceCreateFlag)){\n        Write-error \"Please provide the required AWS information\"\n        Exit 1\n        } \n\nif(!($CommanderServer) -or !($vCmdrID) -or !($VMname) -or !($Attrib)-or !($Attrib1)-or !($Attrib2)){\n        Write-error \"Please provide the required Commander information\"\n        Exit 1\n        }   \n\nif(!($Domain) -or !($Type) -or !($TTL) -or !($Comment)){\n        Write-error \"Please provide the required Route53 information\"\n        Exit 1\n        }  \n\n\n#Remove and re-add the modules \n        Write-Host \"Loading Modules\"\n        $module = @(\"VCommanderRestClient\",\"VCommander\",\"AWSPowerShell\" )\n        ForEach($Modulename in $module){\n                If (-not (Get-Module -name $moduleName)) {Import-Module -Name $moduleName \n                } else {Remove-Module $moduleName\n                        Import-Module -Name $moduleName\n                        }\n                        Start-Sleep 1\n                }\n#Connect to AWS in the specified region. \n    $AWSCred=(Set-AWSCredentials -AccessKey $AccessKey -SecretKey $SecretKey -StoreAs Commander)\n    Set-DefaultAWSRegion -Region $Region\n    Initialize-AWSDefaults -ProfileName Commander -Region $Region\n\n#Setup Credential\n    $Credential= New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList \"$User\",(\"$Pass\" | ConvertTo-SecureString -AsPlainText -Force)  \n    write-host  \"Cred object created for $user\"\n\n#Connecting to vCommander\n    $Global:SERVICE_HOST = $CommanderServer\n    $Global:REQUEST_HEADERS =@{}\n    $Global:BASE_SERVICE_URI = $Global:BASE_SERVICE_URI_PATTERN.Replace(\"{service_host}\",$Global:SERVICE_HOST)   \n    $Global:CREDENTIAL = $Credential\n    VCommander\\Set-IgnoreSslErrors\n    $Connect = Connect-Client\n    if($Connect -ne \"True\"){\n        Write-Host \"Not Connected to vCommander, please perform Login to continue\"\n        Exit 1;\n        }\n\n    #Check and see if the Attribute exists in vCommander: Create if it does not exist.\n    $CheckAttrib = (Get-CustomAttributes).CustomAttributeCollection.CustomAttributes | Where-Object{$_.Name -EQ  $Attrib}\n    If ($CheckAttrib.displayName -ne  $Attrib)\n        {   Write-host \"Creating Custom attribute - $Attrib\"\n            $caObject = New-DTOTemplateObject -DTOTagName \"CustomAttribute\"\n            #Specify attribute value\n            $caObject.CustomAttribute.name=\"$Attrib\"\n            $caObject.CustomAttribute.description=\"\"\n            $caObject.CustomAttribute.targetManagedObjectTypes = @(\"ALL\")\n            $caObject.CustomAttribute.portalEditable = \"false\"\n            $caObject.CustomAttribute.id = -1\n            $caObject.CustomAttribute.allowedValues =  @()\n            $createdCa = New-CustomAttribute -customAttributeDTo $caObject\n            }\n            Start-Sleep 1 #Wait to be sure the job completes before proceeding\n\n    #Check and see if the Attribute exists in vCommander: Create if it does not exist.\n    $CheckAttrib1 = (Get-CustomAttributes).CustomAttributeCollection.CustomAttributes | Where-Object{$_.Name -EQ  $Attrib1}\n    If ($CheckAttrib1.displayName -ne  $Attrib1)\n        {   Write-host \"Creating Custom attribute - $Attrib1\"\n            $caObject1 = New-DTOTemplateObject -DTOTagName \"CustomAttribute\"\n            #Specify attribute value\n            $caObject1.CustomAttribute.name=\"$Attrib1\"\n            $caObject1.CustomAttribute.description=\"\"\n            $caObject1.CustomAttribute.targetManagedObjectTypes = @(\"ALL\")\n            $caObject1.CustomAttribute.portalEditable = \"false\"\n            $caObject1.CustomAttribute.id = -1\n            $caObject1.CustomAttribute.allowedValues = @( \"Yes\", \"No\" )\n            $createdCa1 = New-CustomAttribute -customAttributeDTo $caObject1\n            }\n            Start-Sleep 1 #Wait to be sure the job completes before proceeding\n\n    #Check and see if the Attribute exists in vCommander: Create if it does not exist.\n    $CheckAttrib2 = (Get-CustomAttributes).CustomAttributeCollection.CustomAttributes | Where-Object{$_.Name -EQ  $Attrib2}\n    If ($CheckAttrib2.displayName -ne  $Attrib2)\n        {   Write-host \"Creating Custom attribute - $Attrib2\"\n            $caObject2 = New-DTOTemplateObject -DTOTagName \"CustomAttribute\"\n            #Specify attribute value\n            $caObject2.CustomAttribute.name=\"$Attrib2\"\n            $caObject2.CustomAttribute.description=\"\"\n            $caObject2.CustomAttribute.targetManagedObjectTypes = @(\"ALL\")\n            $caObject2.CustomAttribute.portalEditable = \"false\"\n            $caObject2.CustomAttribute.id = -1\n            $caObject2.CustomAttribute.allowedValues = @()\n            $createdCa2 = New-CustomAttribute -customAttributeDTo $caObject2\n            }\n            Start-Sleep 1 #Wait to be sure the job completes before proceeding\n\n#Check of user entered domain without the dot, and add it\n    if ($Domain.Substring($Domain.Length-1) -ne \".\") {\n        $DomainDot = $Domain + \".\"\n    } else {\n        $DomainDot = $Domain\n    }\n\n#Check Instance for Elastic IP to continue.\n    $Elastic_Address = Get-EC2Address -Filter @{ Name=\"instance-id\";Value=\"$Instance\" }\n    $Non_ElasticpublicIP = (Get-EC2Instance -InstanceId $Instance).Instances.PublicIpAddress\n     IF(($Elastic_Address -eq $null) -and ($Non_ElasticpublicIP -eq $null) -and ($ForceCreateFlag -eq 'yes')){\n        Try{$address = New-EC2Address -Domain \"Vpc\"\n            $Status = Register-EC2Address -InstanceId $Instance -AllocationId $address.AllocationId\n            $value = $address.PublicIp\n            #Set Custom attribute if Elastic IP set \n            $attributeDTO1 = New-DTOTemplateObject -DTOTagName \"CustomAttribute\"\n            $attributeDTO1.CustomAttribute.allowedValues = @() #not important\n            $attributeDTO1.CustomAttribute.description = $null #not important\n            $attributeDTO1.CustomAttribute.targetManagedObjectTypes = @()  #not important\n            $attributeDTO1.CustomAttribute.name= $Attrib1\n            $attributeDTO1.CustomAttribute.value = \"Yes\"\n            $result = Set-Attribute -vmId  $vCmdrID -customAttributeDTo $attributeDTO1\n            }\n            Catch{$error[0] | Format-List -Force\n                 Exit 1;\n                 }}\n        Elseif(($Elastic_Address -eq $null) -and ($Non_ElasticpublicIP -ne $null)){\n                    #Set Custom attribute if Elastic IP set \n                    $attributeDTO1 = New-DTOTemplateObject -DTOTagName \"CustomAttribute\"\n                    $attributeDTO1.CustomAttribute.allowedValues = @() #not important\n                    $attributeDTO1.CustomAttribute.description = $null #not important\n                    $attributeDTO1.CustomAttribute.targetManagedObjectTypes = @()  #not important\n                    $attributeDTO1.CustomAttribute.name= $Attrib1\n                    $attributeDTO1.CustomAttribute.value = \"Yes\"\n                    $result = Set-Attribute -vmId  $vCmdrID -customAttributeDTo $attributeDTO1\n                    $Value = $Non_ElasticpublicIP\n                    }\n        Elseif(($Elastic_Address -ne $null) -and ($Non_ElasticpublicIP -ne $null)){\n                    #Set Custom attribute if Elastic IP set \n                    $attributeDTO1 = New-DTOTemplateObject -DTOTagName \"CustomAttribute\"\n                    $attributeDTO1.CustomAttribute.allowedValues = @() #not important\n                    $attributeDTO1.CustomAttribute.description = $null #not important\n                    $attributeDTO1.CustomAttribute.targetManagedObjectTypes = @()  #not important\n                    $attributeDTO1.CustomAttribute.name= $Attrib1\n                    $attributeDTO1.CustomAttribute.value = \"Yes\"\n                    $result = Set-Attribute -vmId  $vCmdrID -customAttributeDTo $attributeDTO1\n                    $Value = $Elastic_Address\n                    }\n\n        Else {Write-host \"Exiting because the target instance does not have an elastic IP\"\n            Exit 1\n            }\n    \n#Remove the Spaces from the name if they exist\n    $VMname = $Vmname.replace(' ','')\n\n# Create new objects for R53 update\n    $Change = New-Object Amazon.Route53.Model.Change\n    $Change.Action = \"UPSERT\"\n        # CREATE: Creates a resource record set that has the specified values.\n        # DELETE: Deletes an existing resource record set that has the specified values.\n        # UPSERT: If a resource record set doesn't already exist, AWS creates it. If it does, Route 53 updates it with values in the request.\n    $Change.ResourceRecordSet = New-Object Amazon.Route53.Model.ResourceRecordSet\n    $Change.ResourceRecordSet.Name = \"$VMname.$Domain\"\n    $Change.ResourceRecordSet.Type = $Type\n    $Change.ResourceRecordSet.Region = $Region\n    $Change.ResourceRecordSet.TTL = $TTL\n    $Change.ResourceRecordSet.SetIdentifier = \"vCommander\"\n    #$Change.ResourceRecordSet.ResourceRecords.Add(@{Value=$Value})\n    $Change.ResourceRecordSet.ResourceRecords.Add(@{Value=if ($Type -eq \"TXT\") {\"\"\"$Value\"\"\"} else {$Value}})\n\n# Get hosted zone\n    $HostedZone = Get-R53HostedZones | Where-Object {$_.Name -eq $DomainDot}\n\n# Set final parameters and execute\n    $Parameters = @{\n        HostedZoneId = $HostedZone.Id\n        ChangeBatch_Change = $Change # Object\n        ChangeBatch_Comment = $Comment # \"Edited A record\"\n    }\n    $Result = Edit-R53ResourceRecordSet @Parameters\n\n# Set Custom attribute value in vCommander for the Instance\n    Try{$attributeDTO = New-DTOTemplateObject -DTOTagName \"CustomAttribute\"\n        $attributeDTO.CustomAttribute.allowedValues = @() #not important\n        $attributeDTO.CustomAttribute.description = $null #not important\n        $attributeDTO.CustomAttribute.targetManagedObjectTypes = @()  #not important\n        $attributeDTO.CustomAttribute.name= \"$Attrib\"\n        $attributeDTO.CustomAttribute.value = \"$VMname.$Domain\"\n        Set-Attribute -vmId $vCmdrID -customAttributeDTo $attributeDTO\n\n        #Set Custom attribute of Route 53 DNS Address  \n        $attributeDTO2 = New-DTOTemplateObject -DTOTagName \"CustomAttribute\"\n        $attributeDTO2.CustomAttribute.allowedValues = @() #not important\n        $attributeDTO2.CustomAttribute.description = $null #not important\n        $attributeDTO2.CustomAttribute.targetManagedObjectTypes = @()  #not important\n        $attributeDTO2.CustomAttribute.name= $Attrib2\n        $attributeDTO2.CustomAttribute.value = $Value\n        $result = Set-Attribute -vmId  $vCmdrID -customAttributeDTo $attributeDTO2\n        }\n        Catch{\n        Write-host \"Failed to set $Attrib value.\"\n        $error[0] | Format-List -Force\n        Exit 1;\n        }\n    \n#End",
+        "script_arguments": "",
+        "timeout": 300,
+        "executable": "Powershell.exe",
+        "capture_output": true
+      }
+    }
+  ]
+}
