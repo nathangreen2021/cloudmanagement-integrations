@@ -1,6 +1,6 @@
 # Tenable.SC Integration
 
-Simple Tenable.SC scripts. Originally for NTT Singapore "BlueSky" project.
+Simple Tenable.SC scripts.
 
 ## Requirements
 * Python 3
