@@ -1,7 +1,9 @@
-# Completion modules for Create and Decommission Azure Standard Network Load Balancer
+# Completion modules for Create and Decommission Azure Standard Network Load Balancer 
 
 These completion modules contain steps to create a standard network load balancer in Azure with basic configurations and to also remove VMs and delete Loadbalancers when back end pools are empty
-These completion modules make use of the Azure Powershell modules : https://docs.microsoft.com/en-us/powershell/azure/install-az-ps?view=azps-7.0.0
+ - Requires PS module AZ on the Commander server.
+ - Commander 8.6.0 or higher
+ - Advanced property "embotics.workflow.script.credentials" must be set to "true"
 
 ## Changelog
 
