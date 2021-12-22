@@ -1,0 +1,38 @@
+{
+  "id": "",
+  "guid": "",
+  "name": "Azure - Load Balancer Decommission",
+  "description": "This will remove VMs from the back end pool. If the pool is not empty, it will not delete the Load Balancer, If the pool is empty it will clean up the public IP and the load balancer.",
+  "type": "CHANGE_COMPLETION",
+  "change_description": null,
+  "target_type": null,
+  "input_variables": [],
+  "info_messages": [],
+  "system_version": "8.10.1 (1007150084)",
+  "steps": [
+    {
+      "name": "Azure Load Balancer Decommission",
+      "type": "EMBEDDED_SCRIPT",
+      "condition": null,
+      "data": {
+        "credentials": "",
+        "failure_action": "FAIL_STEP",
+        "script_contents": "<#\nAzure Standard Load Balancer Decommission.\nRequires PS module AZ on the Commander server.\n*Commander 8.6.0 or higher\n*Advanced property \"embotics.workflow.script.credentials\" must be set to \"true\"\n\n\nThis script will remove the VM from the back end pool first, then it will check the back end pool to confirm if there are existing VMs. \nIf there are no more VMs in the back end pool it will go ahead and delete the Public IP and the Load Balancer\n#> \n\n# Capture connection information for the correct subscription / resource group etc\n$subscriptionId = (Get-Item Env:AZURE_SUBSCRIPTION_ID).value\n$tenantId = (Get-Item Env:AZURE_TENANT_ID).value\n$apiKey = (Get-Item Env:AZURE_API_KEY).value\n$applicationId = (Get-Item Env:AZURE_APPLICATION_ID).value\n$instanceId = \"#{target.remoteId}\"\n$resourceGroup = \"#{target.resourceGroup.name}\"\n$module = \"AZ\"\n$vmname = \"#{target.deployedName}\"\n\nif(!($subscriptionId) -or !($tenantId) -or !($apiKey) -or !($applicationId)-or !($module) -or !($instanceId)-or !($resourceGroup)){\n        Write-error \"Please provide Azure Login information\"\n        Exit 1\n}\n\n#Remove white space for older versions of powershell\n$subscriptionId = $subscriptionId -replace \"\\s\", \"\"\n$tenantId = $tenantId -replace \"\\s\", \"\"\n$apiKey = $apiKey -replace \"\\s\", \"\"\n$applicationId = $applicationId -replace \"\\s\", \"\" \n\n#Check for Module\nif (Get-Module -ListAvailable -Name \"$module.*\") {\n    Import-Module $module\n    Write-Debug \"Module $module is installed.\"\n} \nelse {\n    Write-Error \"Module $module does not appear to be installed, Please install and run again.\"\n    Exit 2\n}\n\n#Credential Object\n[pscredential]$credential= New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList \"$applicationId\",(\"$apiKey\" | ConvertTo-SecureString -AsPlainText -Force) \n\n#Connect to Azure\n$connect = Connect-AzAccount -Credential $credential -Subscription $subscriptionId -Tenant $tenantId -ServicePrincipal -Confirm:$false\nif($connect){\n    Write-Debug \"Connected to $($connect[0].Context.Environment.name)\"\n}\n\n#Get VM Data and NLB Data. Sleeps have been added during my testing, feel free to remove them if required.\nTry{\n    #$vmName = $instanceId.Split('/') | select -Last 1\n    $vmData = Get-AzVM -Name $vmName -ResourceGroupName $resourceGroup\n    $location = $vmData.Location\n    $osType = $vmData.StorageProfile.OsDisk.OsType\n    $NetworkInterfaceID = ($vmData.NetworkProfile.NetworkInterfaces.id).Split('/')[-1]\n    $VMNic = ($VMData.NetworkProfile.NetworkInterfaces.id).Split('/')[-1]\n    $nic1 = Get-AzNetworkInterface -ResourceGroupName $resourceGroup -Name $VMNic\n    Start-Sleep -Seconds 10\n    \n    # NLB Details\n    $BackEndPoolForNic1 = $nic1.IpConfigurations.LoadBalancerBackendAddressPools.id\n    $BackEndPoolNameForNic1 = $BackEndPoolForNic1.Split('/')[-1]\n    $NLBNameforNic1 = $BackEndPoolForNic1.Split('/')[-3]\n    $mylb = Get-AzLoadBalancer -Name $NLBNameforNic1 -ResourceGroupName $resourceGroup\n    $NLBPublicIPName = ($mylb.FrontendIpConfigurations.publicipaddress.id).Split('/')[-1]\n    $BackendIpConfigurations = Get-AzLoadBalancerBackendAddressPool -Name $BackEndPoolNameForNic1 -ResourceGroupName $resourceGroup -LoadBalancerName $NLBNameforNic1\n    $ap = Get-AzLoadBalancerBackendAddressPoolConfig -Name $BackEndPoolNameForNic1 -LoadBalancer $mylb\n    Start-Sleep -Seconds 10\n}\nCatch{\n    $exception = \"$_.\"\n    Write-Error $exception\n    Exit 3     \n}\n\n#Remove VM from Back End Pool\nTry {\nwrite-host \"Removing $vmname from $BackEndPoolNameForNic1 Back End Pool\"\n\n$nic1 = Get-AzNetworkInterface -ResourceGroupName $resourceGroup -Name $VMNic\n$nic1.IpConfigurations[0].LoadBalancerBackendAddressPools = $Null\n$nic1 | Set-AzNetworkInterface\nStart-Sleep -Seconds 10\n}\nCatch{\n    $exception = \"$_.\"\n    Write-Error $exception\n    Exit 3     \n}\n\n$BackendIpConfigurations = Get-AzLoadBalancerBackendAddressPool -Name $BackEndPoolNameForNic1 -ResourceGroupName $resourceGroup -LoadBalancerName $NLBNameforNic1\n\nif ($BackendIpConfigurations.BackendIpConfigurations)\n    {\n        write-host \"$BackEndPoolNameForNic1 Still has Servers associated, skipping deletion of $NLBNameforNic1\"\n    }\nelse\n    {\n        write-host \"No VMs associated to $BackEndPoolNameForNic1, removing Load Balancer $NLBNameforNic1 from resource group $resourceGroup \"\n        Remove-AzLoadBalancer -Name $NLBNameforNic1 -ResourceGroupName $resourceGroup  -force\n        Start-Sleep -Seconds 10\n        $BackendIpConfigurations = Get-AzLoadBalancerBackendAddressPool -Name $BackEndPoolNameForNic1 -ResourceGroupName $resourceGroup -LoadBalancerName $NLBNameforNic1\n        write-host \"Removing Public IP Address Named $NLBPublicIPName from Resource Group $resourceGroup\"\n        Remove-AzPublicIpAddress -Name $NLBPublicIPName -ResourceGroupName $resourceGroup -force\n        \n    }\n",
+        "script_arguments": "",
+        "timeout": 300,
+        "executable": "powershell.exe",
+        "capture_output": true
+      }
+    },
+    {
+      "name": "Pause for 60 Seconds after Clearing LB",
+      "type": "WAIT",
+      "condition": null,
+      "data": {
+        "failure_action": "PROCEED_TO_NEXT_STEP",
+        "wait_for_type": "ELAPSED_TIME",
+        "timeout": 60
+      }
+    }
+  ]
+}

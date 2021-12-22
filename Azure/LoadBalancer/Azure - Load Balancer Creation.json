@@ -1,0 +1,71 @@
+{
+  "id": "",
+  "guid": "",
+  "name": "Azure - Load Balancer Creation",
+  "description": "This will create an Azure NLB if it does not exist with some standard configurations.  If you are deploying multiple VMs, the subsequence VMs will just be added to the back end pool.",
+  "type": "COMPONENT_COMPLETION",
+  "change_description": null,
+  "target_type": null,
+  "input_variables": [
+    {
+      "name": "Azure LB Public IP Name",
+      "variable": "Azure LB Public IP Name",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "Azure LB Rule Name",
+      "variable": "Azure LB Rule Name",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "Azure LB Front End Name",
+      "variable": "Azure LB Front End Name",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "Azure LB Health Probe Name",
+      "variable": "Azure LB Health Probe Name",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "Azure LB Back End Pool Name",
+      "variable": "Azure LB Back End Pool Name",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "Azure LB Name",
+      "variable": "Azure LB Name",
+      "description": null,
+      "required": false,
+      "default_value": null
+    }
+  ],
+  "info_messages": [],
+  "system_version": "8.10.1 (1007150084)",
+  "steps": [
+    {
+      "name": "Azure - Load Balancer Creation",
+      "type": "EMBEDDED_SCRIPT",
+      "condition": null,
+      "data": {
+        "credentials": "",
+        "failure_action": "FAIL_STEP",
+        "script_contents": "<#\nAzure Standard Network Load Balancer creation and configuration\nRequires PS module AZ on the Commander server.\n*Commander 8.6.0 or higher\n*Advanced property \"embotics.workflow.script.credentials\" must be set to \"true\"\n\n\nThis allows the deployment of an Azure Load Balanacer to be deployed as part of the completiong process of A or many VMs.\nThis will do the following:\n\nCustom Naming for:\n* Load Balancer\n* Front End\n* Back End Pool\n* Public IP\n* Rule\n* Health Probe\n\nInputs to configure:\n\n* Rules\n* Health Probe\n\n\n#> \n\n# Captures connection information for the correct Subscription / resource group\n$subscriptionId = (Get-Item Env:AZURE_SUBSCRIPTION_ID).value\n$tenantId = (Get-Item Env:AZURE_TENANT_ID).value\n$apiKey = (Get-Item Env:AZURE_API_KEY).value\n$applicationId = (Get-Item Env:AZURE_APPLICATION_ID).value\n$instanceId = \"#{target.remoteId}\"\n$resourceGroup = \"#{target.resourceGroup.name}\"\n$module = \"AZ\"\n$vmname = \"#{target.deployedName}\"\n\n\n<# This is the custom naming component.  Feel free to modify/change this to suit your needs\nExample:\nmyservername-001 is changed to myservername-LB for the load balancer and so forth.  Please amend to meet your requirements\n#>\n\n$AzureLBBackEndPoolName = ((\"#{inputVariable['Azure LB Back End Pool Name']}\").Substring(0,\"#{inputVariable['Azure LB Back End Pool Name']}\".Length-3))+\"BE\"\n$AzureLBFrontEndName = ((\"#{inputVariable['Azure LB Front End Name']}\").Substring(0,\"#{inputVariable['Azure LB Front End Name']}\".Length-3))+\"FE\"\n$AzureLBHealthProbeName = ((\"#{inputVariable['Azure LB Health Probe Name']}\").Substring(0,\"#{inputVariable['Azure LB Health Probe Name']}\".Length-3))+\"HP\"\n$AzureLBName = ((\"#{inputVariable['Azure LB Name']}\").Substring(0,\"#{inputVariable['Azure LB Name']}\".Length-3))+\"LB\"\n$AzureLBPublicIPName = ((\"#{inputVariable['Azure LB Public IP Name']}\").Substring(0,\"#{inputVariable['Azure LB Public IP Name']}\".Length-3))+\"IP\"\n$AzureLBRuleName = ((\"#{inputVariable['Azure LB Rule Name']}\").Substring(0,\"#{inputVariable['Azure LB Rule Name']}\".Length-3))+\"RN\"\n\n\nif(!($subscriptionId) -or !($tenantId) -or !($apiKey) -or !($applicationId)-or !($module) -or !($instanceId)-or !($resourceGroup)){\n        Write-error \"Please provide Azure Login information\"\n        Exit 1\n}\n\n#Remove white space for older versions of powershell\n$subscriptionId = $subscriptionId -replace \"\\s\", \"\"\n$tenantId = $tenantId -replace \"\\s\", \"\"\n$apiKey = $apiKey -replace \"\\s\", \"\"\n$applicationId = $applicationId -replace \"\\s\", \"\" \n\n#Check for Module\nif (Get-Module -ListAvailable -Name \"$module.*\") {\n    Import-Module $module\n    Write-Debug \"Module $module is installed.\"\n} \nelse {\n    Write-Error \"Module $module does not appear to be installed, Please install and run again.\"\n    Exit 2\n}\n\n#Credential Object\n[pscredential]$credential= New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList \"$applicationId\",(\"$apiKey\" | ConvertTo-SecureString -AsPlainText -Force) \n\n#Connect to Azure\n$connect = Connect-AzAccount -Credential $credential -Subscription $subscriptionId -Tenant $tenantId -ServicePrincipal -Confirm:$false\nif($connect){\n    Write-Debug \"Connected to $($connect[0].Context.Environment.name)\"\n}\n\n\n#Capture the VM Data for use within the script.  If any of these fail it will provide errors.  Most likely the VM no longer exists.\nTry{\n    $vmName = $instanceId.Split('/') | select -Last 1\n    $vmData = Get-AzVM -Name $vmName -ResourceGroupName $resourceGroup\n    $location = $vmData.Location\n    $osType = $vmData.StorageProfile.OsDisk.OsType\n    $VMNic = ($vmData.NetworkProfile.NetworkInterfaces.id).Split('/')[-1]\n}\nCatch{\n    $exception = \"$_.\"\n    Write-Error $exception\n    Exit 3     \n}\n\n\n<# Do checks to see if Load Balancer already exists.  If it does not exist it will create the new Load Balancer, If it already exists, it will\nSimply add the VM to the load balancer\n#>\n$mylb = Get-AzLoadBalancer -Name $AzureLBName -ResourceGroupName $resourceGroup -ErrorAction Ignore\nif ($mylb -eq $Null)\n    {\n    write-host \"Load Balancer does not exist in the Subscription, will create and add the VM to it\"\n\n##### Create Public IP Address\n\n$publicip = @{\n    Name = $AzureLBPublicIPName\n    ResourceGroupName = $resourceGroup\n    Location = $location\n    Sku = 'Standard'\n    AllocationMethod = 'static'\n    Zone = 1,2,3\n}\nNew-AzPublicIpAddress @publicip\n\n##### Create standard NLB\n\n## Place public IP created in previous steps into variable. ##\n$publicIp = Get-AzPublicIpAddress -Name $AzureLBPublicIPName -ResourceGroupName $resourceGroup\n\n## Create load balancer frontend configuration and place in variable. ##\n$feip = New-AzLoadBalancerFrontendIpConfig -Name $AzureLBFrontEndName -PublicIpAddress $publicIp\n\n## Create backend address pool configuration and place in variable. ##\n$bepool = New-AzLoadBalancerBackendAddressPoolConfig -Name $AzureLBBackEndPoolName\n\n## Create the health probe and place in variable. ##\n$probe = @{\n    Name = $AzureLBHealthProbeName\n    Protocol = \"#{target.settings.customAttribute['Azure LB Health Probe Protocol']}\"\n    Port = \"#{target.settings.customAttribute['Azure LB Health Probe Port']}\"\n    IntervalInSeconds = '360'\n    ProbeCount = '5'\n    RequestPath = \"#{target.settings.customAttribute['Azure LB Health Probe Request Path']}\"\n}\n$healthprobe = New-AzLoadBalancerProbeConfig @probe\n\n## Create the load balancer rule and place in variable. ##\n$lbrule = @{\n    Name = $AzureLBRuleName\n    Protocol = \"#{target.settings.customAttribute['Azure LB Rule Protocol']}\"\n    FrontendPort = \"#{target.settings.customAttribute['Azure LB Rule Front End Port']}\"\n    BackendPort = \"#{target.settings.customAttribute['Azure LB Rule Back End Port']}\"\n    IdleTimeoutInMinutes = '15'\n    FrontendIpConfiguration = $feip\n    BackendAddressPool = $bePool\n}\n$rule = New-AzLoadBalancerRuleConfig @lbrule -EnableTcpReset -DisableOutboundSNAT\n\n## Create the load balancer resource. ##\n$loadbalancer = @{\n    ResourceGroupName = $resourceGroup\n    Name = $AzureLBName\n    Location = $location\n    Sku = \"Standard\"\n    FrontendIpConfiguration = $feip\n    BackendAddressPool = $bePool\n    LoadBalancingRule = $rule\n    Probe = $healthprobe\n}\nNew-AzLoadBalancer @loadbalancer\n\n## Add VM to the BackEnd Pool\n$mylb = Get-AzLoadBalancer -Name $AzureLBName -ResourceGroupName $resourceGroup\n$ap = Get-AzLoadBalancerBackendAddressPoolConfig -Name $AzureLBBackEndPoolName -LoadBalancer $mylb\n#$VMNic = ($VMName.NetworkProfile.NetworkInterfaces.id).Split('/')[-1]\n$nic1 = Get-AzNetworkInterface -ResourceGroupName $resourceGroup -Name $VMNic\n$nic1.IpConfigurations[0].LoadBalancerBackendAddressPools = $ap\n$nic1 | Set-AzNetworkInterface\n}\nelse\n    {\n        # This is only adding a VM to an existing Load Balancer Back End Pool since the check stated the Load Balancer already exists.\n        write-host \"Load Balancer already exists, adding VM to back end pool \"\n        ## Add VM to the BackEnd Pool\n        $mylb = Get-AzLoadBalancer -Name $AzureLBName -ResourceGroupName $resourceGroup\n        $ap = Get-AzLoadBalancerBackendAddressPoolConfig -Name $AzureLBBackEndPoolName -LoadBalancer $mylb\n        $nic1 = Get-AzNetworkInterface -ResourceGroupName $resourceGroup -Name $VMNic\n        $nic1.IpConfigurations[0].LoadBalancerBackendAddressPools = $ap\n    $nic1 | Set-AzNetworkInterface\n    }",
+        "script_arguments": "",
+        "timeout": 300,
+        "executable": "powershell.exe",
+        "capture_output": true
+      }
+    }
+  ]
+}
