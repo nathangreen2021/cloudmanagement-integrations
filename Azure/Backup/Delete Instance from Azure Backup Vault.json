@@ -1,0 +1,36 @@
+{
+  "id": 79,
+  "guid": "a96d1810-623b-4aa5-bdf7-ddbc2ce0c20c",
+  "name": "Delete Instance from Azure Backup Vault",
+  "description": null,
+  "type": "CHANGE_COMPLETION",
+  "change_description": null,
+  "target_type": null,
+  "input_variables": [
+    {
+      "name": "Workload Type",
+      "variable": "workloadType",
+      "description": "Workload type to Delete, Default is AzureVM for Instances",
+      "required": true,
+      "default_value": "AzureVM"
+    }
+  ],
+  "info_messages": [],
+  "system_version": "8.10.2 (1007150085)",
+  "steps": [
+    {
+      "name": "Delete instance from Azure backup Vault",
+      "type": "EMBEDDED_SCRIPT",
+      "condition": null,
+      "data": {
+        "credentials": null,
+        "failure_action": "FAIL_STEP",
+        "script_contents": "$subscriptionId = (Get-Item Env:AZURE_SUBSCRIPTION_ID).value\n$tenantId = (Get-Item Env:AZURE_TENANT_ID).value\n$apiKey = (Get-Item Env:AZURE_API_KEY).value\n$applicationId = (Get-Item Env:AZURE_APPLICATION_ID).value\n$instanceId = \"#{target.remoteId}\"\n$Region = \"#{target.region.name}\"\n$resourceGroup = \"#{target.resourceGroup.name}\"\n$module = \"AZ\"\n$WorkloadType = \"#{inputVariable['workloadType']}\" \n\nif (!($subscriptionId) -or !($tenantId) -or !($apiKey) -or !($applicationId) -or !($module) -or !($instanceId) -or !($resourceGroup) -or !($Region) -or !($WorkloadType)){\n    Write-error \"Please provide Azure Login information\"\n    Exit 1\n    }\n\n#Remove white space for older versions of powershell\n$subscriptionId = $subscriptionId -replace \"\\s\", \"\"\n$tenantId = $tenantId -replace \"\\s\", \"\"\n$apiKey = $apiKey -replace \"\\s\", \"\"\n$applicationId = $applicationId -replace \"\\s\", \"\" \n\n#Check for Module\nif (Get-Module -ListAvailable -Name \"$module.*\") {\n    Import-Module $module\n    Write-Debug \"Module $module is installed.\"\n    } \nelse {\n    Write-Error \"Module $module does not appear to be installed, Please install and run again.\"\n    Exit 1\n    }\n\n#Build Azure Credential Object\n    [pscredential]$credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList \"$applicationId\", (\"$apiKey\" | ConvertTo-SecureString -AsPlainText -Force) \n\n#Connect to Azure\n    $connect = Connect-AzAccount -Credential $credential -Subscription $subscriptionId -Tenant $tenantId -ServicePrincipal -Confirm:$false -WarningAction 0 \n    if ($connect) {\n        Write-Debug \"Connected to $($connect[0].Context.Environment.name)\"\n    }\n\n#Capture VM Information From ID\n    $vmName = $instanceId.Split('/') | select -Last 1\n    $vmData = Get-AzVM -Name $vmName -ResourceGroupName $resourceGroup\n    $Region = $vmData.Location\n    $osType = $vmData.StorageProfile.OsDisk.OsType\n\n#Check if instance is configured to be backed up\n    $BackupData = Get-AzRecoveryServicesBackupStatus -Name $vmName -ResourceGroupName $resourceGroup -Type $WorkloadType\n    if (!$BackupData){\n        Write-host \"Instance $vmname is currently not assigned to a vault, Nothing to Cleanup\"\n        Exit 0\n    }\n    $VaultName = ($BackupData.VaultId).Split('/') | select -Last 1\n    $VaultID = $BackupData.VaultId\n\n#Set Policy\n    Get-AzRecoveryServicesVault -Name $vaultName | Set-AzRecoveryServicesVaultContext\n    #$policy = Get-AzRecoveryServicesBackupProtectionPolicy -Name $PolicyName\n    #$vault = Get-AzRecoveryServicesVault -ResourceGroupName $resourceGroup -Name $vaultName\n    $Container = Get-AzRecoveryServicesBackupContainer -ContainerType $WorkloadType -Status Registered -FriendlyName $vmName -VaultId $VaultID -WarningAction 0 \n    $BackupItem = Get-AzRecoveryServicesBackupItem -Container $Container -WorkloadType $WorkloadType -VaultId $VaultID -WarningAction 0 \n\n#Disable Backup\n    $BackupDisable = Disable-AzRecoveryServicesBackupProtection -Item $BackupItem -VaultId $VaultID -RemoveRecoveryPoints -Confirm:$False -Force -WarningAction 0 \n    $Status = $BackupDisable.Status\n    $Operation = $BackupDisable.Operation\n    Write-Output \"The operation $Operation on Instance $vmName for Vault $VaultName has $Status, Note: Soft Deletes are still present if not disabled on the vault\"\n  \n",
+        "script_arguments": "",
+        "timeout": 500,
+        "executable": "powershell.exe",
+        "capture_output": true
+      }
+    }
+  ]
+}

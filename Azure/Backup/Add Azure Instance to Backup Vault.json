@@ -1,0 +1,50 @@
+{
+  "id": 78,
+  "guid": "6fc6859a-ff72-400f-99d1-a43c58c6ac17",
+  "name": "Add Azure Instance to Backup Vault",
+  "description": null,
+  "type": "COMPONENT_COMPLETION",
+  "change_description": null,
+  "target_type": null,
+  "input_variables": [
+    {
+      "name": "WorkloadType",
+      "variable": "workloadType",
+      "description": "WorkloadType for instances in Azure it's AzureVM, this can be changed for other services. ",
+      "required": true,
+      "default_value": "AzureVM"
+    },
+    {
+      "name": "Policy Name",
+      "variable": "policyname",
+      "description": "Name of a policy in the Vault",
+      "required": true,
+      "default_value": "DefaultPolicy"
+    },
+    {
+      "name": "Backup Vault Name",
+      "variable": "vaultName",
+      "description": "Name of the backup Vault, if using a vault per tenant the organization variable would be ideal. ",
+      "required": true,
+      "default_value": "Vaultname"
+    }
+  ],
+  "info_messages": [],
+  "system_version": "8.10.2 (1007150085)",
+  "steps": [
+    {
+      "name": "Add Azure Instance to Backup Vault",
+      "type": "EMBEDDED_SCRIPT",
+      "condition": null,
+      "data": {
+        "credentials": null,
+        "failure_action": "FAIL_STEP",
+        "script_contents": " <#\nAzure Add VM to Policies in Azure backup Vault.\nRequires PS module AZ on the Commander server.\n*Commander 8.6.0 or higher\n*Advanced property \"embotics.workflow.script.credentials\" must be set to \"true\"\nForm attribute with a List of Policies Available to the Vault in the Instance region\n#> \n\n$subscriptionId = (Get-Item Env:AZURE_SUBSCRIPTION_ID).value\n$tenantId = (Get-Item Env:AZURE_TENANT_ID).value\n$apiKey = (Get-Item Env:AZURE_API_KEY).value\n$applicationId = (Get-Item Env:AZURE_APPLICATION_ID).value\n$instanceId = \"#{target.remoteId}\"\n$Region = \"#{target.region.name}\"\n$resourceGroup = \"#{target.resourceGroup.name}\"\n$module = \"AZ\"\n$policyName = \"#{inputVariable['policyname']}\"\n$vaultName = \"#{inputVariable['vaultName']}\" \n$WorkloadType = \"#{inputVariable['workloadType']}\" \n\nif (!($subscriptionId) -or !($tenantId) -or !($apiKey) -or !($applicationId) -or !($module) -or !($instanceId) -or !($resourceGroup) -or !($Region)) {\n        Write-error \"Please provide Azure Login information\"\n        Exit 1\n}\n if (!($policyName) -or !($vaultName) -or !($WorkloadType)) {\n        Write-error \"Please provide Azure Backup Vault information\"\n        Exit 1\n}\n\n#Remove white space for older versions of powershell\n$subscriptionId = $subscriptionId -replace \"\\s\", \"\"\n$tenantId = $tenantId -replace \"\\s\", \"\"\n$apiKey = $apiKey -replace \"\\s\", \"\"\n$applicationId = $applicationId -replace \"\\s\", \"\" \n\n#Check for Module\nif (Get-Module -ListAvailable -Name \"$module.*\") {\n    Import-Module $module\n    Write-Debug \"Module $module is installed.\"\n} \nelse {\n    Write-Error \"Module $module does not appear to be installed, Please install and run again.\"\n    Exit 1\n}\n\n#Build Azure Credential Object\n[pscredential]$credential= New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList \"$applicationId\",(\"$apiKey\" | ConvertTo-SecureString -AsPlainText -Force) \n\n#Connect to Azure\n$connect = Connect-AzAccount -Credential $credential -Subscription $subscriptionId -Tenant $tenantId -ServicePrincipal -Confirm:$false -WarningAction 0 \nif($connect){\n    Write-Debug \"Connected to $($connect[0].Context.Environment.name)\"\n}\n\n#Capture VM Information From ID\n    $vmName = $instanceId.Split('/') | select -Last 1\n    $vmData = Get-AzVM -Name $vmName -ResourceGroupName $resourceGroup\n    $Region = $vmData.Location\n    $osType = $vmData.StorageProfile.OsDisk.OsType\n\n#Get and verify vault information\n    $Vaults = Get-AzRecoveryServicesVault -ResourceGroupName $resourceGroup | where-object {$_.Location -like $Region} | select-object Name -ExpandProperty Name\n    if(!$vaults){\n        Write-Error \"No Vaults found, Cannot Continue\"\n        Exit 1\n        }\n    elseif($vaults -notcontains $vaultName){\n        Write-Error \"$vaultName not found, in the region $region, Cannot Continue\"\n        Exit 1 \n    }\n\n#Get and Verify Policy\n    Get-AzRecoveryServicesVault -Name $vaultName | Set-AzRecoveryServicesVaultContext\n    $policys = Get-AzRecoveryServicesBackupProtectionPolicy -Name $policyName | Where-object {$_.WorkloadType -eq $WorkloadType}\n    if(!$policys){\n        Write-Error \"No Policy mathing that workflow type found, Cannot Continue\"\n        Exit 1\n        }\n    elseif($policys.Name -notcontains $policyName){\n        Write-Error \"$policyName not found, in the $vaultName Vault, Cannot Continue\"\n        Exit 1 \n    }\n\n#Set Context and policy\n    Get-AzRecoveryServicesVault -Name $vaultName | Set-AzRecoveryServicesVaultContext\n    $policycontext = Get-AzRecoveryServicesBackupProtectionPolicy -Name $policyName\n    Set-AzRecoveryServicesVaultContext -Vault (Get-AzRecoveryServicesVault -ResourceGroupName $resourceGroup -Name $vaultName) \n\n#Enable VM Backup - specifying policy, resource group & VM\n    Enable-AzRecoveryServicesBackupProtection  -ResourceGroupName $resourceGroup  -Name $vmname -Policy $policycontext \n    #pause for Azure to update (30 second to be safe)\n    Start-sleep -Seconds 30\n    $backupStatus = Get-AzRecoveryServicesBackupContainer -ContainerType $WorkloadType -FriendlyName $vmname -ResourceGroupName $resourceGroup -WarningAction 0 \n    if(!$backupStatus){\n        Write-Error \"Failed to get backup status, Please contact an Admin to ensure everything is setup as expected\"\n        Exit 1\n        }\n    $Status = $backupStatus.Status\n    $buType = $backupStatus.ContainerType\n    Write-Output \"The Instance $vmName has been assigned the $buType Policy $policyName in the vault $vaultName with a status of $Status\"\n   \n \n",
+        "script_arguments": "",
+        "timeout": 300,
+        "executable": "powershell.exe",
+        "capture_output": true
+      }
+    }
+  ]
+}
