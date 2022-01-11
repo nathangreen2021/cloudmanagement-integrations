@@ -1,0 +1,43 @@
+{
+  "id": "",
+  "guid": "",
+  "name": "Assign/Remove Elastic IP",
+  "description": "Script to Assign or Remove an Elastic IP from an AWS EC2 instance\n* Requires PS modules \"AWSPowerShell.netcore\" on the Commander server. \n* Commander 8.6.0 or higher\n* Advanced property \"embotics.workflow.script.credentials\" must be set to \"true\" \n",
+  "type": "CHANGE_COMPLETION",
+  "change_description": null,
+  "target_type": null,
+  "input_variables": [
+    {
+      "name": "Api Wait timeout",
+      "variable": "apiwait",
+      "description": "Wait in seconds for the API to update.",
+      "required": true,
+      "default_value": "3"
+    },
+    {
+      "name": "Action",
+      "variable": "action",
+      "description": "Action Value {Assign:Remove} to either assign or remove an EIP from an EC2 instance. \n \n",
+      "required": true,
+      "default_value": "Assign"
+    }
+  ],
+  "info_messages": [],
+  "system_version": "8.10.4 (1007150089)",
+  "steps": [
+    {
+      "name": "Assign/Remove Elastic IP",
+      "type": "EMBEDDED_SCRIPT",
+      "condition": "\"#{target.cloudAccount.type}\" -eq \"amazon_aws\"",
+      "data": {
+        "credentials": null,
+        "failure_action": "FAIL_STEP",
+        "script_contents": " <#\nScript to Assign or Remove an Elastic IP from an AWS EC2 instance\n* Requires PS modules \"AWSPowerShell.netcore\" on the Commander server. \n* Commander 8.6.0 or higher\n* Advanced property \"embotics.workflow.script.credentials\" must be set to \"true\"\n#>\n\n#AWS Information\n$AccessKey = (Get-Item Env:AWS_ACCESS_KEY_ID).value\n$SecretKey = (Get-Item Env:AWS_SECRET_ACCESS_KEY).value\n$Instance = '#{target.remoteId}' \n$Region = '#{target.region.name}' \n$Action = \"#{inputVariable['action']}\"  #Action Value {Assign:Remove}\n$APIwait = \"#{inputVariable['apiwait']}\"  #time to wait for AWS to update in seconds \n\nif(!($Accesskey) -or !($SecretKey) -or !($Region) -or !($Instance) -or !($Action)){\n        Write-error \"Please provide the required AWS information\"\n        Exit 1\n        } \n\n#Remove and re-add the modules \n        Write-Host \"Loading Modules\"\n        $module = @(\"AWSPowerShell.netcore\" )\n        ForEach($Modulename in $module){\n                If (-not (Get-Module -name $moduleName)) {Import-Module -Name $moduleName \n                } else {Remove-Module $moduleName\n                        Import-Module -Name $moduleName\n                        }\n                        Start-Sleep 1\n                }\n\n#Connect to AWS in the specified region. \n    Set-AWSCredentials -AccessKey $AccessKey -SecretKey $SecretKey -StoreAs vCommander\n    Set-DefaultAWSRegion -Region $Region\n    Initialize-AWSDefaults -ProfileName vCommander -Region $Region\n\n#Get-Instance Termination status\n    $PublicEIP = (Get-EC2Instance -InstanceId $Instance -Region $Region).RunningInstance | Select-Object -ExpandProperty PublicIpAddress\n\n#Assign Elastic IP address\n    Try{\n        IF($PublicEIP -eq $null -and $Action -eq \"Assign\"){\n            $address = New-EC2Address -Domain \"Vpc\"\n            $Status = Register-EC2Address -InstanceId $Instance -AllocationId $address.AllocationId\n            #Small wait just to be sure the api updates\n            Start-sleep $APIwait \n            $PublicEIP = (Get-EC2Instance -InstanceId $Instance -Region $Region).RunningInstance | Select-Object -ExpandProperty PublicIpAddress  \n\t        Write-Host \"Elastic IP $PublicEIP has been assigned to instance $instance\" \n            Exit 0\n        }\n\n#Remove Elastic IP address\n         ElseIF ($PublicEIP -ne $null -and $Action -eq \"Remove\"){\n            $unassigned = Get-EC2Address -Filter @{ Name=\"public-ip\";Value=$PublicEIP } \n            $Associd = $unassigned.AssociationId\n            Unregister-EC2Address -AssociationId $Associd\n            Remove-EC2Address -AllocationId $unassigned.AllocationId -Force\n            #Small wait just to be sure the api updates\n            Start-sleep $APIwait \n            $PIP = (Get-EC2Instance -InstanceId $Instance -Region $Region).RunningInstance | Select-Object -ExpandProperty PublicIpAddress  \n            if($pip -eq $null){\n                 Write-Host \"Elastic IP $PublicEIP has been removed from instance $instance\" \n            }\n            Exit 0\n\t        \n        }\n        ElseIF($PublicEIP -ne $null -and $Action -eq \"Assign\"){\n            Write-Host \"Elastic IP $PublicEIP is already assigned to instance $instance\"\n            Exit 0 \n        }\n    \n        ElseIF($PublicEIP -eq $null -and $Action -eq \"Remove\"){\n            Write-Host \"There is no ElasticIP assigned to $Instance, nothing to do.\" \n            Exit 0\n        }\n        Else{Write-host \"Something went wrong please contact your Administrator\"\n            Exit 1\n        }\n        \n    }\n    Catch{\n        $error[0] | Format-List -Force\n        Exit 1\n    }\n\n#EOF \n",
+        "script_arguments": "",
+        "timeout": 300,
+        "executable": "powershell.exe",
+        "capture_output": true
+      }
+    }
+  ]
+}
