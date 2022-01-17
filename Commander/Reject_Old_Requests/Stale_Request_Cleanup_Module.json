@@ -1,0 +1,50 @@
+{
+  "id": "",
+  "guid": "",
+  "name": "Stale Request Cleanup Module",
+  "description": null,
+  "type": "COMMAND",
+  "change_description": null,
+  "target_type": "NO_INVENTORY_TARGET",
+  "input_variables": [
+    {
+      "name": "Commander Base URL",
+      "variable": "CommanderBaseURL",
+      "description": "Base url for Commander: localhost",
+      "required": true,
+      "default_value": "localhost"
+    },
+    {
+      "name": "Bypass Unsigned Certificate",
+      "variable": "bypass_Cert",
+      "description": "ByPass unsigned Certificate: {yes/no}",
+      "required": true,
+      "default_value": "Yes"
+    },
+    {
+      "name": "Cleanup Age",
+      "variable": "CleanupAge",
+      "description": "Age in Days of the Request to Cleanup. ",
+      "required": true,
+      "default_value": "14"
+    }
+  ],
+  "info_messages": [],
+  "system_version": "8.10.4 (1007150089)",
+  "steps": [
+    {
+      "name": "Request Cleanup",
+      "type": "EMBEDDED_SCRIPT",
+      "condition": null,
+      "data": {
+        "credentials": null,
+        "failure_action": "FAIL_STEP",
+        "script_contents": "<#\nDesigned to be run as a schedualed workflow in Commander daily. \nThis script finds requests that are older than X days and rejects them after a configurable time.\n#> \n\n$CommanderServer = \"#{inputVariable['CommanderBaseURL']}\"\n$user = (Get-Item Env:SELECTED_CREDENTIALS_USERNAME ).value;\n$pass = (Get-Item Env:SELECTED_CREDENTIALS_PASSWORD).value;\n$BypassCert = \"#{inputVariable['bypass_Cert']}\" \n$CleanupAge = \"#{inputVariable['CleanupAge']}\"      # Days\n$Comments = \"Automatic cleanup rejecting request as it's been running for more than $Cleanupage days\" \n\n #Check All Variables Present\nif(!($CleanupAge) -or !($CommanderServer) -or !($user) -or !($pass)  -or !($BypassCert)){\n        Write-error \"Please provide all required input variables to execute this workflow\"\n        Exit 1} \n\n#Bypass unsigned SSL for Localhost\nif ($BypassCert -eq \"yes\"){\nWrite-host \"- Ignoring invalid Certificate\" -ForegroundColor Green\n\n# Create a compilation environment\n $Provider=New-Object Microsoft.CSharp.CSharpCodeProvider\n $Compiler=$Provider.CreateCompiler()\n $Params=New-Object System.CodeDom.Compiler.CompilerParameters\n $Params.GenerateExecutable=$False\n $Params.GenerateInMemory=$True\n $Params.IncludeDebugInformation=$False\n $Params.ReferencedAssemblies.Add(\"System.DLL\") > $null\n $TASource=@'\n   namespace Local.ToolkitExtensions.Net.CertificatePolicy {\n     public class TrustAll : System.Net.ICertificatePolicy {\n       public TrustAll() { \n       }\n       public bool CheckValidationResult(System.Net.ServicePoint sp,\n         System.Security.Cryptography.X509Certificates.X509Certificate cert, \n         System.Net.WebRequest req, int problem) {\n         return true;\n       }\n     }\n   }\n'@ \n $TAResults=$Provider.CompileAssemblyFromSource($Params,$TASource)\n $TAAssembly=$TAResults.CompiledAssembly\n $TrustAll=$TAAssembly.CreateInstance(\"Local.ToolkitExtensions.Net.CertificatePolicy.TrustAll\")\n [System.Net.ServicePointManager]::CertificatePolicy=$TrustAll\n}\n\n#GetToken\n    $Token = $null\n    $TokenURL = \"https://$CommanderServer/rest/v3/tokens\"\n    $TokenBody = \"{\n                \"\"username\"\": \"\"$user\"\",\n                \"\"password\"\": \"\"$pass\"\" \n                }\"\n    $TokenResult = Invoke-RestMethod -Method POST $TokenURL -Body $TokenBody -ContentType 'application/json'\n    $Token = $TokenResult.token\n    $AuthHeader = @{\"Authorization\"= \"Bearer $Token\"}\n\n#Create Timespan\n    $ts = new-Timespan -Days $CleanupAge\n    $time = ((Get-Date).AddDays(-$ts.Days)).tostring(“yyyy-MM-dd”)\n\n#Get VMs with Attrib setloop through requests 100 at a time \n    $Page = 1\n    $Maxcount = 100\n    $Rejectbody = \"{ \"\"comment\"\":\"\"$Comments\"\"}\"\n\nDo {$RequestsEnspoint = \"https://$CommanderServer\"+\"/rest/v3/service-requests?page_size=$Maxcount&filter=(date_submitted -lt '$time') -and (state -ne COMPLETED) -and  (state -ne REJECTED)\"\n        $requests = Invoke-Restmethod -Method GET -Uri $RequestsEnspoint -Headers $AuthHeader -ContentType 'application/json'\n        $Count = $requests.items.count\n        $Page = [int]$Page += 1\n        Write-host \"Page $Page with $count VM's\"\n\n    #loop through Requests by ID\n        $ReqIDs = $requests.items\n       \n        $ReqIDs | ForEach-Object{\n            $id = $name = $RejectURI = $null\n            $id = $_.id\n            $name = $_.name\n            Write-Debug \"Processing RequestID $id\"\n            $RejectURI = \"https://$CommanderServer/rest/v3/service-requests/$id/reject\"   \n            Try{\n                $RejectResult = Invoke-Restmethod -Method POST -Uri $RejectURI -Body $Rejectbody -Headers $AuthHeader -ContentType 'application/json'\n                }\n                Catch{\n                    $Exception = \"$_\"\n                    Write-Host \"Failed to reject request $id, Please reject the request Manually\"\n                    Write-Host $Exception  \n                }    \n       #Refresh JWT Token \n            $refreshURL = \"https://$CommanderServer/rest/v3/tokens/refresh\"\n            $refreshBody = \"{ \"\"token\"\": \"\"$token\"\"}\"\n            $refreshResult = Invoke-RestMethod -Method POST $refreshURL -Body $refreshBody -ContentType 'application/json'\n            $Token = $refreshResult.token\n            $AuthHeader = @{\"Authorization\"= \"Bearer $Token\"}                   \n       }\n}\n    Until($Count -eq 0) \n",
+        "script_arguments": "",
+        "timeout": 300,
+        "executable": "powershell.exe",
+        "capture_output": true
+      }
+    }
+  ]
+}
