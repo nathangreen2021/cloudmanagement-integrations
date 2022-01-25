@@ -1,0 +1,31 @@
+{
+  "id": "",
+  "guid": "",
+  "name": "Create a ServiceNow Request",
+  "type": "COMMAND",
+  "change_description": null,
+  "fulfillment_rule": null,
+  "add_owner_as_admin": false,
+  "auto_deploy": false,
+  "users": [],
+  "organizations": [],
+  "target_type": "VIRTUAL_MACHINE",
+  "info_messages": [],
+  "prompt_message": null,
+  "system_version": "8.8.1 (1007130064)",
+  "steps": [
+    {
+      "name": "Run Module",
+      "type": "MODULE",
+      "condition": null,
+      "data": {
+        "contact_type": "self-service",
+        "price": "1030.02",
+        "active": "true",
+        "description": "#{target.dnsName} was requested on #{target.cloudAccount.name}",
+        "module_name": "ServiceNow - New Request",
+        "ServiceNow_Server": "snowcommander"
+      }
+    }
+  ]
+}

@@ -1,0 +1,207 @@
+{
+  "id": "",
+  "guid": "",
+  "name": "ServiceNow - New CMDB CI VMware",
+  "description": null,
+  "type": "COMMAND",
+  "change_description": null,
+  "target_type": "VIRTUAL_MACHINE",
+  "input_variables": [
+    {
+      "name": "cpus",
+      "variable": "cpus",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "ip_address",
+      "variable": "ip_address",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "ServiceNow Server Name",
+      "variable": "ServiceNow_Server",
+      "description": "https://XXXXXXX.service-now.com\nDo not include service-now.com",
+      "required": true,
+      "default_value": null
+    },
+    {
+      "name": "vcenter_ref",
+      "variable": "vcenter_ref",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "disks",
+      "variable": "disks",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "owned_by",
+      "variable": "owned_by",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "guest_os_fullname",
+      "variable": "guest_os_fullname",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "cost_center",
+      "variable": "cost_center",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "dns_domain",
+      "variable": "dns_domain",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "memory",
+      "variable": "memory",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "short_description",
+      "variable": "short_description",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "image_path",
+      "variable": "image_path",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "state",
+      "variable": "state",
+      "description": null,
+      "required": false,
+      "default_value": "On"
+    },
+    {
+      "name": "cost",
+      "variable": "cost",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "fqdn",
+      "variable": "fqdn",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "name",
+      "variable": "name",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "discovery_source",
+      "variable": "discovery_source",
+      "description": null,
+      "required": false,
+      "default_value": "Commander"
+    },
+    {
+      "name": "vm_instance-uuid",
+      "variable": "vm_instance-uuid",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "department",
+      "variable": "department",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "vendor",
+      "variable": "vendor",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "used_for",
+      "variable": "used_for",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "disk_size",
+      "variable": "disk_size",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "comments",
+      "variable": "comments",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "mac_address",
+      "variable": "mac_address",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "nics",
+      "variable": "nics",
+      "description": null,
+      "required": false,
+      "default_value": null
+    }
+  ],
+  "info_messages": [],
+  "system_version": "8.8.1 (1007130064)",
+  "steps": [
+    {
+      "name": "Create a CMDB Record - VMware",
+      "type": "REST",
+      "condition": null,
+      "data": {
+        "success_codes": 201,
+        "credentials": "",
+        "result_filter": "",
+        "failure_action": "FAIL_STEP",
+        "rest_action": "POST",
+        "format": "JSON",
+        "header": "",
+        "body": "{\n    \"vm_instance_uuid\": \"#{inputVariable['vm_instance-uuid']}\",\n    \"discovery_source\": \"Commander\",\n    \"used_for\": \"#{inputVariable['used_for']}\",\n    \"state\": \"##{inputVariable['state']}\",\n    \"owned_by\": \"#{inputVariable['owned_by']}\",\n    \"vcenter_ref\": \"#{inputVariable['vcenter_ref']}\",\n    \"cost_center\": \"#{inputVariable['cost_center']}\",\n    \"dns_domain\": \"#{inputVariable['dns_domain']}\",\n    \"short_description\": \"#{inputVariable['short_description']}\",\n    \"vendor\": \"#{inputVariable['vendor']}\",\n    \"nics\": \"#{inputVariable['nics']}\",\n    \"image_path\": \"#{inputVariable['image_path']}\",\n    \"fqdn\": \"#{inputVariable['fqdn']}\",\n    \"name\": \"#{inputVariable['name']}\",\n    \"guest_os_fullname\": \"#{inputVariable['guest_os_fullname']}\",\n    \"memory\": \"#{inputVariable['memory']}\",\n    \"disks\": \"#{inputVariable['disks']}\",\n    \"mac_address\": \"#{inputVariable['mac_address']}\",\n    \"department\": \"#{inputVariable['department']}\",\n    \"comments\": \"#{inputVariable['comments']}\",\n    \"cost\": \"#{inputVariable['cost']}\",\n    \"cpus\": \"#{inputVariable['cpus']}\",\n    \"ip_address\": \"#{inputVariable['ip_address']}\",\n    \"disks_size\": \"#{inputVariable['disk_size']}\"\n}",
+        "url": "https://#{inputVariable['ServiceNow_Server']}.service-now.com/api/now/table/cmdb_ci_vmware_instance",
+        "capture_output": true
+      }
+    }
+  ]
+}

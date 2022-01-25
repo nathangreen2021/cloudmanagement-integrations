@@ -1,0 +1,88 @@
+{
+  "id": "",
+  "guid": "",
+  "name": "ServiceNow - New Incident",
+  "description": null,
+  "type": "COMMAND",
+  "change_description": null,
+  "target_type": "ANY_INVENTORY_TYPE",
+  "input_variables": [
+    {
+      "name": "Category",
+      "variable": "category",
+      "description": null,
+      "required": false,
+      "default_value": "Cloud Management"
+    },
+    {
+      "name": "ServiceNow Server Name",
+      "variable": "ServiceNow_Server",
+      "description": "https://XXXXXXX.service-now.com\n\nDo not include service-now.com",
+      "required": true,
+      "default_value": "snowcommander"
+    },
+    {
+      "name": "Description",
+      "variable": "description",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "Caller",
+      "variable": "caller",
+      "description": null,
+      "required": false,
+      "default_value": "colin.jack@snowsoftware.com"
+    },
+    {
+      "name": "Contact Type",
+      "variable": "contact_type",
+      "description": null,
+      "required": false,
+      "default_value": "self-service"
+    },
+    {
+      "name": "Short Description",
+      "variable": "short_description",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "Active",
+      "variable": "active",
+      "description": null,
+      "required": false,
+      "default_value": "true"
+    },
+    {
+      "name": "Special Instructions",
+      "variable": "special_instructions",
+      "description": null,
+      "required": false,
+      "default_value": null
+    }
+  ],
+  "info_messages": [],
+  "system_version": "8.8.1 (1007130064)",
+  "steps": [
+    {
+      "name": "Create Incident",
+      "type": "REST",
+      "condition": null,
+      "data": {
+        "success_codes": 201,
+        "credentials": "",
+        "result_filter": "",
+        "failure_action": "FAIL_STEP",
+        "rest_action": "POST",
+        "format": "JSON",
+        "header": "",
+        "body": "{   \n    \"short_description\": \"#{inputVariable['short_description']}\",\n    \"description\": \"#{inputVariable['description']}\",\n    \"contact_type\": \"#{inputVariable['contact_type']}\",\n    \"caller_id\": \"#{inputVariable['caller']}\",\n    \"category\": \"#{inputVariable['category']}\",\n    \"special_instructions\": \"#{inputVariable['special_instructions']}\",\n    \"active\": \"#{inputVariable['active']}\"\n}",
+        "url": "https://snowcommander.service-now.com/api/now/table/incident",
+        "capture_output": true
+      }
+    }
+  ]
+}

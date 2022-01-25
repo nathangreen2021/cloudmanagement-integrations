@@ -1,0 +1,57 @@
+{
+  "id": 82,
+  "guid": "b825ae81-2997-4e2f-80db-7a7ee7bb6f07",
+  "name": "phpIPAM - Release IP",
+  "description": null,
+  "type": "CHANGE_COMPLETION",
+  "change_description": null,
+  "target_type": null,
+  "input_variables": [
+    {
+      "name": "Bypass Unsigned Certificate",
+      "variable": "bypass_Cert",
+      "description": "ByPass unsigned Certificate: {yes/no}",
+      "required": true,
+      "default_value": "Yes"
+    },
+    {
+      "name": "IP Address",
+      "variable": "IPAddress",
+      "description": "IP address to release from phpIPAM",
+      "required": true,
+      "default_value": "#{target.ipAddress}"
+    },
+    {
+      "name": "phpIPAM Base URL",
+      "variable": "phpIPAMBaseURL",
+      "description": "phpIPAM Base URL : typically http://phpipam.domain.com/phpipam \n",
+      "required": true,
+      "default_value": "http://phpIPAMAddress"
+    },
+    {
+      "name": "phpIPAM_AppID",
+      "variable": "phpIPAMAppID",
+      "description": "Applcation ID in phpipam for remote requests. ",
+      "required": true,
+      "default_value": "Commander"
+    }
+  ],
+  "info_messages": [],
+  "system_version": "8.10.4 (1007150089)",
+  "steps": [
+    {
+      "name": "Release IP Address Step",
+      "type": "EMBEDDED_SCRIPT",
+      "condition": null,
+      "data": {
+        "credentials": null,
+        "failure_action": "FAIL_STEP",
+        "script_contents": "<#\nModule that Calls out to phpIPAM to release the specified address in a decommissioning workflow request.\nRequirements: \n* Commander 8.6.0 or higher\n* Advanced property \"embotics.workflow.script.credentials\" must be set to \"true\"\n* PhpIpam 1.3.1 or greater\n\nNote:\nYour Environment maye require additional or diffrent logic depending on how phpipam has been configured. This Example assumes there is no overlapping subnets in phpIPAM\n#>\n\n\n$IPAddress = \"#{target.ipAddress}\"                                    #Address to be released\n$phpipamURL = \"#{inputVariable['phpIPAMBaseURL']}\"                    #Phpipam Base URL\n$phpIPAMUser = (Get-Item Env:SELECTED_CREDENTIALS_USERNAME ).value;   #Credential\n$phpIPAMPass = (Get-Item Env:SELECTED_CREDENTIALS_PASSWORD).value;\n$phpipamAppID = \"#{inputVariable['phpIPAMAppID']}\"                    #AppID in svrphpipam Set to \"None\" for security to use password auth only not token auth. \n$BypassCert = \"#{inputVariable['bypass_Cert']}\"                       #to bypass an unsigned SSL cert on the phpIPAM Server\n\n#$DebugPreference=\"Continue\"\n$ErrorActionPreference = \"Stop\"\n\n#Check All Variables Present\nif(!($IPAddress) -or !($phpipamURL) -or !($phpIPAMUser) -or !($phpIPAMPass) -or !($phpipamAppID) -or !($BypassCert)){\n        Write-error \"Please provide all required input variables to execute this workflow\"\n        Exit 1} \n\n    \n#Bypass unsigned SSL cert for phpipam\nif ($BypassCert -eq \"yes\"){\nWrite-host \"- Ignoring invalid Certificate\" -ForegroundColor Green\n\n# Create a compilation environment\n $Provider=New-Object Microsoft.CSharp.CSharpCodeProvider\n $Compiler=$Provider.CreateCompiler()\n $Params=New-Object System.CodeDom.Compiler.CompilerParameters\n $Params.GenerateExecutable=$False\n $Params.GenerateInMemory=$True\n $Params.IncludeDebugInformation=$False\n $Params.ReferencedAssemblies.Add(\"System.DLL\") > $null\n $TASource=@'\n   namespace Local.ToolkitExtensions.Net.CertificatePolicy {\n     public class TrustAll : System.Net.ICertificatePolicy {\n       public TrustAll() { \n       }\n       public bool CheckValidationResult(System.Net.ServicePoint sp,\n         System.Security.Cryptography.X509Certificates.X509Certificate cert, \n         System.Net.WebRequest req, int problem) {\n         return true;\n       }\n     }\n   }\n'@ \n $TAResults=$Provider.CompileAssemblyFromSource($Params,$TASource)\n $TAAssembly=$TAResults.CompiledAssembly\n $TrustAll=$TAAssembly.CreateInstance(\"Local.ToolkitExtensions.Net.CertificatePolicy.TrustAll\")\n [System.Net.ServicePointManager]::CertificatePolicy=$TrustAll\n}\n\n\n# Building phpipam API string and invoking API\n    $baseAuthURL = $phpipamURL +\"/api/$phpipamAppID/user/\"\n    # Authenticating with phpipam APIs\n    $PHPcred = \n    $authInfo = (\"{0}:{1}\" -f $phpIPAMUser,$phpIPAMPass)\n    $authInfo = [System.Text.Encoding]::UTF8.GetBytes($authInfo)\n    $authInfo = [System.Convert]::ToBase64String($authInfo)\n    $headers = @{Authorization=(\"Basic {0}\" -f $authInfo)}\n    $sessionBody = '{\"AuthenticationMethod\": \"1\"}'\n    $contentType = \"application/json\"\n    Try{$iPamSessionResponse = Invoke-WebRequest -Uri $baseAuthURL -Headers $headers -Method POST -ContentType $contentType\n          }Catch{Write-Host \"Failed to authenticate to Ipam\" -ForegroundColor Red\n                $error[0] | Format-List -Force\n                Exit 1\n                }\n     \n#Extracting Token from the response, and adding it to the actual API\n    $phpipamToken = ($iPamSessionResponse | ConvertFrom-Json).data.token\n    $phpipamsessionHeader = @{\"token\"=$phpipamToken}\n\n#Get Data from Specific Subnet(Gateway, netmask, dns)\n    Try{$IPURL = $phpipamURL +\"/api/$phpipamAppID/addresses/search/$IPAddress/\"\n        $IPJson = Invoke-WebRequest -Uri $IPURL -Headers $phpipamsessionHeader -Method GET -ContentType $contentType\n        $IPData = $IPJson | ConvertFrom-Json\n        $IPSubnetID = $IPData.data.subnetid\n         }Catch{Write-Host \"Failed to get existing IP data from Ipam\" -ForegroundColor Red\n                $error[0] | Format-List -Force\n                Exit 1\n                }\n    \n#Setup request body to remove DNS Entry ***Not required - Depends on implementation of PhpIpam***\n $JSONbody = \n    \"{\n    \"\"remove_dns\"\":\"\"1\"\"\n    }\"\n\n#perform Remove \n    Try{$DeleteURL = $phpipamURL +\"/api/$phpipamAppID/addresses/$IPAddress/\"+\"$IPSubnetID/\"\n        $Delete = Invoke-WebRequest -Uri $DeleteURL -Headers $phpipamsessionHeader -Method Delete -ContentType $contentType\n        #$DeleteURL1 = $phpipamURL +\"/api/$phpipamAppID/addresses/$IPAddress\"\n        #$Delete1 = Invoke-WebRequest -Uri $DeleteURL -Headers $phpipamsessionHeader -Body $JSONbody -Method DELETE -ContentType $contentType\n        $Status = ($Delete1 | ConvertFrom-Json).message\n         }Catch{Write-Host \"Failed to Delete Address $IPAddress from IPAM\" -ForegroundColor Red\n                $error[0] | Format-List -Force\n                Exit 1\n                }\n        if($Status -eq 'Address deleted'){\n           Write-host $status\n          # Exit;0\n           }\n        else{Write-host \"$Status\"\n            #Exit;1\n        } \n",
+        "script_arguments": "",
+        "timeout": 300,
+        "executable": "powershell.exe",
+        "capture_output": true
+      }
+    }
+  ]
+}

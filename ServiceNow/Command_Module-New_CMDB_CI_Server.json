@@ -1,0 +1,256 @@
+{
+  "id": "",
+  "guid": "",
+  "name": "ServiceNow - New CMDB CI Server",
+  "description": null,
+  "type": "COMMAND",
+  "change_description": null,
+  "target_type": "VIRTUAL_MACHINE",
+  "input_variables": [
+    {
+      "name": "os_service_pack",
+      "variable": "os_service_pack",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "category",
+      "variable": "category",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "ip_address",
+      "variable": "ip_address",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "cost",
+      "variable": "cost",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "cpu_count",
+      "variable": "cpu_count",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "cpu_core_count",
+      "variable": "cpu_core_count",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "name",
+      "variable": "name",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "classification",
+      "variable": "classification",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "department",
+      "variable": "department",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "os_version",
+      "variable": "os_version",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "vendor",
+      "variable": "vendor",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "virtual",
+      "variable": "virtual",
+      "description": null,
+      "required": false,
+      "default_value": "true"
+    },
+    {
+      "name": "discovery_source",
+      "variable": "discovery_source",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "fqdn",
+      "variable": "fqdn",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "short_description",
+      "variable": "short_description",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "company",
+      "variable": "company",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "firewall_status",
+      "variable": "firewall_status",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "ram",
+      "variable": "ram",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "cpu_manufacturer",
+      "variable": "cpu_manufacturer",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "dns_domain",
+      "variable": "dns_domain",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "owned_by",
+      "variable": "owned_by",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "assigned_to",
+      "variable": "assigned_to",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "os",
+      "variable": "os",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "comments",
+      "variable": "comments",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "mac_address",
+      "variable": "mac_address",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "manufacturer",
+      "variable": "manufacturer",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "cost_center",
+      "variable": "cost_center",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "disk_space",
+      "variable": "disk_space",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "ServiceNow Server Name",
+      "variable": "ServiceNow_Server",
+      "description": null,
+      "required": true,
+      "default_value": null
+    },
+    {
+      "name": "used_for",
+      "variable": "used_for",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "cpu_type",
+      "variable": "cpu_type",
+      "description": null,
+      "required": false,
+      "default_value": "Virtual"
+    },
+    {
+      "name": "operational_status",
+      "variable": "operational_status",
+      "description": null,
+      "required": false,
+      "default_value": "1"
+    }
+  ],
+  "info_messages": [],
+  "system_version": "8.8.1 (1007130064)",
+  "steps": [
+    {
+      "name": "Create a CMDB Record - Server",
+      "type": "REST",
+      "condition": null,
+      "data": {
+        "success_codes": 201,
+        "credentials": "",
+        "result_filter": "",
+        "failure_action": "FAIL_STEP",
+        "rest_action": "POST",
+        "format": "JSON",
+        "header": "",
+        "body": "{\n        \"firewall_status\": \"#{inputVariable['firewall_status']}\",\n        \"operational_status\": \"#{inputVariable['operational_status']}\",\n        \"os_service_pack\": \"#{inputVariable['os_service_pack']}\",\n        \"cpu_manufacturer\": \"#{inputVariable['cpu_manufacturer']}\",\n        \"discovery_source\": \"#{inputVariable['discovery_source']}\",\n        \"used_for\": \"#{inputVariable['used_for']}\",\n        \"ram\": \"#{inputVariable['ram']}\",\n        \"owned_by\": \"#{inputVariable['owned_by']}\",\n        \"classification\": \"#{inputVariable['classification']}\",\n        \"disk_space\": \"#{inputVariable['disk_space']}\",\n        \"cost_center\": \"#{inputVariable['cost_center']}\",\n        \"dns_domain\": \"#{inputVariable['dns_domain']}\",\n        \"short_description\": \"#{inputVariable['short_description']}\",\n        \"cpu_count\": \"#{inputVariable['cpu_count']}\",\n        \"cpu_type\": \"#{inputVariable['cpu_type']}\",\n        \"assigned_to\": \"#{inputVariable['assigned_to']}\",\n        \"manufacturer\": \"#{inputVariable['manufacturer']}\",\n        \"vendor\": \"#{inputVariable['vendor']}\",\n        \"os_version\": \"#{inputVariable['os_version']}\",\n        \"cpu_core_count\": \"#{inputVariable['cpu_core_count']}\",\n        \"fqdn\": \"#{inputVariable['fqdn']}\",\n        \"name\": \"#{inputVariable['name']}\",\n        \"virtual\": \"#{inputVariable['virtual']}\",\n        \"mac_address\": \"#{inputVariable['mac_address']}\",\n        \"company\": \"#{inputVariable['company']}\",\n        \"department\": \"#{inputVariable['department']}\",\n        \"comments\": \"#{inputVariable['comments']}\",\n        \"cost\": \"#{inputVariable['cost']}\",\n        \"os\": \"#{inputVariable['os']}\",\n        \"ip_address\": \"#{inputVariable['ip_address']}\",\n        \"category\": \"#{inputVariable['category']}\"\n}",
+        "url": "https://#{inputVariable['ServiceNow_Server']}.service-now.com/api/now/table/cmdb_ci_server",
+        "capture_output": true
+      }
+    }
+  ]
+}

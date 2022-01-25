@@ -1,0 +1,43 @@
+{
+  "id": "",
+  "guid": "",
+  "name": "Create a ServiceNow Incident",
+  "type": "COMMAND",
+  "change_description": null,
+  "fulfillment_rule": null,
+  "add_owner_as_admin": false,
+  "auto_deploy": false,
+  "users": [],
+  "organizations": [],
+  "target_type": "VIRTUAL_MACHINE",
+  "info_messages": [],
+  "prompt_message": null,
+  "system_version": "8.8.1 (1007130064)",
+  "steps": [
+    {
+      "name": "Create Incident",
+      "type": "MODULE",
+      "condition": null,
+      "data": {
+        "short_description": "Incident Created for #{target.deployedName} on #{target.cloudAccount.name}. ",
+        "special_instructions": "Please keep #{target.primaryOwner.email} informed of any status changes as they are the primary owner of this workload.",
+        "contact_type": "self-service",
+        "caller": "user@domain.com",
+        "description": "Incident Created for #{target.deployedName} on #{target.cloudAccount.name}. ",
+        "active": "true",
+        "module_name": "ServiceNow - New Incident",
+        "ServiceNow_Server": "snowcommander",
+        "category": "Cloud Management"
+      }
+    },
+    {
+      "name": "Incident Number",
+      "type": "TEXT_JSONPATH",
+      "condition": null,
+      "data": {
+        "expression": "$..number",
+        "source": "#{steps[1].output}"
+      }
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "id": "",
+  "guid": "",
+  "name": "ServiceNow - New Request",
+  "description": null,
+  "type": "COMMAND",
+  "change_description": null,
+  "target_type": "ANY_INVENTORY_TYPE",
+  "input_variables": [
+    {
+      "name": "Contact Type",
+      "variable": "contact_type",
+      "description": null,
+      "required": false,
+      "default_value": "self-service"
+    },
+    {
+      "name": "Price",
+      "variable": "price",
+      "description": null,
+      "required": false,
+      "default_value": "0"
+    },
+    {
+      "name": "Description",
+      "variable": "description",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "ServiceNow Server Name",
+      "variable": "ServiceNow_Server",
+      "description": "https://XXXXXXX.service-now.com\nDo not include service-now.com",
+      "required": true,
+      "default_value": null
+    },
+    {
+      "name": "Active",
+      "variable": "active",
+      "description": null,
+      "required": false,
+      "default_value": "true"
+    }
+  ],
+  "info_messages": [],
+  "system_version": "8.8.1 (1007130064)",
+  "steps": [
+    {
+      "name": "Create a ServiceNow Request",
+      "type": "REST",
+      "condition": null,
+      "data": {
+        "success_codes": 201,
+        "credentials": "",
+        "result_filter": "",
+        "failure_action": "FAIL_STEP",
+        "rest_action": "POST",
+        "format": "JSON",
+        "header": "",
+        "body": "{\n    \"description\": \"#{inputVariable['description']}\",\n    \"contact_type\": \"#{inputVariable['contact_type']}\",\n    \"price\": \"#{inputVariable['price']}\",\n    \"active\": \"#{inputVariable['active']}\"\n}",
+        "url": "https://#{inputVariable['ServiceNow_Server']}.service-now.com/api/now/table/sc_request",
+        "capture_output": true
+      }
+    }
+  ]
+}

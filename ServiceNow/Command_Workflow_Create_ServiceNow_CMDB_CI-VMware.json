@@ -1,0 +1,51 @@
+{
+  "id": "",
+  "guid": "",
+  "name": "Create a ServiceNow CMDB CI - Vmware",
+  "type": "COMMAND",
+  "change_description": null,
+  "fulfillment_rule": null,
+  "add_owner_as_admin": false,
+  "auto_deploy": false,
+  "users": [],
+  "organizations": [],
+  "target_type": "VIRTUAL_MACHINE",
+  "info_messages": [],
+  "prompt_message": null,
+  "system_version": "8.8.1 (1007130064)",
+  "steps": [
+    {
+      "name": "Create ServiceNow CMDB CI VMware",
+      "type": "MODULE",
+      "condition": null,
+      "data": {
+        "guest_os_fullname": "#{target.guestOS}",
+        "short_description": "#{target.deployedName} deployed on #{target.cloudAccount.name} in the #{target.cluster.name} cluster.",
+        "memory": "#{target.memory.gb}",
+        "disks": "#{target.storage.diskCount}",
+        "discovery_source": "Commander",
+        "vendor": "VMware",
+        "mac_address": "#{target.macAddresses}",
+        "nics": "#{target.nicCount}",
+        "used_for": "#{target.customAttribute['Project Code']}",
+        "state": "On",
+        "department": "#{target.organization.id}",
+        "comments": "",
+        "cost": "",
+        "vm_instance-uuid": "#{target.remoteId}",
+        "cpus": "#{target.cpuCount}",
+        "fqdn": "#{target.dnsName}",
+        "disk_size": "#{target.storage.gb}",
+        "owned_by": "#{target.primaryOwner.email}",
+        "ip_address": "#{target.ipAddress}",
+        "ServiceNow_Server": "servicenowInstance",
+        "vcenter_ref": "#{target.cloudAccount.name}",
+        "cost_center": "#{target.customAttribute['Cost Center']}",
+        "image_path": "#{target.imageId}",
+        "dns_domain": "#{target.dnsName}",
+        "name": "#{target.deployedName}",
+        "module_name": "ServiceNow - New CMDB CI VMware"
+      }
+    }
+  ]
+}

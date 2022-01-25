@@ -1,0 +1,284 @@
+{
+  "id": "",
+  "guid": "",
+  "name": "ServiceNow - New CMDB CI Database",
+  "description": null,
+  "type": "CLOUDTEMPLATE_COMPLETION",
+  "change_description": null,
+  "target_type": null,
+  "input_variables": [
+    {
+      "name": "DNS Domain",
+      "variable": "dns_domain",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "Install Status",
+      "variable": "install_status",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "Classifier",
+      "variable": "classifier",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "Description",
+      "variable": "short_description",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "Managed By",
+      "variable": "managed_by",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "Model Number",
+      "variable": "model_number",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "Asset Tag",
+      "variable": "asset_tag",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "IP Address",
+      "variable": "ip_address",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "Vendor",
+      "variable": "vendor",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "Environment",
+      "variable": "environment",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "ServiceNow Server Name",
+      "variable": "ServiceNow_Server",
+      "description": null,
+      "required": true,
+      "default_value": null
+    },
+    {
+      "name": "Company",
+      "variable": "company",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "FQDN",
+      "variable": "fqdn",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "Name",
+      "variable": "name",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "MAC Address",
+      "variable": "mac_address",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "Operational Status",
+      "variable": "operational_status",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "Cost",
+      "variable": "cost",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "Version",
+      "variable": "version",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "TCP Ports",
+      "variable": "tcp_port",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "Assigned",
+      "variable": "assigned",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "Edition",
+      "variable": "edition",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "Is Clustered",
+      "variable": "is_clustered",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "Maintenance Schedule",
+      "variable": "maintenance_schedule",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "Install Directory",
+      "variable": "install_directory",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "Supported By",
+      "variable": "supported_by",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "Comments",
+      "variable": "comments",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "Cost Center",
+      "variable": "cost_center",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "Assignment Group",
+      "variable": "assignment_Group",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "Justification",
+      "variable": "justification",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "Manufacturer",
+      "variable": "manufacturer",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "Used For",
+      "variable": "used_for",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "Department",
+      "variable": "department",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "Listener Name",
+      "variable": "listener_name",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "Managed By Group",
+      "variable": "managed_by_group",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "Owned By",
+      "variable": "owned_by",
+      "description": null,
+      "required": false,
+      "default_value": null
+    },
+    {
+      "name": "Discovery Source",
+      "variable": "discovery_source",
+      "description": null,
+      "required": false,
+      "default_value": null
+    }
+  ],
+  "info_messages": [],
+  "system_version": "8.8.1 (1007130064)",
+  "steps": [
+    {
+      "name": "Create a CMDB CI Database Instance",
+      "type": "REST",
+      "condition": null,
+      "data": {
+        "success_codes": 201,
+        "credentials": "",
+        "result_filter": "",
+        "failure_action": "FAIL_STEP",
+        "rest_action": "POST",
+        "format": "JSON",
+        "header": "",
+        "body": "{\n    \"name\": \"#{inputVariable['name']}\",\n    \"short_description\": \"#{inputVariable['short_description']}\",\n    \"ip_address\": \"#{inputVariable['ip_address']}\",\n    \"tcp_port\": \"#{inputVariable['tcp_port']}\",\n    \"mac_address\": \"#{inputVariable['mac_address']}\",\n    \"fqdn\": \"#{inputVariable['fqdn']}\",\n    \"dns_domain\": \"#{inputVariable['dns_domain']}\",\n    \"department\": \"#{inputVariable['department']}\",\n    \"company\": \"#{inputVariable['company']}\",\n    \"vendor\": \"#{inputVariable['vendor']}\",\n    \"manufacturer\": \"#{inputVariable['manufacturer']}\",\n    \"model_number\": \"#{inputVariable['model_number']}\",\n    \"owned_by\": \"#{inputVariable['owned_by']}\",\n    \"version\": \"#{inputVariable['version']}\",\n    \"cost_center\": \"#{inputVariable['cost_center']}\",\n    \"cost\": \"#{inputVariable['cost']}\",\n    \"justification\": \"#{inputVariable['justification']}\",\n    \"listener_name\": \"#{inputVariable['listener_name']}\",\n    \"operational_status\": \"#{inputVariable['operational_status']}\",\n    \"discovery_source\": \"#{inputVariable['discovery_source']}\",\n    \"install_directory\": \"#{inputVariable['install_directory']}\",\n    \"classifier\": \"#{inputVariable['classifier']}\",\n    \"used_for\": \"#{inputVariable['used_for']}\",\n    \"environment\": \"#{inputVariable['environment']}\",\n    \"is_clustered\": \"#{inputVariable['is_clustered']}\",\n    \"asset_tag\": \"#{inputVariable['asset_tag']}\",\n    \"comments\": \"#{inputVariable['comments']}\",\n    \"maintenance_schedule\": \"#{inputVariable['maintenance_schedule']}\",\n    \"install_status\": \"#{inputVariable['install_status']}\",\n    \"supported_by\": \"#{inputVariable['supported_by']}\",\n    \"assigned\": \"#{inputVariable['assigned']}\",\n    \"assignment_group\": \"#{inputVariable['assignment_Group']}\",\n    \"managed_by\": \"#{inputVariable['managed_by']}\",\n    \"edition\": \"#{inputVariable['edition']}\",\n    \"managed_by_group\": \"#{inputVariable['managed_by_group']}\"\n}    \n",
+        "url": "https://#{inputVariable['ServiceNow_Server']}.service-now.com/api/now/table/cmdb_ci_db_instance",
+        "capture_output": true
+      }
+    }
+  ]
+}
