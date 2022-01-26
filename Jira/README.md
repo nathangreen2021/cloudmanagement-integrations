@@ -1,6 +1,6 @@
 # Commander Integrations - Jira
 
-Jira Module samples to Creat, Comment and Transition a Jira Task, 
+Jira Module samples to Create, Comment and Transition a Jira Task, 
 
  Requirements: 
 * Commander 8.6.0 or higher
