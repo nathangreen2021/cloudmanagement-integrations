@@ -1,10 +1,12 @@
 # Commander Integrations - Jira
 
-A simple Command Workflow sample, 
+Jira Module samples to Creat, Comment and Transition a Jira Task, 
 
-*Requires PS module VMware.VimAutomation.Core on the Commander server.
-*Commander 8.6.0 or higher
-*Advanced property "embotics.workflow.script.credentials" must be set to "true"
+ Requirements: 
+* Commander 8.6.0 or higher
+* Advanced property "embotics.workflow.script.credentials" must be set to "true"
+* Requires Jira Powershell module "JiraPS" 
+
 
 *Currently being migrated from [Embotics Git](https://github.com/Embotics)*
 
