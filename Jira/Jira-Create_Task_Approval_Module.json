@@ -1,0 +1,64 @@
+{
+  "id": "",
+  "guid": "",
+  "name": "Jira Create Task",
+  "description": null,
+  "type": "APPROVAL",
+  "change_description": null,
+  "target_type": null,
+  "input_variables": [
+    {
+      "name": "Project Key",
+      "variable": "ProjectKey",
+      "description": "Jira Project Key or ID",
+      "required": true,
+      "default_value": null
+    },
+    {
+      "name": "Summary",
+      "variable": "Summary",
+      "description": "Issue Summary",
+      "required": true,
+      "default_value": "Commander Request #{request.id} for #{request.services[1].publishedName} by #{request.requester.name} in #{request.requester.organization.name}"
+    },
+    {
+      "name": "Description",
+      "variable": "Description",
+      "description": "Details of the Issue",
+      "required": true,
+      "default_value": "Sample Description"
+    },
+    {
+      "name": "Jira Server",
+      "variable": "JiraServer",
+      "description": "https://company.atlassian.net",
+      "required": true,
+      "default_value": "https://company.atlassian.net"
+    },
+    {
+      "name": "Issue Type",
+      "variable": "IssueType",
+      "description": "Type of issue to be created.  Task, Story, etc.",
+      "required": true,
+      "default_value": "Task"
+    }
+  ],
+  "info_messages": [],
+  "system_version": "8.10.3 (1007150087)",
+  "steps": [
+    {
+      "name": "Create Task in Jira",
+      "type": "EMBEDDED_SCRIPT",
+      "condition": null,
+      "data": {
+        "credentials": null,
+        "failure_action": "FAIL_STEP",
+        "script_contents": "<#\nDescription: Script that Calls out to Jira to create a task.\n\nRequirements: \n* Commander 8.6.0 or higher\n* Advanced property \"embotics.workflow.script.credentials\" must be set to \"true\"\n* Requires Jira Powershell module \"JiraPS\"\n#>\n\n# preamble\nSet-StrictMode -Version Latest\n$ErrorActionPreference = \"Stop\"\n$PSDefaultParameterValues['*:ErrorAction'] = 'Stop'\n\n# server configuration\n$Server = \"#{inputVariable['JiraServer']}\"\n\n# required issue configuration\n$Project = \"#{inputVariable['ProjectKey']}\"\n$IssueType = \"#{inputVariable['IssueType']}\"\n$Summary = \"#{inputVariable['Summary']}\"\n$Description = @\"\n#{inputVariable['Description']}\n\"@\n\n\n# credentials\n$Username = $Env:SELECTED_CREDENTIALS_USERNAME\n$Password = $Env:SELECTED_CREDENTIALS_PASSWORD\n$SecurePassword = ConvertTo-SecureString -AsPlainText -Force $Password\n$Credential = New-Object pscredential $Username, $SecurePassword\n\n#Check All Variables Present\nif(!($Username) -or !($Password) -or !($Server) -or !($project) -or !($summary) -or !($IssueType) -or !($Description)){\n        Write-error \"Please provide all required input variables to execute this workflow\"\n        Exit 1} \n\n#Check for Module\n    $Module = \"JiraPS\"\n    if (Get-Module -ListAvailable -Name $Module) {\n        Import-Module $Module\n        Write-Debug \"Module $Module is installed.\"\n    } \n    else {\n        Write-Error \"Module $module does not appear to be installed, Please install and run again.\"\n        Exit 1\n    }\n\n# init\nSet-JiraConfigServer $Server\nNew-JiraSession $Credential\n\n# work\n$NewJiraIssueSplat = @{\n    Project     = $Project\n    IssueType   = $IssueType\n    #Get-JiraIssueType $IssueType | Select-Object -ExpandProperty ID\n    Summary     = $Summary\n    Description = $Description\n}\n\n\nNew-JiraIssue @NewJiraIssueSplat",
+        "script_arguments": "",
+        "timeout": 300,
+        "executable": "powershell.exe",
+        "capture_output": true
+      }
+    }
+  ]
+}

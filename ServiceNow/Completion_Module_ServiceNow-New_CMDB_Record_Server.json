@@ -241,7 +241,7 @@
       "condition": null,
       "data": {
         "success_codes": 201,
-        "credentials": "",
+        "credentials": null,
         "result_filter": "",
         "failure_action": "FAIL_STEP",
         "rest_action": "POST",
