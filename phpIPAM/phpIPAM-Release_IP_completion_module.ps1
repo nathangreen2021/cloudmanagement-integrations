@@ -108,6 +108,6 @@ Write-host "- Ignoring invalid Certificate" -ForegroundColor Green
            Write-host $status
            Exit 0
            }
-        else{Write-host "$Status"
+        else{Write- "$Status"
             Exit 1
         } 
