@@ -94,7 +94,7 @@ if ($BypassCert -eq "Yes") {
         $WoData = $WoResults.entries.values | Select-object "Request ID", "Work Order ID", Status | where-object "Work Order ID" -eq $WorkorderID
         $WoState = $WoData.Status
         if($wostate -eq $status){
-            Write-host Write-host "WorkOrder $WorkorderID has been Marked as $status"
+            Write-host "WorkOrder $WorkorderID has been Marked as $status"
         }
         Exit 0
     }
