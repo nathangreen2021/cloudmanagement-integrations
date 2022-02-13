@@ -1,0 +1,64 @@
+{
+  "id": "",
+  "guid": "",
+  "name": "Remedy - Create CI",
+  "description": "Sample Module to Create a CI in Remedy as part of a VM Completion Workflow.",
+  "type": "COMPONENT_COMPLETION",
+  "change_description": null,
+  "target_type": null,
+  "input_variables": [
+    {
+      "name": "NameSpace",
+      "variable": "nameSpace",
+      "description": null,
+      "required": true,
+      "default_value": "BMC.CORE"
+    },
+    {
+      "name": "Remedy Address",
+      "variable": "remedy_address",
+      "description": "Remedy DNS address  IE: helixtrialsjcXXX-dev-restapi.onbmc.com",
+      "required": true,
+      "default_value": "helixtrialsjcXXX-dev-restapi.onbmc.com"
+    },
+    {
+      "name": "DatasetID",
+      "variable": "datasetId",
+      "description": null,
+      "required": true,
+      "default_value": "BMC.ASSET"
+    },
+    {
+      "name": "Class",
+      "variable": "class",
+      "description": null,
+      "required": true,
+      "default_value": "BMC_ComputerSystem"
+    },
+    {
+      "name": "Bypass Unsigned Certificate",
+      "variable": "bypass_Cert",
+      "description": "Bypass unsigned Certificate: {yes/no}",
+      "required": true,
+      "default_value": "No"
+    }
+  ],
+  "info_messages": [],
+  "system_version": "8.10.4 (1007150089)",
+  "steps": [
+    {
+      "name": "Remedy Create CI",
+      "type": "EMBEDDED_SCRIPT",
+      "condition": null,
+      "data": {
+        "credentials": null,
+        "failure_action": "FAIL_STEP",
+        "script_contents": "<#\nSample Module to Create a CI in Remedy as part of a VM Completion Workflow.\n\nRequirements: \n* Commander 8.6.0 or higher\n* Advanced property \"embotics.workflow.script.credentials\" must be set to \"true\"\n#>\n\n$RemedyAddress = \"#{inputVariable['remedy_address']}\"\n$Username = (Get-Item Env:SELECTED_CREDENTIALS_USERNAME ).value; #Credential\n$Password = (Get-Item Env:SELECTED_CREDENTIALS_PASSWORD).value;\n$BypassCert = \"#{inputVariable['bypass_Cert']}\"    #to bypass an unsigned SSL cert on the Target\n\n#Workorder Variables\n$ShortDescription = \"Created by Snow Commander RequestID - #{request.id}\"\n$CIName = \"#{target.deployedName}\"\n$DataSetId = \"#{inputVariable['datasetId']}\"\n$NameSpace = \"#{inputVariable['nameSpace']}\"\n$Class = \"#{inputVariable['class']}\"\n$Company = \"#{request.requester.organization.name}\"\n$OwnerName = \"#{request.requester.email}\"\n\n#$DebugPreference=\"Continue\"\n$ErrorActionPreference = \"Stop\"\n\nif (!($RemedyAddress) -or !($WorkorderID) -or !($UserName) -or !($Password)) {\n    Write-error \"Please provide Remedy Login Information\"\n    Exit 1\n}\nif (!($ShortDescription) -or !($CiName) -or !($DataSetId) -or !($NameSpace) -or !($Class) -or !($OwnerName) -or !($Company)) {\n    Write-error \"Please provide Remedy Login Information\"\n    Exit 1\n}\n\n#Bypass unsigned SSL cert for phpipam\nif ($BypassCert -eq \"Yes\") {\n    Write-host \"- Ignoring invalid Certificate\" -ForegroundColor Green\n\n    # Create a compilation environment\n    $Provider = New-Object Microsoft.CSharp.CSharpCodeProvider\n    $Provider.CreateCompiler()\n    $Params = New-Object System.CodeDom.Compiler.CompilerParameters\n    $Params.GenerateExecutable = $False\n    $Params.GenerateInMemory = $True\n    $Params.IncludeDebugInformation = $False\n    $Params.ReferencedAssemblies.Add(\"System.DLL\") > $null\n    $TASource = @'\n   namespace Local.ToolkitExtensions.Net.CertificatePolicy {\n     public class TrustAll : System.Net.ICertificatePolicy {\n       public TrustAll() { \n       }\n       public bool CheckValidationResult(System.Net.ServicePoint sp,\n         System.Security.Cryptography.X509Certificates.X509Certificate cert, \n         System.Net.WebRequest req, int problem) {\n         return true;\n       }\n     }\n   }\n'@ \n    $TAResults = $Provider.CompileAssemblyFromSource($Params, $TASource)\n    $TAAssembly = $TAResults.CompiledAssembly\n    $TrustAll = $TAAssembly.CreateInstance(\"Local.ToolkitExtensions.Net.CertificatePolicy.TrustAll\")\n    [System.Net.ServicePointManager]::CertificatePolicy = $TrustAll\n}\n\n#Get Remedy Token\n    $TokenUri = \"https://$RemedyAddress/api/jwt/login\"\n    $TokenContentType = 'application/x-www-form-urlencoded'\n    $TokenBody = @{\n        username = $($Username)\n        password = $($Password)\n    }\n    $Token = Invoke-RestMethod -uri $TokenUri -Method POST -ContentType $TokenContentType -body $TokenBody\n    $AuthHeader = @{\n        Authorization = \"AR-JWT $($Token)\"\n    }\n\n#Create CI\n        $CIUri = \"https://$($RemedyAddress)/api/cmdb/v1/instance/$($DataSetId)/$($NameSpace)/$($Class)\"\n    \n        $Cijsonbody = \"{\"\"attributes\"\": {\n                        \"\"Name\"\": \"\"$CIName\"\",\n                        \"\"ShortDescription\"\": \"\"$ShortDescription\"\",\n                        \"\"DatasetId\"\": \"\"$DataSetId\"\", \n                        \"\"Company\"\": \"\"$Company\"\",\n                        \"\"OwnerName\"\": \"\"$Ownername\"\"\n                        }\n        }\"\n        $Cijsonbody = ConvertFrom-Json $Cijsonbody| ConvertTo-Json \n        $CIResult = Invoke-WebRequest -uri $CiUri -Method POST -ContentType 'application/json' -Headers $AuthHeader -Body $Cijsonbody\n        $CreatedCiURI = $CIResult.Headers.Location \n        $CIId = $CreatedCiURI -split('/')[-1] | Select-Object -last 1\n\n\n        Write-host \"Created CI identifier is $CIId\"\n        $CreatedCI = Invoke-RestMethod -uri \"$CreatedCiURI\" -Method Get -ContentType 'application/json' -Headers $AuthHeader\n        $CIData = $CreatedCI.attributes",
+        "script_arguments": "",
+        "timeout": 300,
+        "executable": "powershell.exe",
+        "capture_output": true
+      }
+    }
+  ]
+}
