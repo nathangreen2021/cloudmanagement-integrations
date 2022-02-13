@@ -1,6 +1,6 @@
 # Commander Integrations - Remedy
 
-Completion Module to Close a work order in remedy and Create Work Order Module (Sample)
+Completion Module to Close a work order in Remedy and Basic Samples for Creating a Workorder and creating a CI
 
 Requirements: 
 * Commander 8.6.0 or higher
@@ -14,16 +14,16 @@ Close Work Order Module Installation and Setup:
 3. Add the module to your Completion workflow specifying the Required parameters for your setup.
 4. If the Module fails to run, the comments will contain the errors 
 
-Create Work Order Module (Sample) Installation and Setup:
+Create Work Order Module (Basic Sample) Installation and Setup:
 1. Ensure a credential exists in "Configuration > Credentials" for Remedy 
 2. Import the VM Completion Module for closing a work order
 2. Open the Module and specify the credential to Connect to Remedy. 
 3. Add the module to your Completion workflow specifying the Required parameters for your setup.
 4. If the Module fails to run, the comments will contain the errors 
 
-Create CI Module (Sample) Installation and Setup:
+Create CI Module (Basic Sample) Installation and Setup:
 1. Ensure a credential exists in "Configuration > Credentials" for Remedy 
-2. Import the VM Completion Module for closing a work order
+2. Import the VM Completion Module for Creating a CI
 2. Open the Module and specify the credential to Connect to Remedy. 
 3. Add the module to your Completion workflow specifying the Required parameters for your setup.
 4. If the Module fails to run, the comments will contain the errors 
