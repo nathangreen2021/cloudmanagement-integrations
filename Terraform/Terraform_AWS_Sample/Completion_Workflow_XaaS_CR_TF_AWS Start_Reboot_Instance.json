@@ -1,0 +1,32 @@
+{
+  "id": 13,
+  "guid": "f8a6d0d7-24a4-42b2-94e2-99e8e78d67b9",
+  "name": "XaaS CR TF_AWS Start or Reboot Instance",
+  "type": "CHANGE_COMPLETION",
+  "change_description": null,
+  "fulfillment_rule": null,
+  "add_owner_as_admin": false,
+  "auto_deploy": false,
+  "users": [],
+  "organizations": [],
+  "target_type": null,
+  "info_messages": [],
+  "prompt_message": null,
+  "system_version": "Flurry (1007160132)",
+  "steps": [
+    {
+      "name": "Start or Reboot Instance",
+      "type": "EMBEDDED_SCRIPT",
+      "condition": null,
+      "data": {
+        "credentials": "Comamnder_API",
+        "failure_action": "FAIL_STEP",
+        "script_contents": "#Commander Base Configuration\n$BaseURL = 'https://localhost'\n$user = (Get-Item Env:SELECTED_CREDENTIALS_USERNAME).value;\n$pass = (Get-Item Env:SELECTED_CREDENTIALS_PASSWORD).value;\n$BypassCert = \"yes\"\n$WaitforSync = 10 #in seconds \n\n\n#Target Information\n$Context = \"#{target.context.instances[0].attributes.arn}\"\n$Deployedname = \"#{target.deployedName}\"\n \n #Check All Variables Presenta\nif (!($BaseURL ) -or !($WaitforSync) -or !($user) -or !($pass) -or !($BypassCert) -or !($Context) -or !($Deployedname)) {\n        Write-error \"Please provide all required input variables to execute this workflow\"\n        Exit 1} \n\n\n#Check for Module\n    $Module = \"AWSPowerShell.NetCore\"\n    if (Get-Module -ListAvailable -Name $Module) {\n        Import-Module AWSPowershell.netcore -WarningAction Ignore\n        Write-Debug \"Module $Module is installed.\"\n    } \n    else {\n        Write-Error \"Module $module does not appear to be installed, Please install and run again.\"\n        Exit 1\n    }\n#Breakdown ARN into usable variables\n    $account = $Context.split(\":\")[4]\n    $region = $Context.split(\":\")[3]\n    $Instance = $Context.split(\"/\")[-1]\n\n#ignore Commander unsigned Certificate\nif ($BypassCert -eq \"Yes\"){\n    Write-host \"- Ignoring invalid Certificate\" -ForegroundColor Green\n\nadd-type @\"\n   using System.Net;\n    using System.Security.Cryptography.X509Certificates;\n    public class TrustAllCertsPolicy : ICertificatePolicy {\n        public bool CheckValidationResult(\n            ServicePoint srvPoint, X509Certificate certificate,\n            WebRequest request, int certificateProblem) {\n            return true;\n        }\n    }\n\"@\n[System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy\n[Net.ServicePointManager]::Expect100Continue = $true\n[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12\n}\n\n#Get Auth Token\n    $Token = $null\n    $TokenEndpoint = \"/rest/v3/tokens\"\n    $TokenURL = $BaseURL+$TokenEndpoint\n    $TokenBody = \"{\n                \"\"username\"\": \"\"$user\"\",\n                \"\"password\"\": \"\"$pass\"\" \n                }\"\n    $TokenResult = Invoke-RestMethod -Method POST $TokenURL -Body $TokenBody -ContentType 'application/json'\n    $Token = $TokenResult.token\n    $AuthHeader = @{\"Authorization\"= \"Bearer $Token\"}\n\n#Get Credential for subscription by subscription ID\n     Try{\n         $credurl = $BaseURL+\"/rest/v3/credentials/$account\"   \n         $cred = Invoke-RestMethod -Method GET $credurl -Headers $AuthHeader -ContentType 'application/json'\n         $creds = $cred.password_credential\n         $awsaccesskey = $creds.username \n         $awssecret = $creds.password\n        }\n         Catch{\n             $Exception = \"$_\"\n             Write-Error \"Failed to get credential named $account from credentials in commander.. Does it exist?\"\n             Write-Error $Exception\n             Exit 1   \n         } \n\n#Login\n    Set-AWSCredentials -AccessKey $awsaccesskey -SecretKey $awssecret -StoreAs SnowCommander\n    $Connect = Initialize-AWSDefaults -ProfileName SnowCommander -Region $Region\n\n#Restart Instance\n    $InstanceData = Get-EC2Instance -Region $Region -InstanceId $Instance\n    if(($InstanceData.Instances.InstanceId) -eq $Instance){\n        $InstanceState = (Get-EC2InstanceStatus -InstanceId $instance).InstanceState\n        if(!$InstanceState){\n            Write-host \"Instance has no Status Attempting to start the Instance\"\n            $Start = Start-EC2Instance -InstanceId $Instance -Force -Confirm:$false\n            start-sleep $WaitforSync\n            $InstanceState = (Get-EC2InstanceStatus -InstanceId $instance).InstanceState\n            $CurrentState = $InstanceState.Name.Value\n\n            Write-host \"Instance is now $CurrentState\"\n        }\n        elseif($InstanceState.name.value -eq \"running\"){\n            Write-host \"Attempting to restart the running Instance $Instance\"\n            $Restart = Restart-EC2Instance -InstanceId $Instance -Force -Confirm:$false\n        }\n        else{Write-host \"The Instance is not in a Stopped or Running State, nothing to do.\"\n        }\n    }\n \n",
+        "script_arguments": "",
+        "timeout": 300,
+        "executable": "powershell.exe",
+        "capture_output": true
+      }
+    }
+  ]
+}

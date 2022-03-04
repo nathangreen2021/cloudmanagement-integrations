@@ -1,0 +1,60 @@
+{
+  "id": "",
+  "guid": "",
+  "name": "Terraform AWS Deployment Sample",
+  "type": "CUSTOM_COMPLETION",
+  "change_description": null,
+  "fulfillment_rule": null,
+  "add_owner_as_admin": false,
+  "auto_deploy": false,
+  "users": [],
+  "organizations": [],
+  "target_type": null,
+  "info_messages": [],
+  "prompt_message": null,
+  "system_version": "8.10.4 (1007150089)",
+  "steps": [
+    {
+      "name": "Deploy Terraform",
+      "type": "MODULE",
+      "condition": null,
+      "data": {
+        "InstanceName": "NewTFVM001",
+        "terraform_organization": "#{request.requester.organization.name}",
+        "terraform_Exe_path": "c:\\terraform\\terraform.exe",
+        "module_name": "Terraform - Completion AWS (Sample)",
+        "template_folder_clone": "C:\\Terraform\\Ubuntu_VM_Template",
+        "region": "ca-central-1",
+        "webport": "8080",
+        "deploymentfilelocation": "c:\\terraform\\deployments"
+      }
+    },
+    {
+      "name": "Sync TF Accounts",
+      "type": "MODULE",
+      "condition": null,
+      "data": {
+        "bypass_Cert": "Yes",
+        "module_name": "Sync All Terraform accounts",
+        "BaseURL": "https://localhost",
+        "waitforSync": "60"
+      }
+    },
+    {
+      "name": "Set Workspace Ownership",
+      "type": "MODULE",
+      "condition": null,
+      "data": {
+        "owner": "#{request.requester.userId}",
+        "bypass_Cert": "Yes",
+        "is_primary": "false",
+        "organization": "#{request.requester.organization.name}",
+        "module_name": "Set Terraform workspace Owner or Organization",
+        "BaseURL": "https://localhost",
+        "assign_IT_contact": "false",
+        "waitforSync": "60",
+        "tf_workspace": "#{request.id}"
+      }
+    }
+  ]
+}

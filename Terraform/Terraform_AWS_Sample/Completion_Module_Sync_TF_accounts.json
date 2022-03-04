@@ -1,0 +1,50 @@
+{
+  "id": "",
+  "guid": "",
+  "name": "Sync All Terraform accounts",
+  "description": null,
+  "type": "CUSTOM_COMPLETION",
+  "change_description": null,
+  "target_type": null,
+  "input_variables": [
+    {
+      "name": "Commander Base URL",
+      "variable": "BaseURL",
+      "description": "Commander base URL \"https://localhost\"",
+      "required": true,
+      "default_value": "https://localhost"
+    },
+    {
+      "name": "Wait For Sync to Complete",
+      "variable": "waitforSync",
+      "description": "Timer in seconds to for Accounts for finish syncing before continuing. ",
+      "required": true,
+      "default_value": "60"
+    },
+    {
+      "name": "Bypass Unsigned Certificate",
+      "variable": "bypass_Cert",
+      "description": "Bypass unsigned Certificate: {yes/no}",
+      "required": true,
+      "default_value": "Yes"
+    }
+  ],
+  "info_messages": [],
+  "system_version": "8.10.4 (1007150089)",
+  "steps": [
+    {
+      "name": "Syncronize all TF accounts",
+      "type": "EMBEDDED_SCRIPT",
+      "condition": null,
+      "data": {
+        "credentials": null,
+        "failure_action": "FAIL_STEP",
+        "script_contents": "$BaseURL = \"#{inputVariable['BaseURL']}\"\n$User = (Get-Item Env:SELECTED_CREDENTIALS_USERNAME ).value; #Credential\n$Pass = (Get-Item Env:SELECTED_CREDENTIALS_PASSWORD).value;\n$BypassCert = \"#{inputVariable['bypass_Cert']}\" \n$WaitforSync = \"#{inputVariable['waitforSync']}\" #seconds\n\n #Check All Variables Presenta\nif (!($BaseURL ) -or !($WaitforSync) -or !($user) -or !($pass) -or !($BypassCert)) {\n        Write-error \"Please provide all required input variables to execute this workflow\"\n        Exit 1} \n\n#$DebugPreference=\"Continue\"\n$ErrorActionPreference = \"Stop\"\n\n#Bypass unsigned SSL for Localhost\nif ($BypassCert -eq \"yes\") {\n    Write-host \"- Ignoring invalid Certificate\" -ForegroundColor Green\n    add-type @\"\n   using System.Net;\n    using System.Security.Cryptography.X509Certificates;\n    public class TrustAllCertsPolicy : ICertificatePolicy {\n        public bool CheckValidationResult(\n            ServicePoint srvPoint, X509Certificate certificate,\n            WebRequest request, int certificateProblem) {\n            return true;\n        }\n    }\n\"@\n[System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy\n[Net.ServicePointManager]::Expect100Continue = $true\n[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12\n}\n\n#Get a token   \n    Write-host \"Requesting a new token\"\n    $TokenBody = \"{\n        \"\"username\"\": \"\"$user\"\",\n        \"\"password\"\": \"\"$pass\"\"\n        }\"\n                        \n    $Tokenendpoint = \"/rest/v3/tokens\"\n    $TokenpostURL = $BaseURL + $Tokenendpoint\n    $Tokenresult = Invoke-RestMethod $TokenpostURL -Method POST -Body $TokenBody -ContentType 'application/json' \n        IF ($Tokenresult) {\n            $authToken = $Tokenresult.token\n            $headers = @{Authorization = (\"Bearer $authToken\") }\n            Write-host \"Token Acquired\"\n        }\n        else {\n            Write-host \"Failed to aquire token for $user\"\n        }\n \n#Get TF Accounts\n    $AccountsEP = \"/rest/v3/terraform-accounts\"\n    $Accounturl = $BaseURL+$AccountsEP    \n    $Accountresult = Invoke-RestMethod $Accounturl -Method GET -header $headers -ContentType 'application/json' \n        IF ($Accountresult.items.count -gt 0) {\n            $accounts = $Accountresult.items\n            $Accounts | ForEach-Object {\n            $id = $TFaName = $SyncResult = $SyncEP = $null\n            $ID = $_.id\n            $TFaName = $_.name\n            $SyncEP = $BaseURL+\"/rest/v3/terraform-accounts/$id/synchronize\"  \n            #Refresh JWT Token \n                $refreshURL = $BaseURL + \"/rest/v3/tokens/refresh\"\n                $refreshBody = \"{ \"\"token\"\": \"\"$authToken\"\"}\"\n                $refreshResult = Invoke-RestMethod -Method POST $refreshURL -Body $refreshBody -ContentType 'application/json' \n                $authToken = $refreshResult.token\n                $headers = @{\"Authorization\" = \"Bearer $authToken\" }\n            $SyncResult = Invoke-WebRequest $SyncEP -Method POST -header $headers -ContentType 'application/json'   \n                if($SyncResult.StatusCode -eq 200 -or $SyncResult.StatusCode -eq 202 ){\n                    Write-host \"Syncronization of Terraform Account : $TFaName - $id , has started.\" `n\n                }\n                else{\n                    Write-host \"Syncronization Task of Terraform Account : $TFaName - $id was not started as expected.\" `n\n                }\n           }\n        }\n        else {\n            Write-host \"No accounts were returned, Nothing to Sync\"\n            Exit 0\n        }   \n#wait a few seconds for Syncs to complete        \nStart-sleep $WaitforSync \n",
+        "script_arguments": "",
+        "timeout": 300,
+        "executable": "powershell.exe",
+        "capture_output": true
+      }
+    }
+  ]
+}

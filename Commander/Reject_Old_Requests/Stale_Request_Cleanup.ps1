@@ -10,10 +10,7 @@ $BypassCert = "#{inputVariable['bypass_Cert']}"
 $CleanupAge = "#{inputVariable['CleanupAge']}"      # Days
 $Comments = "Automatic cleanup rejecting request as it's been running for more than $Cleanupage days" 
 
- #Check All Variables Present
-if(!($CleanupAge) -or !($CommanderServer) -or !($user) -or !($pass)  -or !($BypassCert)){
-        Write-error "Please provide all required input variables to execute this workflow"
-        Exit 1} 
+
 
 #Bypass unsigned SSL for Localhost
 if ($BypassCert -eq "yes"){

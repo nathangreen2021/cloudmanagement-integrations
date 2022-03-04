@@ -65,7 +65,7 @@ if ($BypassCert -eq "Yes") {
 #Get Remedy WorkOrders
     $WoUri = "https://$($RemedyAddress)/api/arsys/v1/entry/WOI:WorkOrderInterface"
     $AuthHeader = @{
-        Authorization = "AR-JWT $($Token)"
+        Authorization = "AR-JWT $($Token)"2
     }
     $WoResults = Invoke-RestMethod -uri $WoUri -Method GET -ContentType 'application/json' -Headers $AuthHeader
 
