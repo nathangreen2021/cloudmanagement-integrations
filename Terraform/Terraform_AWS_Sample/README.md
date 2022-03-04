@@ -26,14 +26,14 @@ Deployment Modules Installation and Setup:
 7. In the sample the vmname is "NewTFVM001" this can be a user input field and passed into the module
 8. If the Module fails to run, the comments will contain the errors
 
-ChangeRequest Module:
+Change Request Workflow:
 1. Ensure a credential exists in "Configuration > Credentials" for the AWS account the name must match the subscription ID for programatic lookup. 
 2. Import the Change Completion Workflow. 
 3. Edit the workflow and specify the credential in the dropdown to connect back into the Commander API.
 4. Create a XaaS Change Request with a Display filter of #{target.context.provider} -contains "registry.terraform.io/hashicorp/aws"
 5. Set the completion workflow for the component to the imported workflow "XaaS CR TF_AWS Start or Reboot Instance" 
 6. this CR will now only show up when making a Change request on an AWS resource from the Terrafrom resources list  on the Admin or Portal 
-4. If the Module fails to run, the comments will contain the errors 
+4. If the Workflow fails to run, the comments will contain the errors 
 ____
 
 *Currently being migrated from [Embotics Git](https://github.com/Embotics)*
