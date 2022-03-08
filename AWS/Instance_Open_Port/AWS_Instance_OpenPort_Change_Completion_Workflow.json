@@ -1,0 +1,32 @@
+{
+  "id": "",
+  "guid": "",
+  "name": "Instance - Open Port",
+  "type": "CHANGE_COMPLETION",
+  "change_description": null,
+  "fulfillment_rule": "NONE",
+  "add_owner_as_admin": false,
+  "auto_deploy": false,
+  "users": [],
+  "organizations": [],
+  "target_type": null,
+  "info_messages": [],
+  "prompt_message": null,
+  "system_version": "8.10.4 (1007150089)",
+  "steps": [
+    {
+      "name": "AWS - Add Port Rule to Instance SG",
+      "type": "EMBEDDED_SCRIPT",
+      "condition": "#{target.cloudAccount.type} -eq \"amazon_aws\"",
+      "data": {
+        "credentials": null,
+        "failure_action": "FAIL_STEP",
+        "script_contents": " <#\nAWS Instance CR - Open TCP/UDP Ports.\n*Requires PS module AWSPowershell.Netcore on the Commander server. \n*Commander 8.6.0 or higher\n*Advanced property \"embotics.workflow.script.credentials\" must be set to \"true\"\nRequires three form Attributes:\nList Attribute on Change request form: TCP/UDP\nRegex for CIDR on Change Request Form: ^([0-9]{1,3}\\.){3}[0-9]{1,3}($|\\/(0|16|24|32))$\nRegex for Port Value: ^\\d+$\n#>\n \n\n$AccessKey = (Get-Item Env:AWS_ACCESS_KEY_ID).value\n$SecretKey = (Get-Item Env:AWS_SECRET_ACCESS_KEY).value\n$InstanceID = \"#{target.remoteId}\"\n$Region = \"#{target.region.name}\"\n$ipCidr = \"#{target.settings.customAttribute['CIDR Input']}\"\n$Protocol = \"#{target.settings.customAttribute['Protocol']}\"\n$Port = \"#{target.settings.customAttribute['Port']}\"\n \n \nif(!($Accesskey) -or !($SecretKey) -or !($Region) -or !($InstanceID) -or !($ipCidr) -or !($Protocol)-or !($Port)){\n        Write-error \"Please provide AWS Login information\"\n        Exit 1\n        } \n        \n#Remove white space for older versions of powershell\n$Accesskey = $Accesskey -replace \"\\s\", \"\"\n$SecretKey = $SecretKey -replace \"\\s\", \"\"\n\n#Check for Module\n    $Module = \"AWSPowerShell.NetCore\"\n    if (Get-Module -ListAvailable -Name $Module) {\n        Import-Module AWSPowershell.netcore\n        Write-Debug \"Module $Module is installed.\"\n    } \n    else {\n        Write-Error \"Module $module does not appear to be installed, Please install and run again.\"\n        Exit 1\n    }\n\n#Login\n    Set-AWSCredentials -AccessKey $AccessKey -SecretKey $SecretKey -StoreAs SnowCommander\n    $Connect = Initialize-AWSDefaults -ProfileName SnowCommander -Region $Region\n\n#Setup Ingress Rule\n$IngressChange = New-Object Amazon.EC2.Model.IpPermission\n$IngressChange.IpProtocol = $Protocol\n$IngressChange.FromPort = $Port\n$IngressChange.ToPort = $port\n$IngressChange.IpRanges.Add(\"$ipCidr\")\n\n#Get Instance Data/SG\n    $InstanceData = Get-EC2Instance -Region $Region -InstanceId $InstanceID\n    $SecurityGroup = $InstanceData.RunningInstance.SecurityGroups.GroupId\n    Write-host $securitygroup\n        if($SecurityGroup.count -eq 1){\n            Try{\n                Grant-EC2SecurityGroupIngress -GroupId $SecurityGroup -PassThru -Region $Region -IpPermission @($IngressChange) -force\n                }\n                Catch{\n                    $Exception = \"$_.Exception\"\n                    if($Exception -like \"*already exists*\"){\n                        write-host \"Ingress Port rule already exists... nothing to do\" -ForegroundColor Red\n                        Exit 0}\n                    else{Write-error \"$Exception\"\n                        Exit 1\n                        }\n    \n                }\n            }\n        elseif($SecurityGroup.count -gt 1){\n            Write-Error \"Instance has more than one assigned Security Group, Not making any Changes!\"\n            Exit 1\n            }\n        else{Write-Error \"Something has gone wrong regarding Security Group Count, Not making any Changes!\"\n            Exit 1\n            } \n",
+        "script_arguments": "",
+        "timeout": 300,
+        "executable": "powershell.exe",
+        "capture_output": true
+      }
+    }
+  ]
+}
