@@ -1,10 +1,9 @@
-# Commander Integrations Connect to AWS set Termination protection for an Instance
+# Commander - Update public CLoud List pricing
 
-Completion Workflow Module sample, which connects to AWS using the AWSPowershell.Netcore Powershell module and sets the desired termination protection on an EC2-Instance
+Command Workflow Module, which pulls the latest List pricing and reloads the Costs via API
 
 * Requires PS module AWSPowershell.Netcore on the Commander server.
 * Commander 8.6.0 or higher
-* Advanced property "embotics.workflow.script.credentials" must be set to "true"
 
 *Currently being migrated from [Embotics Git](https://github.com/Embotics)*
 
