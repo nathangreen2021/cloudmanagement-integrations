@@ -1,0 +1,738 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!--
+    Instance Costs for Google Cloud Platform - Embotics Corporation
+    Uses Typical Price from https://cloud.google.com/compute/pricing
+
+    Warning: Do not make changes to this file as it will be overwritten when
+    upgrading vCommander. To change the costs, copy the records that need to
+    be changed from this file and paste into costs-gcp.custom.xml.
+
+    Changes to the customized file will require a restart of vCommander to pick up the changes.
+
+	GCP uses Resource-based pricing where each vCPU and each GB of memory on Compute Engine is 
+	billed separately rather than as part of a single machine type.
+	Shared-core machine types are still billed as a single unit rather than as separate vCPU and 
+	memory resources.
+
+	CPU price is hourly per vCpu
+	Memory price is hourly per GB
+	Instance Type price is hourly
+	OS prices are hourly
+	Storage prices are monthly
+-->
+
+<!--
+
+      Regions
+		asia-east1
+		asia-east2
+		asia-northeast1
+		asia-northeast2
+		asia-northeast3
+		asia-south1
+		asia-southeast1
+		asia-southeast2
+		australia-southeast1
+		europe-north1
+		europe-west1
+		europe-west2
+		europe-west3
+		europe-west4
+		europe-west6
+		northamerica-northeast1
+		southamerica-east1
+		us-central1
+		us-east1
+		us-east4
+		us-west1
+		us-west2
+		us-west3
+		us-west4
+
+-->
+
+<InstanceTypeCosts>
+	<InstanceTypeCost region="asia-east1" 				instanceType="f1-micro" >0.0090</InstanceTypeCost>
+	<InstanceTypeCost region="asia-east1" 				instanceType="g1-small" >0.0300</InstanceTypeCost>
+	<InstanceTypeCost region="asia-east1"               instanceType="e2-micro" >0.009699</InstanceTypeCost>
+	<InstanceTypeCost region="asia-east1"               instanceType="e2-small" >0.019398</InstanceTypeCost>
+	<InstanceTypeCost region="asia-east1"               instanceType="e2-medium">0.038795</InstanceTypeCost>
+	
+	<InstanceTypeCost region="asia-east2" 				instanceType="f1-micro" >0.0106</InstanceTypeCost>
+	<InstanceTypeCost region="asia-east2" 				instanceType="g1-small" >0.0359</InstanceTypeCost>
+	<InstanceTypeCost region="asia-east2"               instanceType="e2-micro" >0.01172</InstanceTypeCost>
+	<InstanceTypeCost region="asia-east2"               instanceType="e2-small" >0.023439</InstanceTypeCost>
+	<InstanceTypeCost region="asia-east2"               instanceType="e2-medium">0.046879</InstanceTypeCost>
+	
+	<InstanceTypeCost region="asia-northeast1"			instanceType="f1-micro" >0.0092</InstanceTypeCost>
+	<InstanceTypeCost region="asia-northeast1" 			instanceType="g1-small" >0.0322</InstanceTypeCost>
+	<InstanceTypeCost region="asia-northeast1"          instanceType="e2-micro" >0.010745</InstanceTypeCost>
+	<InstanceTypeCost region="asia-northeast1"          instanceType="e2-small" >0.021491</InstanceTypeCost>
+	<InstanceTypeCost region="asia-northeast1"          instanceType="e2-medium">0.042982</InstanceTypeCost>
+	
+	<InstanceTypeCost region="asia-northeast2"			instanceType="f1-micro" >0.0092</InstanceTypeCost>
+	<InstanceTypeCost region="asia-northeast2" 			instanceType="g1-small" >0.0322</InstanceTypeCost>
+ 	<InstanceTypeCost region="asia-northeast2"          instanceType="e2-micro" >0.010745</InstanceTypeCost>
+	<InstanceTypeCost region="asia-northeast2"          instanceType="e2-small" >0.021491</InstanceTypeCost>
+    <InstanceTypeCost region="asia-northeast2"          instanceType="e2-medium">0.042982</InstanceTypeCost>
+  
+	<InstanceTypeCost region="asia-northeast3"			instanceType="f1-micro" >0.0092</InstanceTypeCost>
+	<InstanceTypeCost region="asia-northeast3" 			instanceType="g1-small" >0.0322</InstanceTypeCost>
+    <InstanceTypeCost region="asia-northeast3"          instanceType="e2-micro" >0.010745</InstanceTypeCost>   
+    <InstanceTypeCost region="asia-northeast3"          instanceType="e2-small" >0.021491</InstanceTypeCost>	
+    <InstanceTypeCost region="asia-northeast3"          instanceType="e2-medium">0.042982</InstanceTypeCost>
+   
+	<InstanceTypeCost region="asia-south1" 				instanceType="f1-micro" >0.0091</InstanceTypeCost>
+	<InstanceTypeCost region="asia-south1" 				instanceType="g1-small" >0.0308</InstanceTypeCost>
+	<InstanceTypeCost region="asia-south1"              instanceType="e2-micro" >0.010061</InstanceTypeCost>
+	<InstanceTypeCost region="asia-south1"              instanceType="e2-small" >0.020122</InstanceTypeCost>
+	<InstanceTypeCost region="asia-south1"              instanceType="e2-medium">0.040243</InstanceTypeCost>
+	
+	<InstanceTypeCost region="asia-southeast1" 			instanceType="f1-micro" >0.0092</InstanceTypeCost>
+	<InstanceTypeCost region="asia-southeast1" 			instanceType="g1-small" >0.0311</InstanceTypeCost>
+	<InstanceTypeCost region="asia-southeast1"          instanceType="e2-micro" >0.010332</InstanceTypeCost>
+	<InstanceTypeCost region="asia-southeast1"          instanceType="e2-small" >0.020664</InstanceTypeCost>
+	<InstanceTypeCost region="asia-southeast1"          instanceType="e2-medium">0.041329</InstanceTypeCost>
+	
+	<InstanceTypeCost region="asia-southeast2" 			instanceType="f1-micro" >0.0100280</InstanceTypeCost>
+	<InstanceTypeCost region="asia-southeast2" 			instanceType="g1-small" >0.0338990</InstanceTypeCost>
+	<InstanceTypeCost region="asia-southeast2"          instanceType="e2-micro" >0.011262</InstanceTypeCost>
+	<InstanceTypeCost region="asia-southeast2"          instanceType="e2-small" >0.022523</InstanceTypeCost>
+	<InstanceTypeCost region="asia-southeast2"          instanceType="e2-medium">0.045047</InstanceTypeCost>
+	
+	<InstanceTypeCost region="australia-southeast1" 	instanceType="f1-micro" >0.0106</InstanceTypeCost>
+	<InstanceTypeCost region="australia-southeast1"		instanceType="g1-small" >0.0357</InstanceTypeCost>
+	<InstanceTypeCost region="australia-southeast1"     instanceType="e2-micro" >0.011884</InstanceTypeCost>
+	<InstanceTypeCost region="australia-southeast1"     instanceType="e2-small" >0.023769</InstanceTypeCost>
+	<InstanceTypeCost region="australia-southeast1"     instanceType="e2-medium">0.047538</InstanceTypeCost>
+	
+	<InstanceTypeCost region="europe-north1"			instanceType="f1-micro" >0.0084</InstanceTypeCost>
+	<InstanceTypeCost region="europe-north1"			instanceType="g1-small" >0.0283</InstanceTypeCost>
+	<InstanceTypeCost region="europe-north1"            instanceType="e2-micro" >0.009222</InstanceTypeCost>
+	<InstanceTypeCost region="europe-north1"            instanceType="e2-small" >0.018444</InstanceTypeCost>
+	<InstanceTypeCost region="europe-north1"            instanceType="e2-medium">0.036888</InstanceTypeCost>
+	
+	<InstanceTypeCost region="europe-west1" 			instanceType="f1-micro" >0.0086</InstanceTypeCost>
+	<InstanceTypeCost region="europe-west1" 			instanceType="g1-small" >0.0285</InstanceTypeCost>
+	<InstanceTypeCost region="europe-west1"             instanceType="e2-micro" >0.009214</InstanceTypeCost>
+	<InstanceTypeCost region="europe-west1"             instanceType="e2-small" >0.018429</InstanceTypeCost>
+	<InstanceTypeCost region="europe-west1"             instanceType="e2-medium">0.036857</InstanceTypeCost>
+	
+	<InstanceTypeCost region="europe-west2"				instanceType="f1-micro" >0.0096</InstanceTypeCost>
+	<InstanceTypeCost region="europe-west2"				instanceType="g1-small" >0.0324</InstanceTypeCost>
+	<InstanceTypeCost region="europe-west2"             instanceType="e2-micro" >0.010792</InstanceTypeCost>
+	<InstanceTypeCost region="europe-west2"             instanceType="e2-small" >0.021583</InstanceTypeCost>
+	<InstanceTypeCost region="europe-west2"             instanceType="e2-medium">0.043167</InstanceTypeCost>
+	
+	<InstanceTypeCost region="europe-west3" 			instanceType="f1-micro" >0.0096</InstanceTypeCost>
+	<InstanceTypeCost region="europe-west3" 			instanceType="g1-small" >0.0324</InstanceTypeCost>
+	<InstanceTypeCost region="europe-west3"             instanceType="e2-micro" >0.010792</InstanceTypeCost>
+	<InstanceTypeCost region="europe-west3"             instanceType="e2-small" >0.021583</InstanceTypeCost>
+	<InstanceTypeCost region="europe-west3"             instanceType="e2-medium">0.043167</InstanceTypeCost>
+	
+	<InstanceTypeCost region="europe-west4"				instanceType="f1-micro" >0.0084</InstanceTypeCost>
+	<InstanceTypeCost region="europe-west4"				instanceType="g1-small" >0.0283</InstanceTypeCost>
+	<InstanceTypeCost region="europe-west4"             instanceType="e2-micro" >0.009221</InstanceTypeCost>
+	<InstanceTypeCost region="europe-west4"             instanceType="e2-small" >0.018443</InstanceTypeCost>
+	<InstanceTypeCost region="europe-west4"             instanceType="e2-medium">0.036885</InstanceTypeCost>
+	
+	<InstanceTypeCost region="europe-west6"				instanceType="f1-micro" >0.0106</InstanceTypeCost>
+	<InstanceTypeCost region="europe-west6"				instanceType="g1-small" >0.0359</InstanceTypeCost>
+	<InstanceTypeCost region="europe-west6"             instanceType="e2-micro" >0.01172</InstanceTypeCost>
+	<InstanceTypeCost region="europe-west6"             instanceType="e2-small" >0.023439</InstanceTypeCost>
+	<InstanceTypeCost region="europe-west6"             instanceType="e2-medium">0.046879</InstanceTypeCost>
+	
+	<InstanceTypeCost region="northamerica-northeast1" 	instanceType="f1-micro" >0.0084</InstanceTypeCost>
+	<InstanceTypeCost region="northamerica-northeast1" 	instanceType="g1-small" >0.0283</InstanceTypeCost>
+	<InstanceTypeCost region="northamerica-northeast1"  instanceType="e2-micro" >0.009221</InstanceTypeCost>
+	<InstanceTypeCost region="northamerica-northeast1"  instanceType="e2-small" >0.018443</InstanceTypeCost>
+	<InstanceTypeCost region="northamerica-northeast1"  instanceType="e2-medium">0.036885</InstanceTypeCost>
+	
+	<InstanceTypeCost region="southamerica-east1"		instanceType="f1-micro" >0.0118</InstanceTypeCost>
+	<InstanceTypeCost region="southamerica-east1"		instanceType="g1-small" >0.0400</InstanceTypeCost>
+	<InstanceTypeCost region="southamerica-east1"       instanceType="e2-micro" >0.013296</InstanceTypeCost>
+	<InstanceTypeCost region="southamerica-east1"       instanceType="e2-small" >0.026592</InstanceTypeCost>
+	<InstanceTypeCost region="southamerica-east1"       instanceType="e2-medium">0.053184</InstanceTypeCost>
+	
+	<InstanceTypeCost region="us-central1"				instanceType="f1-micro" >0.0088644</InstanceTypeCost>
+	<InstanceTypeCost region="us-central1"				instanceType="g1-small" >0.0230084</InstanceTypeCost>
+	<InstanceTypeCost region="us-central1"              instanceType="e2-micro" >0.008376</InstanceTypeCost>
+	<InstanceTypeCost region="us-central1"              instanceType="e2-small" >0.016751</InstanceTypeCost>
+	<InstanceTypeCost region="us-central1"              instanceType="e2-medium">0.033503</InstanceTypeCost>
+	
+	<InstanceTypeCost region="us-east1"					instanceType="f1-micro" >0.0088644</InstanceTypeCost>
+	<InstanceTypeCost region="us-east1"					instanceType="g1-small" >0.0230084</InstanceTypeCost>
+	<InstanceTypeCost region="us-east1"                 instanceType="e2-micro" >0.008376</InstanceTypeCost>
+	<InstanceTypeCost region="us-east1"                 instanceType="e2-small" >0.016751</InstanceTypeCost>
+	<InstanceTypeCost region="us-east1"                 instanceType="e2-medium">0.037731</InstanceTypeCost>
+	
+	<InstanceTypeCost region="us-east4"					instanceType="f1-micro" >0.0086</InstanceTypeCost>
+	<InstanceTypeCost region="us-east4"					instanceType="g1-small" >0.0289</InstanceTypeCost>
+	<InstanceTypeCost region="us-east4"                 instanceType="e2-micro" >0.009433</InstanceTypeCost>
+	<InstanceTypeCost region="us-east4"                 instanceType="e2-small" >0.018866</InstanceTypeCost>
+	<InstanceTypeCost region="us-east4"                 instanceType="e2-medium">0.037731</InstanceTypeCost>
+	
+	<InstanceTypeCost region="us-west1"					instanceType="f1-micro" >0.0088644</InstanceTypeCost>
+	<InstanceTypeCost region="us-west1"					instanceType="g1-small" >0.0230084</InstanceTypeCost>
+	<InstanceTypeCost region="us-west1"                 instanceType="e2-micro" >0.008376</InstanceTypeCost>
+    <InstanceTypeCost region="us-west1"                 instanceType="e2-small" >0.016751</InstanceTypeCost>
+    <InstanceTypeCost region="us-west1"                 instanceType="e2-medium">0.033503</InstanceTypeCost>
+    
+	<InstanceTypeCost region="us-west2"					instanceType="f1-micro" >0.0091</InstanceTypeCost>
+	<InstanceTypeCost region="us-west2"					instanceType="g1-small" >0.0308</InstanceTypeCost>
+    <InstanceTypeCost region="us-west2"                 instanceType="e2-micro" >0.010061</InstanceTypeCost>
+	<InstanceTypeCost region="us-west2"                 instanceType="e2-small" >0.020122</InstanceTypeCost>
+    <InstanceTypeCost region="us-west2"                 instanceType="e2-medium">0.040243</InstanceTypeCost>
+	
+	<InstanceTypeCost region="us-west3"					instanceType="f1-micro" >0.0091</InstanceTypeCost>
+	<InstanceTypeCost region="us-west3"					instanceType="g1-small" >0.0308</InstanceTypeCost>
+    <InstanceTypeCost region="us-west3"                 instanceType="e2-micro" >0.010061</InstanceTypeCost>
+	<InstanceTypeCost region="us-west3"                 instanceType="e2-small" >0.020122</InstanceTypeCost>
+    <InstanceTypeCost region="us-west3"                 instanceType="e2-medium">0.040243</InstanceTypeCost>
+    
+	<InstanceTypeCost region="us-west4"					instanceType="f1-micro" >0.0086</InstanceTypeCost>
+	<InstanceTypeCost region="us-west4"					instanceType="g1-small" >0.0289</InstanceTypeCost>
+	<InstanceTypeCost region="us-west4"                 instanceType="e2-micro" >0.009433</InstanceTypeCost>  
+    <InstanceTypeCost region="us-west4"                 instanceType="e2-small" >0.018866</InstanceTypeCost> 
+    <InstanceTypeCost region="us-west4"                 instanceType="e2-medium">0.037731</InstanceTypeCost>
+
+	<CpuCost 	region="asia-east1" 				type="predefined" 			>0.036602</CpuCost>
+	<MemoryCost region="asia-east1" 				type="predefined" 			>0.004906</MemoryCost>
+	<CpuCost 	region="asia-east1" 				type="custom" 				>0.038410</CpuCost>
+	<MemoryCost region="asia-east1" 				type="custom" 				>0.005150</MemoryCost>
+	<MemoryCost region="asia-east1" 				type="custom-extended"		>0.011509</MemoryCost>			
+	<CpuCost 	region="asia-east1" 				type="predefined-e2" 		>0.025255</CpuCost>
+	<MemoryCost region="asia-east1" 				type="predefined-e2" 		>0.003385</MemoryCost>
+	<CpuCost 	region="asia-east1" 				type="custom-e2" 			>0.026504</CpuCost>
+	<MemoryCost region="asia-east1" 				type="custom-e2" 			>0.003552</MemoryCost>		
+	<CpuCost 	region="asia-east1" 				type="predefined-n2d" 		>0.031844</CpuCost>
+	<MemoryCost region="asia-east1" 				type="predefined-n2d" 		>0.004268</MemoryCost>
+	<CpuCost 	region="asia-east1" 				type="custom-n2d" 			>0.033436</CpuCost>
+	<MemoryCost region="asia-east1" 				type="custom-n2d" 			>0.004482</MemoryCost>
+	<MemoryCost region="asia-east1" 				type="custom-extended-n2d"	>0.009621</MemoryCost>
+	<CpuCost 	region="asia-east1" 				type="memory-optimized"     >0.0403305</CpuCost>
+	<MemoryCost region="asia-east1" 				type="memory-optimized"     >0.0059225</MemoryCost>
+	<CpuCost 	region="asia-east1" 				type="compute-optimized"    >0.0393470</CpuCost>
+	<MemoryCost region="asia-east1" 				type="compute-optimized"    >0.005274</MemoryCost>
+	
+	<CpuCost 	region="asia-east2" 				type="predefined" 			>0.044231</CpuCost>
+	<MemoryCost region="asia-east2" 				type="predefined" 			>0.005928</MemoryCost>
+	<CpuCost 	region="asia-east2" 				type="custom" 				>0.044231</CpuCost>
+	<MemoryCost region="asia-east2" 				type="custom" 				>0.005928</MemoryCost>
+	<MemoryCost region="asia-east2" 				type="custom-extended"		>0.012733</MemoryCost>
+	<CpuCost 	region="asia-east2" 				type="predefined-e2" 		>0.030519</CpuCost>
+	<MemoryCost region="asia-east2" 				type="predefined-e2" 		>0.004090</MemoryCost>
+	<CpuCost 	region="asia-east2" 				type="custom-e2" 			>0.030519</CpuCost>
+	<MemoryCost region="asia-east2" 				type="custom-e2" 			>0.004090</MemoryCost>
+	<CpuCost 	region="asia-east2" 				type="compute-optimized"    >0.047548</CpuCost>
+	<MemoryCost region="asia-east2" 				type="compute-optimized"    >0.006373</MemoryCost>
+	
+	<CpuCost 	region="asia-northeast1" 			type="predefined" 			>0.040618</CpuCost>
+	<MemoryCost region="asia-northeast1" 			type="predefined" 			>0.005419</MemoryCost>
+	<CpuCost 	region="asia-northeast1" 			type="custom" 				>0.04062</CpuCost>
+	<MemoryCost region="asia-northeast1" 			type="custom" 				>0.00542</MemoryCost>
+	<MemoryCost region="asia-northeast1" 			type="custom-extended"		>0.011667</MemoryCost>
+	<CpuCost 	region="asia-northeast1" 			type="predefined-e2" 		>0.028026</CpuCost>
+	<MemoryCost region="asia-northeast1" 			type="predefined-e2" 		>0.003739</MemoryCost>
+	<CpuCost 	region="asia-northeast1" 			type="custom-e2" 			>0.028026</CpuCost>
+	<MemoryCost region="asia-northeast1" 			type="custom-e2" 			>0.003739</MemoryCost>		
+	<CpuCost 	region="asia-northeast1" 			type="memory-optimized" 	>0.0426489</CpuCost>
+	<MemoryCost region="asia-northeast1" 			type="memory-optimized" 	>0.0062307</MemoryCost>
+	<CpuCost 	region="asia-northeast1" 			type="compute-optimized" 	>0.043664</CpuCost>
+	<MemoryCost region="asia-northeast1" 			type="compute-optimized" 	>0.005825</MemoryCost>
+	
+	<CpuCost 	region="asia-northeast2" 			type="predefined" 		>0.040618</CpuCost>
+	<MemoryCost region="asia-northeast2" 			type="predefined" 		>0.005419</MemoryCost>
+	<CpuCost 	region="asia-northeast2" 			type="custom" 			>0.040618</CpuCost>
+	<MemoryCost region="asia-northeast2" 			type="custom" 			>0.005418</MemoryCost>
+	<MemoryCost region="asia-northeast2" 			type="custom-extended"	>0.011667</MemoryCost>
+	<CpuCost 	region="asia-northeast2" 			type="predefined-e2" 	>0.028026</CpuCost>
+	<MemoryCost region="asia-northeast2" 			type="predefined-e2" 	>0.003739</MemoryCost>
+	<CpuCost 	region="asia-northeast2" 			type="custom-e2" 		>0.026504</CpuCost>
+	<MemoryCost region="asia-northeast2" 			type="custom-e2" 		>0.003552</MemoryCost>	
+	<CpuCost 	region="asia-northeast2" 			type="memory-optimized" >0.0426489</CpuCost>
+	<MemoryCost region="asia-northeast2" 			type="memory-optimized" >0.0062307</MemoryCost>
+	
+	<CpuCost 	region="asia-northeast3" 			type="predefined" 		>0.040618</CpuCost>
+	<MemoryCost region="asia-northeast3" 			type="predefined" 		>0.005419</MemoryCost>
+	<CpuCost 	region="asia-northeast3" 			type="custom" 			>0.040618</CpuCost>
+	<MemoryCost region="asia-northeast3" 			type="custom" 			>0.005418</MemoryCost>
+	<MemoryCost region="asia-northeast3" 			type="custom-extended"	>0.011667</MemoryCost>
+	<CpuCost 	region="asia-northeast3" 			type="predefined-e2" 	>0.028026</CpuCost>
+	<MemoryCost region="asia-northeast3" 			type="predefined-e2" 	>0.003739</MemoryCost>
+	<CpuCost 	region="asia-northeast3" 			type="custom-e2" 		>0.028026</CpuCost>
+	<MemoryCost region="asia-northeast3" 			type="custom-e2" 		>0.003739</MemoryCost>	
+	<CpuCost 	region="asia-northeast3" 			type="compute-optimized">0.043664</CpuCost>
+	<MemoryCost region="asia-northeast3" 			type="compute-optimized">0.005825</MemoryCost>
+
+	<CpuCost 	region="asia-south1" 				type="predefined" 		>0.03797</CpuCost>
+	<MemoryCost region="asia-south1" 				type="predefined" 		>0.005088</MemoryCost>
+	<CpuCost 	region="asia-south1" 				type="custom" 			>0.037966</CpuCost>
+	<MemoryCost region="asia-south1" 				type="custom" 			>0.005088</MemoryCost>
+	<MemoryCost region="asia-south1" 				type="custom-extended"	>0.010929</MemoryCost>
+	<CpuCost 	region="asia-south1" 				type="predefined-e2" 	>0.026199</CpuCost>
+	<MemoryCost region="asia-south1" 				type="predefined-e2" 	>0.003511</MemoryCost>
+	<CpuCost 	region="asia-south1" 				type="custom-e2" 		>0.026504</CpuCost>
+	<MemoryCost region="asia-south1" 				type="custom-e2" 		>0.003552</MemoryCost>	
+	<CpuCost 	region="asia-south1" 				type="memory-optimized" >0.03986</CpuCost>
+	<MemoryCost region="asia-south1" 				type="memory-optimized" >0.0058512</MemoryCost>
+	<CpuCost 	region="asia-south1" 				type="compute-optimized">0.040818</CpuCost>
+	<MemoryCost region="asia-south1" 				type="compute-optimized">0.005470</MemoryCost>
+
+	<CpuCost 	region="asia-southeast1" 			type="predefined" 		>0.038999</CpuCost>
+	<MemoryCost region="asia-southeast1" 			type="predefined" 		>0.005226</MemoryCost>
+	<CpuCost 	region="asia-southeast1" 			type="custom" 			>0.038996</CpuCost>
+	<MemoryCost region="asia-southeast1" 			type="custom" 			>0.005226</MemoryCost>
+	<MemoryCost region="asia-southeast1" 			type="custom-extended"	>0.011225</MemoryCost>
+	<CpuCost 	region="asia-southeast1" 			type="predefined-e2" 	>0.026909</CpuCost>
+	<MemoryCost region="asia-southeast1" 			type="predefined-e2" 	>0.003605</MemoryCost>
+	<CpuCost 	region="asia-southeast1" 			type="custom-e2" 		>0.026909</CpuCost>
+	<MemoryCost region="asia-southeast1" 			type="custom-e2" 		>0.003605</MemoryCost>
+	<CpuCost 	region="asia-southeast1" 			type="predefined-n2d" 	>0.033929</CpuCost>
+	<MemoryCost region="asia-southeast1" 			type="predefined-n2d" 	>0.004547</MemoryCost>
+	<CpuCost 	region="asia-southeast1" 			type="custom-n2d" 		>0.035626</CpuCost>
+	<MemoryCost region="asia-southeast1" 			type="custom-n2d" 		>0.004774</MemoryCost>
+	<MemoryCost region="asia-southeast1" 			type="custom-extended-n2d">0.009766</MemoryCost>
+	<CpuCost 	region="asia-southeast1" 			type="memory-optimized" >0.0409458</CpuCost>
+	<MemoryCost region="asia-southeast1" 			type="memory-optimized" >0.0060099</MemoryCost>
+	<CpuCost 	region="asia-southeast1" 			type="compute-optimized">0.041924</CpuCost>
+	<MemoryCost region="asia-southeast1" 			type="compute-optimized">0.005618</MemoryCost>
+
+	<CpuCost 	region="asia-southeast2" 			type="predefined" 		>0.0425089</CpuCost>
+	<MemoryCost region="asia-southeast2" 			type="predefined" 		>0.0056963</MemoryCost>
+	<CpuCost 	region="asia-southeast2" 			type="custom" 			>0.0425056</CpuCost>
+	<MemoryCost region="asia-southeast2" 			type="custom" 			>0.0056963</MemoryCost>
+	<MemoryCost region="asia-southeast2" 			type="custom-extended"	>0.0122535</MemoryCost>
+	<CpuCost 	region="asia-southeast2" 			type="predefined-e2" 	>0.029331</CpuCost>
+	<MemoryCost region="asia-southeast2" 			type="predefined-e2" 	>0.003929</MemoryCost>
+
+	<CpuCost 	region="australia-southeast1" 		type="predefined" 		>0.044856</CpuCost>
+	<MemoryCost region="australia-southeast1" 		type="predefined" 		>0.006011</MemoryCost>
+	<CpuCost 	region="australia-southeast1" 		type="custom" 			>0.044880</CpuCost>
+	<MemoryCost region="australia-southeast1" 		type="custom" 			>0.006010</MemoryCost>
+	<MemoryCost region="australia-southeast1" 		type="custom-extended"	>0.01291</MemoryCost>
+	<CpuCost 	region="australia-southeast1" 		type="predefined-e2" 	>0.030950</CpuCost>
+	<MemoryCost region="australia-southeast1" 		type="predefined-e2" 	>0.004147</MemoryCost>
+	<CpuCost 	region="australia-southeast1" 		type="custom-e2" 		>0.030519</CpuCost>
+	<MemoryCost region="australia-southeast1" 		type="custom-e2" 		>0.004090</MemoryCost>
+	<CpuCost 	region="australia-southeast1" 		type="memory-optimized" >0.044856</CpuCost>
+	<MemoryCost region="australia-southeast1" 		type="memory-optimized" >0.006011</MemoryCost>
+	<CpuCost 	region="australia-southeast1" 		type="compute-optimized">0.048220</CpuCost>
+	<MemoryCost region="australia-southeast1" 		type="compute-optimized">0.006462</MemoryCost>
+
+	<CpuCost 	region="europe-north1" 				type="predefined" 		>0.034806</CpuCost>
+	<MemoryCost region="europe-north1" 				type="predefined" 		>0.004664</MemoryCost>
+	<CpuCost 	region="europe-north1" 				type="custom" 			>0.034802</CpuCost>
+	<MemoryCost region="europe-north1" 				type="custom" 			>0.004664</MemoryCost>
+	<MemoryCost region="europe-north1" 				type="custom-extended"	>0.010018</MemoryCost>	
+	<CpuCost 	region="europe-north1" 				type="predefined-e2" 	>0.024016</CpuCost>
+	<MemoryCost region="europe-north1" 				type="predefined-e2" 	>0.003218</MemoryCost>
+	<CpuCost 	region="europe-north1" 				type="custom-e2" 		>0.024016</CpuCost>
+	<MemoryCost region="europe-north1" 				type="custom-e2" 		>0.003218</MemoryCost>	
+	<CpuCost 	region="europe-north1" 				type="memory-optimized"	>0.036542</CpuCost>
+	<MemoryCost region="europe-north1" 				type="memory-optimized"	>0.005364</MemoryCost>
+	<CpuCost 	region="europe-north1" 				type="compute-optimized">0.037416</CpuCost>
+	<MemoryCost region="europe-north1" 				type="compute-optimized">0.005014</MemoryCost>
+
+	<CpuCost 	region="europe-west1" 				type="predefined" 		>0.034773</CpuCost>
+	<MemoryCost region="europe-west1" 				type="predefined" 		>0.004661</MemoryCost>
+	<CpuCost 	region="europe-west1" 				type="custom" 			>0.036489</CpuCost>
+	<MemoryCost region="europe-west1" 				type="custom" 			>0.004892</MemoryCost>
+	<MemoryCost region="europe-west1" 				type="custom-extended"	>0.010506</MemoryCost>
+	<CpuCost 	region="europe-west1" 				type="predefined-e2" 	>0.023993</CpuCost>
+	<MemoryCost region="europe-west1" 				type="predefined-e2" 	>0.003216</MemoryCost>
+	<CpuCost 	region="europe-west1" 				type="custom-e2" 		>0.025179</CpuCost>
+	<MemoryCost region="europe-west1" 				type="custom-e2" 		>0.003374</MemoryCost>	
+	<CpuCost 	region="europe-west1" 				type="predefined-n2d" 	>0.030253</CpuCost>
+	<MemoryCost region="europe-west1" 				type="predefined-n2d" 	>0.004055</MemoryCost>
+	<CpuCost 	region="europe-west1" 				type="custom-n2d" 		>0.031765</CpuCost>
+	<MemoryCost region="europe-west1" 				type="custom-n2d" 		>0.004258</MemoryCost>
+	<MemoryCost region="europe-west1" 				type="custom-extended-n2d">0.009140</MemoryCost>
+	<CpuCost 	region="europe-west1" 				type="memory-optimized" >0.03831</CpuCost>
+	<MemoryCost region="europe-west1" 				type="memory-optimized" >0.00563</MemoryCost>
+	<CpuCost 	region="europe-west1" 				type="compute-optimized" >0.03738</CpuCost>
+	<MemoryCost region="europe-west1" 				type="compute-optimized" >0.00501</MemoryCost>
+
+	<CpuCost 	region="europe-west2" 				type="predefined" 		>0.040730</CpuCost>
+	<MemoryCost region="europe-west2" 				type="predefined" 		>0.005458</MemoryCost>
+	<CpuCost 	region="europe-west2" 				type="custom" 			>0.040692</CpuCost>
+	<MemoryCost region="europe-west2" 				type="custom" 			>0.005453</MemoryCost>
+	<MemoryCost region="europe-west2" 				type="custom-extended"	>0.01171</MemoryCost>
+	<CpuCost 	region="europe-west2" 				type="predefined-e2" 	>0.028103</CpuCost>
+	<MemoryCost region="europe-west2" 				type="predefined-e2" 	>0.003766</MemoryCost>
+	<CpuCost 	region="europe-west2" 				type="custom-e2" 		>0.028104</CpuCost>
+	<MemoryCost region="europe-west2" 				type="custom-e2" 		>0.003766</MemoryCost>
+	<CpuCost 	region="europe-west2" 				type="predefined-n2d" 	>0.035435</CpuCost>
+	<MemoryCost region="europe-west2" 				type="predefined-n2d" 	>0.004748</MemoryCost>
+	<CpuCost 	region="europe-west2" 				type="custom-n2d" 		>0.037207</CpuCost>
+	<MemoryCost region="europe-west2" 				type="custom-n2d" 		>0.004986</MemoryCost>
+	<MemoryCost region="europe-west2" 				type="custom-extended-n2d">0.010188</MemoryCost>
+	<CpuCost 	region="europe-west2" 				type="memory-optimized" >0.0427266</CpuCost>
+	<MemoryCost region="europe-west2" 				type="memory-optimized" >0.00627095</MemoryCost>
+	<CpuCost 	region="europe-west2" 				type="compute-optimized" >0.043785</CpuCost>
+	<MemoryCost region="europe-west2" 				type="compute-optimized" >0.005867</MemoryCost>
+
+	<CpuCost 	region="europe-west3" 				type="predefined" 		>0.040730</CpuCost>
+	<MemoryCost region="europe-west3" 				type="predefined" 		>0.005458</MemoryCost>
+	<CpuCost 	region="europe-west3" 				type="custom" 			>0.040692</CpuCost>
+	<MemoryCost region="europe-west3" 				type="custom" 			>0.005453</MemoryCost>
+	<MemoryCost region="europe-west3" 				type="custom-extended"	>0.01171</MemoryCost>
+	<CpuCost 	region="europe-west3" 				type="predefined-e2" 	>0.028103</CpuCost>
+	<MemoryCost region="europe-west3" 				type="predefined-e2" 	>0.003766</MemoryCost>
+	<CpuCost 	region="europe-west3" 				type="custom-e2" 		>0.028104</CpuCost>
+	<MemoryCost region="europe-west3" 				type="custom-e2" 		>0.003766</MemoryCost>
+	<CpuCost 	region="europe-west3" 				type="memory-optimized" >0.0427266</CpuCost>
+	<MemoryCost region="europe-west3" 				type="memory-optimized" >0.00627095</MemoryCost>
+	<CpuCost 	region="europe-west3" 				type="compute-optimized">0.04378</CpuCost>
+	<MemoryCost region="europe-west3" 				type="compute-optimized">0.00586</MemoryCost>
+
+	<CpuCost 	region="europe-west4" 				type="predefined" 		>0.0347721</CpuCost>
+	<MemoryCost region="europe-west4" 				type="predefined" 		>0.0046607</MemoryCost>
+	<CpuCost 	region="europe-west4" 				type="custom" 			>0.034802</CpuCost>
+	<MemoryCost region="europe-west4" 				type="custom" 			>0.004664</MemoryCost>
+	<MemoryCost region="europe-west4" 				type="custom-extended"	>0.010018</MemoryCost>
+	<CpuCost 	region="europe-west4" 				type="predefined-e2" 	>0.024013</CpuCost>
+	<MemoryCost region="europe-west4" 				type="predefined-e2" 	>0.003218</MemoryCost>
+	<CpuCost 	region="europe-west4" 				type="custom-e2" 		>0.0240133</CpuCost>
+	<MemoryCost region="europe-west4" 				type="custom-e2" 		>0.003218</MemoryCost>
+	<CpuCost 	region="europe-west4" 				type="predefined-n2d" 	>0.030278</CpuCost>
+	<MemoryCost region="europe-west4" 				type="predefined-n2d" 	>0.004058</MemoryCost>
+	<CpuCost 	region="europe-west4" 				type="custom-n2d" 		>0.031792</CpuCost>
+	<MemoryCost region="europe-west4" 				type="custom-n2d" 		>0.004261</MemoryCost>
+	<MemoryCost region="europe-west4" 				type="custom-extended-n2d">0.008716</MemoryCost>
+	<CpuCost 	region="europe-west4" 				type="memory-optimized" >0.036542</CpuCost>
+	<MemoryCost region="europe-west4" 				type="memory-optimized" >0.005364</MemoryCost>
+	<CpuCost 	region="europe-west4" 				type="compute-optimized">0.03741</CpuCost>
+	<MemoryCost region="europe-west4" 				type="compute-optimized">0.00501</MemoryCost>
+	
+	<CpuCost 	region="europe-west6" 				type="predefined" 		>0.044231</CpuCost>
+	<MemoryCost region="europe-west6" 				type="predefined" 		>0.005928</MemoryCost>
+	<CpuCost 	region="europe-west6" 				type="custom" 			>0.044231</CpuCost>
+	<MemoryCost region="europe-west6" 				type="custom" 			>0.005928</MemoryCost>
+	<MemoryCost region="europe-west6" 				type="custom-extended"	>0.012733</MemoryCost>
+	<CpuCost 	region="europe-west6" 				type="predefined-e2" 	>0.030519</CpuCost>
+	<MemoryCost region="europe-west6" 				type="predefined-e2" 	>0.004090</MemoryCost>
+	<CpuCost 	region="europe-west6" 				type="custom-e2" 		>0.030519</CpuCost>
+	<MemoryCost region="europe-west6" 				type="custom-e2" 		>0.004090</MemoryCost>
+
+	<CpuCost 	region="northamerica-northeast1" 	type="predefined" 		>0.034802</CpuCost>
+	<MemoryCost region="northamerica-northeast1" 	type="predefined" 		>0.004664</MemoryCost>
+	<CpuCost 	region="northamerica-northeast1" 	type="custom" 			>0.034802</CpuCost>
+	<MemoryCost region="northamerica-northeast1" 	type="custom" 			>0.004664</MemoryCost>
+	<MemoryCost region="northamerica-northeast1" 	type="custom-extended"	>0.010018</MemoryCost>
+	<CpuCost 	region="northamerica-northeast1" 	type="predefined-e2" 	>0.024013</CpuCost>
+	<MemoryCost region="northamerica-northeast1" 	type="predefined-e2" 	>0.003218</MemoryCost>
+	<CpuCost 	region="northamerica-northeast1" 	type="custom-e2" 		>0.0240133</CpuCost>
+	<MemoryCost region="northamerica-northeast1" 	type="custom-e2" 		>0.003218</MemoryCost>
+	<CpuCost 	region="northamerica-northeast1" 	type="memory-optimized" >0.0365421</CpuCost>
+	<MemoryCost region="northamerica-northeast1"	type="memory-optimized" >0.0053636</MemoryCost>
+	<CpuCost 	region="northamerica-northeast1" 	type="compute-optimized">0.037412</CpuCost>
+	<MemoryCost region="northamerica-northeast1" 	type="compute-optimized">0.005014</MemoryCost>
+
+	<CpuCost 	region="southamerica-east1" 		type="predefined" 		>0.05018</CpuCost>
+	<MemoryCost region="southamerica-east1" 		type="predefined" 		>0.006725</MemoryCost>
+	<CpuCost 	region="southamerica-east1" 		type="custom" 			>0.050190</CpuCost>
+	<MemoryCost region="southamerica-east1" 		type="custom" 			>0.006729</MemoryCost>
+	<MemoryCost region="southamerica-east1" 		type="custom-extended"	>0.014451</MemoryCost>
+	<CpuCost 	region="southamerica-east1" 		type="predefined-e2" 	>0.034624</CpuCost>
+	<MemoryCost region="southamerica-east1" 		type="predefined-e2" 	>0.004640</MemoryCost>
+	<CpuCost 	region="southamerica-east1" 		type="custom-e2" 		>0.034624</CpuCost>
+	<MemoryCost region="southamerica-east1" 		type="custom-e2" 		>0.004640</MemoryCost>
+    <CpuCost	region="southamerica-east1"         type="memory-optimized" >0.0527</CpuCost>
+    <MemoryCost region="southamerica-east1"         type="memory-optimized" >0.0077</MemoryCost>
+	<CpuCost 	region="southamerica-east1" 		type="compute-optimized">0.053944</CpuCost>
+	<MemoryCost region="southamerica-east1" 		type="compute-optimized">0.007229</MemoryCost>
+
+	<CpuCost 	region="us-central1" 				type="predefined" 		>0.031611</CpuCost>
+	<MemoryCost region="us-central1" 				type="predefined" 		>0.004237</MemoryCost>
+	<CpuCost 	region="us-central1" 				type="custom" 			>0.033174</CpuCost>
+	<MemoryCost region="us-central1" 				type="custom" 			>0.004446</MemoryCost>
+	<MemoryCost region="us-central1" 				type="custom-extended"	>0.009550</MemoryCost>
+	<CpuCost 	region="us-central1" 				type="predefined-e2" 	>0.021811</CpuCost>
+	<MemoryCost region="us-central1" 				type="predefined-e2" 	>0.002923</MemoryCost>
+	<CpuCost 	region="us-central1" 				type="custom-e2" 		>0.022890</CpuCost>
+	<MemoryCost region="us-central1" 				type="custom-e2" 		>0.003067</MemoryCost>
+	<CpuCost 	region="us-central1" 				type="predefined-n2d" 	>0.027502</CpuCost>
+	<MemoryCost region="us-central1" 				type="predefined-n2d" 	>0.003686</MemoryCost>
+	<CpuCost 	region="us-central1" 				type="custom-n2d" 		>0.028877</CpuCost>
+	<MemoryCost region="us-central1" 				type="custom-n2d" 		>0.003870</MemoryCost>
+	<MemoryCost region="us-central1" 				type="custom-extended-n2d">0.008309</MemoryCost>
+	<CpuCost 	region="us-central1" 				type="memory-optimized" >0.0348</CpuCost>
+	<MemoryCost region="us-central1" 				type="memory-optimized" >0.0051</MemoryCost>
+	<CpuCost 	region="us-central1" 				type="compute-optimized" >0.03398</CpuCost>
+	<MemoryCost region="us-central1" 				type="compute-optimized" >0.00455</MemoryCost>
+
+	<CpuCost 	region="us-east1" 					type="predefined" 		>0.031611</CpuCost>
+	<MemoryCost region="us-east1" 					type="predefined" 		>0.004237</MemoryCost>
+	<CpuCost 	region="us-east1" 					type="custom" 			>0.033174</CpuCost>
+	<MemoryCost region="us-east1" 					type="custom" 			>0.004446</MemoryCost>
+	<MemoryCost region="us-east1" 					type="custom-extended"	>0.009550</MemoryCost>
+	<CpuCost 	region="us-east1" 					type="predefined-e2" 	>0.021811</CpuCost>
+	<MemoryCost region="us-east1" 					type="predefined-e2" 	>0.002923</MemoryCost>
+	<CpuCost 	region="us-east1" 					type="custom-e2" 		>0.022890</CpuCost>
+	<MemoryCost region="us-east1" 					type="custom-e2" 		>0.003067</MemoryCost>
+	<CpuCost 	region="us-east1" 					type="predefined-n2d" 	>0.027502</CpuCost>
+	<MemoryCost region="us-east1" 					type="predefined-n2d" 	>0.003686</MemoryCost>
+	<CpuCost 	region="us-east1" 					type="custom-n2d" 		>0.028877</CpuCost>
+	<MemoryCost region="us-east1" 					type="custom-n2d" 		>0.003870</MemoryCost>
+	<MemoryCost region="us-east1" 					type="custom-extended-n2d">0.008309</MemoryCost>
+	<CpuCost 	region="us-east1" 					type="memory-optimized" >0.0348</CpuCost>
+	<MemoryCost region="us-east1" 					type="memory-optimized" >0.0051</MemoryCost>
+	<CpuCost 	region="us-east1" 					type="compute-optimized" >0.03398</CpuCost>
+	<MemoryCost region="us-east1" 					type="compute-optimized" >0.00455</MemoryCost>
+
+	<CpuCost 	region="us-east4" 					type="predefined" 		>0.035605</CpuCost>
+	<MemoryCost region="us-east4"	 				type="predefined" 		>0.004771</MemoryCost>
+	<CpuCost 	region="us-east4" 					type="custom" 			>0.037364</CpuCost>
+	<MemoryCost region="us-east4" 					type="custom" 			>0.005008</MemoryCost>
+	<MemoryCost region="us-east4" 					type="custom-extended"	>0.010756 </MemoryCost>
+	<CpuCost 	region="us-east4" 					type="predefined-e2" 	>0.024567</CpuCost>
+	<MemoryCost region="us-east4" 					type="predefined-e2" 	>0.003291</MemoryCost>
+	<CpuCost 	region="us-east4" 					type="custom-e2" 		>0.025782</CpuCost>
+	<MemoryCost region="us-east4" 					type="custom-e2" 		>0.003454</MemoryCost>
+	<CpuCost 	region="us-east4" 					type="predefined-n2d" 	>0.030976</CpuCost>
+	<MemoryCost region="us-east4" 					type="predefined-n2d" 	>0.004151</MemoryCost>
+	<CpuCost 	region="us-east4" 					type="custom-n2d" 		>0.032525</CpuCost>
+	<MemoryCost region="us-east4" 					type="custom-n2d" 		>0.004358</MemoryCost>
+	<MemoryCost region="us-east4" 					type="custom-extended-n2d">0.009358</MemoryCost>
+	<CpuCost 	region="us-east4" 					type="memory-optimized" >0.0392322</CpuCost>
+	<MemoryCost region="us-east4" 					type="memory-optimized" >0.0057592</MemoryCost>
+	<CpuCost 	region="us-east4" 					type="compute-optimized" >0.03827</CpuCost>
+	<MemoryCost region="us-east4" 					type="compute-optimized" >0.00512</MemoryCost>
+
+	<CpuCost 	region="us-west1"	 				type="predefined" 		>0.031611</CpuCost>
+	<MemoryCost region="us-west1" 					type="predefined" 		>0.004237</MemoryCost>
+	<CpuCost 	region="us-west1" 					type="custom" 			>0.033174</CpuCost>
+	<MemoryCost region="us-west1" 					type="custom" 			>0.004446</MemoryCost>
+	<MemoryCost region="us-west1"	 				type="custom-extended"	>0.009550</MemoryCost>
+	<CpuCost 	region="us-west1" 					type="predefined-e2" 	>0.021811</CpuCost>
+	<MemoryCost region="us-west1" 					type="predefined-e2" 	>0.002923</MemoryCost>
+	<CpuCost 	region="us-west1" 					type="custom-e2" 		>0.022890</CpuCost>
+	<MemoryCost region="us-west1" 					type="custom-e2" 		>0.003067</MemoryCost>
+	<CpuCost 	region="us-west1" 					type="predefined-n2d" 	>0.027502</CpuCost>
+	<MemoryCost region="us-west1" 					type="predefined-n2d" 	>0.003686</MemoryCost>
+	<CpuCost 	region="us-west1" 					type="custom-n2d" 		>0.028877</CpuCost>
+	<MemoryCost region="us-west1" 					type="custom-n2d" 		>0.003870</MemoryCost>
+	<MemoryCost region="us-west1" 					type="custom-extended-n2d">0.008309</MemoryCost>
+	<CpuCost 	region="us-west1" 					type="memory-optimized" >0.0348</CpuCost>
+	<MemoryCost region="us-west1" 					type="memory-optimized" >0.0051</MemoryCost>
+	<CpuCost 	region="us-west1" 					type="compute-optimized">0.03398</CpuCost>
+	<MemoryCost region="us-west1" 					type="compute-optimized">0.00455</MemoryCost>
+
+	<CpuCost 	region="us-west2" 					type="predefined" 		>0.03797</CpuCost>
+	<MemoryCost region="us-west2" 					type="predefined" 		>0.005089</MemoryCost>
+	<CpuCost 	region="us-west2" 					type="custom" 			>0.03797</CpuCost>
+	<MemoryCost region="us-west2" 					type="custom" 			>0.005089</MemoryCost>
+	<MemoryCost region="us-west2" 					type="custom-extended"	>0.010931</MemoryCost>
+	<CpuCost 	region="us-west2" 					type="predefined-e2" 	>0.026199</CpuCost>
+	<MemoryCost region="us-west2" 					type="predefined-e2" 	>0.003511</MemoryCost>
+	<CpuCost 	region="us-west2" 					type="custom-e2" 		>0.026199</CpuCost>
+	<MemoryCost region="us-west2" 					type="custom-e2" 		>0.003511</MemoryCost>
+	<CpuCost 	region="us-west2" 					type="memory-optimized" >0.039869</CpuCost>
+	<MemoryCost region="us-west2" 					type="memory-optimized" >0.005852</MemoryCost>
+	<CpuCost 	region="us-west2" 					type="compute-optimized" >0.04082</CpuCost>
+	<MemoryCost region="us-west2" 					type="compute-optimized" >0.00547</MemoryCost>
+	
+	<CpuCost 	region="us-west3" 					type="predefined" 		>0.03797</CpuCost>
+	<MemoryCost region="us-west3" 					type="predefined" 		>0.005089</MemoryCost>
+	<CpuCost 	region="us-west3" 					type="custom" 			>0.03797</CpuCost>
+	<MemoryCost region="us-west3" 					type="custom" 			>0.005089</MemoryCost>
+	<MemoryCost region="us-west3" 					type="custom-extended"	>0.010931</MemoryCost>
+	<CpuCost 	region="us-west3" 					type="predefined-e2" 	>0.026199</CpuCost>
+	<MemoryCost region="us-west3" 					type="predefined-e2" 	>0.003511</MemoryCost>
+	<CpuCost 	region="us-west3" 					type="custom-e2" 		>0.026199</CpuCost>
+	<MemoryCost region="us-west3" 					type="custom-e2" 		>0.003511</MemoryCost>
+	
+	<CpuCost 	region="us-west4" 					type="predefined" 		>0.035605</CpuCost>
+	<MemoryCost region="us-west4" 					type="predefined" 		>0.004771</MemoryCost>
+	<CpuCost 	region="us-west4" 					type="custom" 			>0.037364</CpuCost>
+	<MemoryCost region="us-west4" 					type="custom" 			>0.005008</MemoryCost>
+	<MemoryCost region="us-west4" 					type="custom-extended"	>0.010756</MemoryCost>
+	<CpuCost 	region="us-west4" 					type="predefined-e2" 	>0.024567</CpuCost>
+	<MemoryCost region="us-west4" 					type="predefined-e2" 	>0.003291</MemoryCost>
+	<CpuCost 	region="us-west4" 					type="custom-e2" 		>0.025782</CpuCost>
+	<MemoryCost region="us-west4" 					type="custom-e2" 		>0.003454</MemoryCost>
+	<CpuCost 	region="us-west4" 					type="memory-optimized" >0.0392322</CpuCost>
+	<MemoryCost region="us-west4" 					type="memory-optimized" >0.0057592</MemoryCost>
+	<CpuCost 	region="us-west4" 					type="compute-optimized" >0.03827</CpuCost>
+	<MemoryCost region="us-west4" 					type="compute-optimized" >0.00512</MemoryCost>
+
+
+	<OsCost guestOsType="Red Hat" 			type="regular-limited" 	cost="0.06" />
+	<OsCost guestOsType="Red Hat" 			type="regular" 			cost="0.13" />
+	<OsCost guestOsType="SUSE" 				type="shared-core" 		cost="0.02" />
+	<OsCost guestOsType="SUSE" 				type="regular" 			cost="0.11" />
+	<OsCost guestOsType="Microsoft Windows" type="shared-core" 		cost="0.023" />
+	<OsCost guestOsType="Microsoft Windows" type="regular" 			costPerCore="0.046" />
+
+
+
+	<StorageCost region="asia-east1" diskType="STANDARD_PERSISTENT" 				datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.040" />
+	<StorageCost region="asia-east1" diskType="SSD_PERSISTENT" 						datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.170" />
+	<StorageCost region="asia-east1" diskType="STANDARD_PERSISTENT" 				datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.080" />
+	<StorageCost region="asia-east1" diskType="SSD_PERSISTENT" 						datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.340" />
+	<StorageCost region="asia-east1" diskType="SSD_LOCAL" 																costPerGB="0.080" />
+	<StorageCost region="asia-east1" diskType="IMAGE" 																	costPerGB="0.050" />
+
+	<StorageCost region="asia-east2" diskType="STANDARD_PERSISTENT" 				datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.050" />
+	<StorageCost region="asia-east2" diskType="SSD_PERSISTENT" 						datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.187" />
+	<StorageCost region="asia-east2" diskType="STANDARD_PERSISTENT" 				datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.112" />
+	<StorageCost region="asia-east2" diskType="SSD_PERSISTENT" 						datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.374" />
+	<StorageCost region="asia-east2" diskType="SSD_LOCAL" 																costPerGB="0.088" />
+	<StorageCost region="asia-east2" diskType="IMAGE" 																	costPerGB="0.065" />
+
+	<StorageCost region="asia-northeast1" diskType="STANDARD_PERSISTENT" 			datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.052" />
+	<StorageCost region="asia-northeast1" diskType="SSD_PERSISTENT" 				datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.221" />
+	<StorageCost region="asia-northeast1" diskType="STANDARD_PERSISTENT" 			datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.104" />
+	<StorageCost region="asia-northeast1" diskType="SSD_PERSISTENT" 				datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.442" />
+	<StorageCost region="asia-northeast1" diskType="SSD_LOCAL" 															costPerGB="0.104" />
+	<StorageCost region="asia-northeast1" diskType="IMAGE" 																costPerGB="0.065" />
+	
+	<StorageCost region="asia-northeast2" diskType="STANDARD_PERSISTENT" 			datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.052" />
+	<StorageCost region="asia-northeast2" diskType="SSD_PERSISTENT" 				datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.221" />
+	<StorageCost region="asia-northeast2" diskType="STANDARD_PERSISTENT" 			datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.104" />
+	<StorageCost region="asia-northeast2" diskType="SSD_PERSISTENT" 				datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.442" />
+	<StorageCost region="asia-northeast2" diskType="SSD_LOCAL" 															costPerGB="0.104" />
+	<StorageCost region="asia-northeast2" diskType="IMAGE" 																costPerGB="0.065" />
+	
+	<StorageCost region="asia-northeast3" diskType="STANDARD_PERSISTENT" 			datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.052" />
+	<StorageCost region="asia-northeast3" diskType="SSD_PERSISTENT" 				datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.221" />
+	<StorageCost region="asia-northeast3" diskType="STANDARD_PERSISTENT" 			datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.104" />
+	<StorageCost region="asia-northeast3" diskType="SSD_PERSISTENT" 				datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.442" />
+	<StorageCost region="asia-northeast3" diskType="SSD_LOCAL" 															costPerGB="0.104" />
+	<StorageCost region="asia-northeast3" diskType="IMAGE" 																costPerGB="0.065" />
+
+	<StorageCost region="asia-south1" diskType="STANDARD_PERSISTENT" 				datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.048" />
+	<StorageCost region="asia-south1" diskType="SSD_PERSISTENT" 					datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.204" />
+	<StorageCost region="asia-south1" diskType="STANDARD_PERSISTENT" 				datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.096" />
+	<StorageCost region="asia-south1" diskType="SSD_PERSISTENT" 					datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.408" />
+	<StorageCost region="asia-south1" diskType="SSD_LOCAL" 																costPerGB="0.096" />
+	<StorageCost region="asia-south1" diskType="IMAGE" 																	costPerGB="0.060" />
+
+	<StorageCost region="asia-southeast1" diskType="STANDARD_PERSISTENT" 			datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.044" />
+	<StorageCost region="asia-southeast1" diskType="SSD_PERSISTENT" 				datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.187" />
+	<StorageCost region="asia-southeast1" diskType="STANDARD_PERSISTENT" 			datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.088" />
+	<StorageCost region="asia-southeast1" diskType="SSD_PERSISTENT" 				datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.374" />
+	<StorageCost region="asia-southeast1" diskType="SSD_LOCAL" 															costPerGB="0.088" />
+	<StorageCost region="asia-southeast1" diskType="IMAGE" 																costPerGB="0.055" />
+
+	<StorageCost region="asia-southeast2" diskType="STANDARD_PERSISTENT" 			datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.052" />
+	<StorageCost region="asia-southeast2" diskType="SSD_PERSISTENT" 				datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.221" />
+	<StorageCost region="asia-southeast2" diskType="STANDARD_PERSISTENT" 			datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.104" />
+	<StorageCost region="asia-southeast2" diskType="SSD_PERSISTENT" 				datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.442" />
+	<StorageCost region="asia-southeast2" diskType="SSD_LOCAL" 															costPerGB="0.104" />
+	<StorageCost region="asia-southeast2" diskType="IMAGE" 																costPerGB="0.05995" />
+
+	<StorageCost region="australia-southeast1" diskType="STANDARD_PERSISTENT"	 	datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.054" />
+	<StorageCost region="australia-southeast1" diskType="SSD_PERSISTENT" 			datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.230" />
+	<StorageCost region="australia-southeast1" diskType="STANDARD_PERSISTENT" 		datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.108" />
+	<StorageCost region="australia-southeast1" diskType="SSD_PERSISTENT" 			datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.460" />
+	<StorageCost region="australia-southeast1" diskType="SSD_LOCAL" 													costPerGB="0.108" />
+	<StorageCost region="australia-southeast1" diskType="IMAGE" 														costPerGB="0.068" />
+
+	<StorageCost region="europe-north1" diskType="STANDARD_PERSISTENT" 				datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.044" />
+	<StorageCost region="europe-north1" diskType="SSD_PERSISTENT" 					datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.187" />
+	<StorageCost region="europe-north1" diskType="STANDARD_PERSISTENT" 				datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.088" />
+	<StorageCost region="europe-north1" diskType="SSD_PERSISTENT" 					datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.374" />
+	<StorageCost region="europe-north1" diskType="SSD_LOCAL" 															costPerGB="0.088" />
+	<StorageCost region="europe-north1" diskType="IMAGE" 																costPerGB="0.055" />
+
+	<StorageCost region="europe-west1" diskType="STANDARD_PERSISTENT"			 	datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.040" />
+	<StorageCost region="europe-west1" diskType="SSD_PERSISTENT" 					datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.170" />
+	<StorageCost region="europe-west1" diskType="STANDARD_PERSISTENT"			 	datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.080" />
+	<StorageCost region="europe-west1" diskType="SSD_PERSISTENT" 					datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.340" />
+	<StorageCost region="europe-west1" diskType="SSD_LOCAL" 															costPerGB="0.080" />
+	<StorageCost region="europe-west1" diskType="IMAGE" 																costPerGB="0.050" />
+
+	<StorageCost region="europe-west2" diskType="STANDARD_PERSISTENT" 				datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.048" />
+	<StorageCost region="europe-west2" diskType="SSD_PERSISTENT" 					datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.204" />
+	<StorageCost region="europe-west2" diskType="STANDARD_PERSISTENT" 				datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.096" />
+	<StorageCost region="europe-west2" diskType="SSD_PERSISTENT" 					datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.408" />
+	<StorageCost region="europe-west2" diskType="SSD_LOCAL" 															costPerGB="0.096" />
+	<StorageCost region="europe-west2" diskType="IMAGE" 																costPerGB="0.060" />
+
+	<StorageCost region="europe-west3" diskType="STANDARD_PERSISTENT" 				datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.048" />
+	<StorageCost region="europe-west3" diskType="SSD_PERSISTENT" 					datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.204" />
+	<StorageCost region="europe-west3" diskType="STANDARD_PERSISTENT" 				datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.096" />
+	<StorageCost region="europe-west3" diskType="SSD_PERSISTENT" 					datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.408" />
+	<StorageCost region="europe-west3" diskType="SSD_LOCAL" 															costPerGB="0.096" />
+	<StorageCost region="europe-west3" diskType="IMAGE" 																costPerGB="0.060" />
+
+	<StorageCost region="europe-west4" diskType="STANDARD_PERSISTENT" 				datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.044" />
+	<StorageCost region="europe-west4" diskType="SSD_PERSISTENT" 					datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.187" />
+	<StorageCost region="europe-west4" diskType="STANDARD_PERSISTENT" 				datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.088" />
+	<StorageCost region="europe-west4" diskType="SSD_PERSISTENT" 					datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.374" />
+	<StorageCost region="europe-west4" diskType="SSD_LOCAL" 															costPerGB="0.088" />
+	<StorageCost region="europe-west4" diskType="IMAGE" 																costPerGB="0.055" />
+	
+	<StorageCost region="europe-west6" diskType="STANDARD_PERSISTENT" 				datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.052" />
+	<StorageCost region="europe-west6" diskType="SSD_PERSISTENT" 					datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.221" />
+	<StorageCost region="europe-west6" diskType="STANDARD_PERSISTENT" 				datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.104" />
+	<StorageCost region="europe-west6" diskType="SSD_PERSISTENT" 					datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.442" />
+	<StorageCost region="europe-west6" diskType="SSD_LOCAL" 															costPerGB="0.104" />
+	<StorageCost region="europe-west6" diskType="IMAGE" 																costPerGB="0.065" />
+
+	<StorageCost region="northamerica-northeast1" diskType="STANDARD_PERSISTENT" 	datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.044" />
+	<StorageCost region="northamerica-northeast1" diskType="SSD_PERSISTENT" 		datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.187" />
+	<StorageCost region="northamerica-northeast1" diskType="STANDARD_PERSISTENT" 	datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.088" />
+	<StorageCost region="northamerica-northeast1" diskType="SSD_PERSISTENT" 		datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.374" />
+	<StorageCost region="northamerica-northeast1" diskType="SSD_LOCAL" 													costPerGB="0.088" />
+	<StorageCost region="northamerica-northeast1" diskType="IMAGE" 														costPerGB="0.055" />
+
+	<StorageCost region="southamerica-east1" diskType="STANDARD_PERSISTENT" 		datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.060" />
+	<StorageCost region="southamerica-east1" diskType="SSD_PERSISTENT" 				datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.255" />
+	<StorageCost region="southamerica-east1" diskType="STANDARD_PERSISTENT" 		datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.120" />
+	<StorageCost region="southamerica-east1" diskType="SSD_PERSISTENT" 				datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.510" />
+	<StorageCost region="southamerica-east1" diskType="SSD_LOCAL" 														costPerGB="0.120" />
+	<StorageCost region="southamerica-east1" diskType="IMAGE" 															costPerGB="0.075" />
+
+	<StorageCost region="us-central1" diskType="STANDARD_PERSISTENT" 				datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.040" />
+	<StorageCost region="us-central1" diskType="SSD_PERSISTENT" 					datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.170" />
+	<StorageCost region="us-central1" diskType="STANDARD_PERSISTENT" 				datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.080" />
+	<StorageCost region="us-central1" diskType="SSD_PERSISTENT" 					datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.340" />
+	<StorageCost region="us-central1" diskType="SSD_LOCAL" 																costPerGB="0.080" />
+	<StorageCost region="us-central1" diskType="IMAGE" 																	costPerGB="0.050" />
+
+	<StorageCost region="us-east1" diskType="STANDARD_PERSISTENT" 					datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.040" />
+	<StorageCost region="us-east1" diskType="SSD_PERSISTENT" 						datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.170" />
+	<StorageCost region="us-east1" diskType="STANDARD_PERSISTENT" 					datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.080" />
+	<StorageCost region="us-east1" diskType="SSD_PERSISTENT" 						datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.340" />
+	<StorageCost region="us-east1" diskType="SSD_LOCAL" 																costPerGB="0.080" />
+	<StorageCost region="us-east1" diskType="IMAGE" 																	costPerGB="0.050" />
+
+	<StorageCost region="us-east4" diskType="STANDARD_PERSISTENT" 					datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.044" />
+	<StorageCost region="us-east4" diskType="SSD_PERSISTENT" 						datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.187" />
+	<StorageCost region="us-east4" diskType="STANDARD_PERSISTENT" 					datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.088" />
+	<StorageCost region="us-east4" diskType="SSD_PERSISTENT" 						datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.374" />
+	<StorageCost region="us-east4" diskType="SSD_LOCAL" 																costPerGB="0.088" />
+	<StorageCost region="us-east4" diskType="IMAGE" 																	costPerGB="0.055" />
+
+	<StorageCost region="us-west1" diskType="STANDARD_PERSISTENT" 					datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.040" />
+	<StorageCost region="us-west1" diskType="SSD_PERSISTENT" 						datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.170" />
+	<StorageCost region="us-west1" diskType="STANDARD_PERSISTENT" 					datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.080" />
+	<StorageCost region="us-west1" diskType="SSD_PERSISTENT" 						datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.340" />
+	<StorageCost region="us-west1" diskType="SSD_LOCAL" 																costPerGB="0.080" />
+	<StorageCost region="us-west1" diskType="IMAGE" 																	costPerGB="0.050" />
+
+	<StorageCost region="us-west2" diskType="STANDARD_PERSISTENT" 					datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.048" />
+	<StorageCost region="us-west2" diskType="SSD_PERSISTENT" 						datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.204" />
+	<StorageCost region="us-west2" diskType="STANDARD_PERSISTENT" 					datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.096" />
+	<StorageCost region="us-west2" diskType="SSD_PERSISTENT" 						datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.408" />
+	<StorageCost region="us-west2" diskType="SSD_LOCAL" 																costPerGB="0.096" />
+	<StorageCost region="us-west2" diskType="IMAGE" 																	costPerGB="0.060" />
+	
+	<StorageCost region="us-west3" diskType="STANDARD_PERSISTENT" 					datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.048" />
+	<StorageCost region="us-west3" diskType="SSD_PERSISTENT" 						datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.204" />
+	<StorageCost region="us-west3" diskType="STANDARD_PERSISTENT" 					datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.096" />
+	<StorageCost region="us-west3" diskType="SSD_PERSISTENT" 						datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.408" />
+	<StorageCost region="us-west3" diskType="SSD_LOCAL" 																costPerGB="0.096" />
+	<StorageCost region="us-west3" diskType="IMAGE" 																	costPerGB="0.060" />
+	
+	<StorageCost region="us-west4" diskType="STANDARD_PERSISTENT" 					datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.044" />
+	<StorageCost region="us-west4" diskType="SSD_PERSISTENT" 						datastoreType="GCP_ZONE_STORAGE" 	costPerGB="0.187" />
+	<StorageCost region="us-west4" diskType="STANDARD_PERSISTENT" 					datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.088" />
+	<StorageCost region="us-west4" diskType="SSD_PERSISTENT" 						datastoreType="GCP_REGION_STORAGE" 	costPerGB="0.374" />
+	<StorageCost region="us-west4" diskType="SSD_LOCAL" 																costPerGB="0.088" />
+	<StorageCost region="us-west4" diskType="IMAGE" 																	costPerGB="0.055" />
+</InstanceTypeCosts>

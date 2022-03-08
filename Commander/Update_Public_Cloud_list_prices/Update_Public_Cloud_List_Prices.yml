@@ -1,0 +1,99 @@
+
+id: ""
+guid: ""
+name: "Update Public Cloud List Prices"
+type: "COMMAND"
+change_description: null
+fulfillment_rule: null
+add_owner_as_admin: false
+auto_deploy: false
+users: []
+organizations: []
+target_type: "NO_INVENTORY_TARGET"
+info_messages: []
+prompt_message: null
+system_version: "master (1007030051)"
+steps:
+- name: "Update Amazon Web Services List Price"
+  type: "EMBEDDED_SCRIPT"
+  condition: null
+  data:
+    credentials: null
+    failure_action: "FAIL_STEP"
+    script_contents: "# the Amazon Web Services list price end point\r\n$endpoint\
+      \ = \"http://emboticss3.s3.amazonaws.com/Costs/costs-aws.xml\"\r\n   \r\n# get\
+      \ the Amazon Web Services list price\r\n$priceList = Invoke-WebRequest $endpoint\
+      \ -Method Get -TimeoutSec 120 -UseBasicParsing\r\n\r\n#Write it\r\nOut-File\
+      \ -Encoding \"UTF8\" -FilePath \"#{system.directory}\\common\\classes\\costs-aws.xml\"\
+      \ -InputObject $priceList.Content"
+    script_arguments: ""
+    timeout: 130
+    executable: "powershell.exe -ExecutionPolicy Bypass"
+    capture_output: true
+- name: "Retry Updating Amazon Web Services List Price"
+  type: "RETRY"
+  condition: null
+  data:
+    retries: "3"
+    wait: "5"
+    wait_units: "SECONDS"
+- name: "Update Microsoft Azure List Price"
+  type: "EMBEDDED_SCRIPT"
+  condition: null
+  data:
+    credentials: null
+    failure_action: "FAIL_STEP"
+    script_contents: "# the Microsoft Azure list price end point\r\n$endpoint = \"\
+      http://emboticss3.s3.amazonaws.com/Costs/costs-arm.xml\"\r\n   \r\n# get the\
+      \ Microsoft Azure list price\r\n$priceList = Invoke-WebRequest $endpoint -Method\
+      \ Get -TimeoutSec 120 -UseBasicParsing\r\n\r\n#Write it\r\nOut-File -Encoding\
+      \ \"UTF8\" -FilePath \"#{system.directory}\\common\\classes\\costs-arm.xml\"\
+      \ -InputObject $priceList.Content"
+    script_arguments: ""
+    timeout: 130
+    executable: "powershell.exe -ExecutionPolicy Bypass"
+    capture_output: true
+- name: "Retry Updating Microsoft Azure List Price"
+  type: "RETRY"
+  condition: null
+  data:
+    retries: "3"
+    wait: "5"
+    wait_units: "SECONDS"
+- name: "Update Google Cloud Platform List Price"
+  type: "EMBEDDED_SCRIPT"
+  condition: null
+  data:
+    credentials: null
+    failure_action: "FAIL_STEP"
+    script_contents: "# the Google Cloud Platform list price end point\r\n$endpoint\
+      \ = \"http://emboticss3.s3.amazonaws.com/Costs/costs-gcp.xml\"\r\n   \r\n# get\
+      \ the Google Cloud Platform list price\r\n$priceList = Invoke-WebRequest $endpoint\
+      \ -Method Get -TimeoutSec 120 -UseBasicParsing\r\n\r\n#Write it\r\nOut-File\
+      \ -Encoding \"UTF8\" -FilePath \"#{system.directory}\\common\\classes\\costs-gcp.xml\"\
+      \ -InputObject $priceList.Content"
+    script_arguments: ""
+    timeout: 130
+    executable: "powershell.exe -ExecutionPolicy Bypass"
+    capture_output: true
+- name: "Retry Updating Google Cloud Platform List Price"
+  type: "RETRY"
+  condition: null
+  data:
+    retries: "3"
+    wait: "5"
+    wait_units: "SECONDS"
+- name: "Reload Cloud List Prices"
+  type: "REST"
+  condition: null
+  data:
+    success_codes: "200"
+    credentials: null
+    result_filter: ""
+    failure_action: "FAIL_STEP"
+    rest_action: "POST"
+    format: "XML"
+    header: ""
+    body: ""
+    url: "https://#{system.address}:#{system.port}/webservices/services/rest/v2/configurations/costmodels/action/reload"
+    capture_output: true
