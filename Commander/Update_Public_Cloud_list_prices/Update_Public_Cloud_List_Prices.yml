@@ -21,7 +21,7 @@ steps:
     credentials: null
     failure_action: "FAIL_STEP"
     script_contents: "# the Amazon Web Services list price end point\r\n$endpoint\
-      \ = \"http://emboticss3.s3.amazonaws.com/Costs/costs-aws.xml\"\r\n   \r\n# get\
+      \ = \"https://github.com/SnowSoftwareGlobal/cloudmanagement-integrations/raw/main/Commander/Update_Public_Cloud_list_prices/costs-aws.xml\"\r\n   \r\n# get\
       \ the Amazon Web Services list price\r\n$priceList = Invoke-WebRequest $endpoint\
       \ -Method Get -TimeoutSec 120 -UseBasicParsing\r\n\r\n#Write it\r\nOut-File\
       \ -Encoding \"UTF8\" -FilePath \"#{system.directory}\\common\\classes\\costs-aws.xml\"\
@@ -44,7 +44,7 @@ steps:
     credentials: null
     failure_action: "FAIL_STEP"
     script_contents: "# the Microsoft Azure list price end point\r\n$endpoint = \"\
-      http://emboticss3.s3.amazonaws.com/Costs/costs-arm.xml\"\r\n   \r\n# get the\
+      https://github.com/SnowSoftwareGlobal/cloudmanagement-integrations/raw/main/Commander/Update_Public_Cloud_list_prices/costs-arm.xml\"\r\n   \r\n# get the\
       \ Microsoft Azure list price\r\n$priceList = Invoke-WebRequest $endpoint -Method\
       \ Get -TimeoutSec 120 -UseBasicParsing\r\n\r\n#Write it\r\nOut-File -Encoding\
       \ \"UTF8\" -FilePath \"#{system.directory}\\common\\classes\\costs-arm.xml\"\
@@ -67,7 +67,7 @@ steps:
     credentials: null
     failure_action: "FAIL_STEP"
     script_contents: "# the Google Cloud Platform list price end point\r\n$endpoint\
-      \ = \"http://emboticss3.s3.amazonaws.com/Costs/costs-gcp.xml\"\r\n   \r\n# get\
+      \ = \"https://github.com/SnowSoftwareGlobal/cloudmanagement-integrations/main/Commander/Update_Public_Cloud_list_prices/costs-gcp.xml\"\r\n   \r\n# get\
       \ the Google Cloud Platform list price\r\n$priceList = Invoke-WebRequest $endpoint\
       \ -Method Get -TimeoutSec 120 -UseBasicParsing\r\n\r\n#Write it\r\nOut-File\
       \ -Encoding \"UTF8\" -FilePath \"#{system.directory}\\common\\classes\\costs-gcp.xml\"\
