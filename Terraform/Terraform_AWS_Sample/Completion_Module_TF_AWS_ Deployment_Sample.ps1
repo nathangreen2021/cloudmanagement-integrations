@@ -80,7 +80,7 @@ terraform {
         type = string
         default = "$InstanceName"
     }
-    variable "instancename-sg"{
+    variable "sgname"{
         type = string
         default = "$InstanceName-sg"
     }
