@@ -40,7 +40,7 @@ resource "aws_instance" "instance" {
               EOF
 
   tags = {
-    Name = var.sgname
+    Name = var.instancename
   }
 }
 
@@ -49,6 +49,10 @@ resource "aws_instance" "instance" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 resource "aws_security_group" "security_group" {
+  
+  tags = {
+    Name = var.sgname
+  }
 
   # Inbound HTTP from anywhere
   ingress {
