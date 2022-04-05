@@ -13,6 +13,7 @@
  - Commander 8.6.0 or higher
  - Advanced property "embotics.workflow.script.credentials" must be set to "true"
 
+
 ## Setup Steps
 1. On the Commander Server if you don’t have the Azure PowerShell module installed it can be easily  installed by running the following in PowerShell:
 ```Install-Module -Name AZ -AllowClobber -Force```
@@ -21,8 +22,8 @@ if you receive a Security error you may need to run this and try again:
 2. In the Commander Admin UI navigate to “Configuration> System> Advanced”
 Search for ```embotics.workflow.script.credentials``` and set the value to true.
 3. Navigate to ```Configuration > Command Workflows``` in the Commander Admin UI. In the lower right-hand corner of the workflow list grid you will see an import button.
-4. With the Workflow installed, select it and edit workflow Step # 3. Set the recipient E-mail address. That will receive a Hyperlink when the report is complete.
-5. Now run the workflow against a cloud account to generate the Report. In Views Select an Azure Cloud account in inventory and then right-click and select Run Workflow from the account-Menu.
+4. With the Workflow imported, select it and edit workflow Step # 3. Set the recipient E-mail address that will receive a Hyperlink when the report is complete.
+5. Now to run the workflow against a cloud account to generate the report. In Views Select an Azure Cloud account in inventory and then right-click and select Run Workflow from the account-Menu.
 6. Select the report you with to run from the workflow list.
 7. Once complete, the recipient will receive a link to the report. It’s HTML based and if the report is run again, it will update the existing. If required print the report for refrence later.
 
