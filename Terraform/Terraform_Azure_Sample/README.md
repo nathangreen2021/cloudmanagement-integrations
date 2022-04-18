@@ -18,8 +18,8 @@ Deployment workflow modules installation and setup:
 2. Import the custom component completion modules, followed by the workflow modules.
 3. Open the sync and ownership modules and specify the credential in the dropdown to connect back into the Commander API. 
 4. Create a folder for deployments on the server for this example: "c:\terraform\deployments".
-5. Create a folder "Ubuntu_VM_Template_Azure" to be copied as a base config or "template" and copy the justvm_az.tf file into the folder. This will be copied for every deployment and named after the RequestID. 
-6. Open the Terraform Deployment module and look at where the variables.tf file get created in the new folder for the deployment. Make sure these match the variables in justvm_az.tf
+5. Create a folder "Ubuntu_VM_Template_AZ" to be copied as a base config or "template" and copy the justvm_az.tf file into the folder. This will be copied for every deployment and named after the RequestID. 
+6. Open the Terraform Deployment module and look at where the variables.tf file get created in the new folder for the deployment. Make sure these match the variables in justvm.tf
 7. In the sample the vmname is "NewTFVM001". This can be a user input field and passed into the module.
 8. If the module fails to run, the comments will contain the errors.
 

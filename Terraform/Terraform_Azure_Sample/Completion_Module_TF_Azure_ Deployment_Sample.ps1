@@ -15,9 +15,9 @@ $Terraformexe = "#{inputVariable['terraform_Exe_path']}"
 $InstanceName = "#{inputVariable['InstanceName']}"
 $TF_Organization = "#{inputVariable['terraform_organization']}"
 $Region = "#{inputVariable['region']}"
-$Port = "#{inputVariable['webport']}"
 
-if(!($Requestid) -or !($Template ) -or !($Deployment) -or !($Terraformexe) -or !($InstanceName) -or !($TF_Organization) -or !($Region) -or !($port)){ 
+
+if(!($Requestid) -or !($Template ) -or !($Deployment) -or !($Terraformexe) -or !($InstanceName) -or !($TF_Organization) -or !($Region)){
         Write-error "Please provide required information"
         Exit 1
         }
@@ -65,26 +65,33 @@ terraform {
 }
     variable "instance_type"{
       type = string
-      default = "t2.micro"
+      default = "Standard_DS1_v2"
     }
-    variable "server_port" {
-      description = "The port the server will use for HTTP requests"
-      type        = number
-      default     = "$Port"
-    }
-    variable "aws_region" {
+    variable "region" {
       type    = string
       default = "$Region"
+      description   = "Location of the resource group."
     }
     variable "instancename"{
         type = string
         default = "$InstanceName"
     }
-    variable "sgname"{
+     variable "sgname"{
         type = string
-        default = "$InstanceName-sg"
+        default = "$InstanceName-SG"
     }
-
+    variable "resource_group_name_prefix" {
+      default       = "rg-"
+      description   = "Prefix of the resource group name that's combined with a random ID so name is unique in your Azure subscription."
+    }
+    variable "vNetName"{
+        type = string
+        default = "$InstanceName-Vnet"
+    }
+    variable "SubnetName"{
+        type = string
+        default = "$InstanceName-Snet"
+    }
 "@
     New-Item -Path $Folderlocation -Name variables.tf -ItemType "file" -Value $values -Force -Confirm:$false
 
