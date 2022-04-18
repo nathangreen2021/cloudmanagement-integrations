@@ -1,6 +1,6 @@
 # Terraform - AWS VM deployment and XaaS change Request(Sample)
 
-This example shows you how to use Commander workflow modules to sync TerraForm accounts after a deployment is made, then resource ownership and make a change request for a deployed AWS E2 instance.
+This AWS example shows you one way to use Commander workflow modules to sync Terraform accounts after a deployment is made, then set resource ownership and make a change request for a deployed AWS E2 instance.This example can be modified for other cloud accounts and services. This example can be used as a starting point for other cloud accounts not managed by Snow Commander.
 
 Requirements:
 * Credential in the Commander credential library for connecting to Commander (API User)
@@ -14,7 +14,7 @@ Requirements:
 * AWS Powershell module installed on the Commander Server
 * Commander 9.X or higher 
 
-Note: This example can be modified for other cloud accounts and services.  
+
 
 Deployment workflow modules installation and setup:
 1. Ensure a credential exists in "Configuration > Credentials" for Commander API.
