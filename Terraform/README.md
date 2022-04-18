@@ -15,6 +15,7 @@ Requirements:
 
 Examples
 * [AWS Sample](https://github.com/SnowSoftwareGlobal/cloudmanagement-integrations/blob/main/Terraform/Terraform_AWS_Sample/README.md)
+* [Azure Sample](https://github.com/SnowSoftwareGlobal/cloudmanagement-integrations/blob/main/Terraform/Terraform_Azure_Sample/README.md)
 
 ____
 
