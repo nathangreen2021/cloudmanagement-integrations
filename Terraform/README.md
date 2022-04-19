@@ -14,8 +14,8 @@ Requirements:
 * Commander 9.X or higher 
 
 Examples
-* [AWS Sample](https://github.com/SnowSoftwareGlobal/cloudmanagement-integrations/blob/main/Terraform/Terraform_AWS_Sample/README.md)
-* [Azure Sample](https://github.com/SnowSoftwareGlobal/cloudmanagement-integrations/blob/main/Terraform/Terraform_Azure_Sample/README.md)
+* [AWS Sample](https://github.com/SnowSoftwareGlobal/cloudmanagement-integrations/tree/main/Terraform/Terraform_AWS_Sample)
+* [Azure Sample](https://github.com/SnowSoftwareGlobal/cloudmanagement-integrations/tree/main/Terraform/Terraform_Azure_Sample)
 
 ____
 
