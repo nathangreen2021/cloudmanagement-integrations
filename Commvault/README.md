@@ -9,7 +9,7 @@ Requirements:
 * Commvault Powershell module installed on the Commander server 
     - https://documentation.commvault.com/hitachivantara/v11/essential/124529_installing_commvault_powershell_sdk_from_github_most_recent_version_of_module.html
 
-## Inputs
+Module Inputs
 1. Commvault Server URL
 * In the format ```commvault.domain.local```
 2. Client Name
