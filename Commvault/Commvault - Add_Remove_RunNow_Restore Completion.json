@@ -1,0 +1,64 @@
+{
+  "id": "",
+  "guid": "",
+  "name": "Commvault - Add/Remove/RunNow/Restore Completion",
+  "description": null,
+  "type": "COMPONENT_COMPLETION",
+  "change_description": null,
+  "target_type": null,
+  "input_variables": [
+    {
+      "name": "SubClient Name",
+      "variable": "subclient_name",
+      "description": "The Subclient name of the Commvault Backup",
+      "required": false,
+      "default_value": "#{target.settings.dynamicList['Subclient']}"
+    },
+    {
+      "name": "Commvault Action",
+      "variable": "action",
+      "description": "Commvault Action Supports 4 values \"SetPolicy\", \"RemovePolicy\", \"RunNow\", \"Restore\"",
+      "required": true,
+      "default_value": "SetPolicy"
+    },
+    {
+      "name": "Bypass Unsigned Certificate",
+      "variable": "bypass_Cert",
+      "description": "Bypass unsigned Certificate: {yes/no}",
+      "required": true,
+      "default_value": "Yes"
+    },
+    {
+      "name": "Client Name",
+      "variable": "client_name",
+      "description": "The Client Name of the Commvault Backup",
+      "required": false,
+      "default_value": "#{target.settings.dynamicList['Client Name']}"
+    },
+    {
+      "name": "Commvault Server URL",
+      "variable": "server_url",
+      "description": "URL of the commvault server",
+      "required": true,
+      "default_value": "https://server.local"
+    }
+  ],
+  "info_messages": [],
+  "system_version": "9.0.0 (1007160158)",
+  "steps": [
+    {
+      "name": "Commvault Add/Remove/RunNow Module",
+      "type": "EMBEDDED_SCRIPT",
+      "condition": null,
+      "data": {
+        "credentials": null,
+        "failure_action": "FAIL_STEP",
+        "script_contents": "<#\nCommvault - Add VM to Policy, Remove VM From Policy and Backup Now\nRequirements: \n* Commander 8.6.0 or higher\n* Advanced property \"embotics.workflow.script.credentials\" must be set to \"true\"\n* Requires Commvault PowerShell modules to be installed on the Commander Server\n    - https://documentation.commvault.com/hitachivantara/v11/essential/124529_installing_commvault_powershell_sdk_from_github_most_recent_version_of_module.html\n#>\n\n$username = (Get-Item Env:SELECTED_CREDENTIALS_USERNAME).value; \n$password = (Get-Item Env:SELECTED_CREDENTIALS_PASSWORD).value; \n$SERVER = \"#{inputVariable['server_url']}\"  \n$Client = \"#{inputVariable['client_name']}\"\n$Subclient = \"#{inputVariable['subclient_name']}\"\n$Target = \"#{target.deployedName}\"\n#Action Supports 4 values \"SetPolicy\", \"RemovePolicy\", \"RunNow\", \"Restore\"\n$Action = \"#{inputVariable['action']}\"\n# {Yes:No} to bypass unsigned cert on the target server.\n$BypassCert = \"#{inputVariable['bypass_Cert']}\" \n\n\n##########################################################################################\nif (!($UserName) -or !($Password) -or !($SERVER) -or !($Action) -or !($BypassCert)) {\n        Write-error \"Please provide the required information for Commvault\"\n        Exit 1\n        }\n\n#Check for Modules\n$Modules = \"Commvault.RESTSession\", \"Commvault.VirtualServer\"\nForEach ($Module in $Modules) {\n    if (Get-Module -ListAvailable -Name \"$Module\") {\n        Import-Module $Module\n        Write-host \"Module $Module is installed.\"\n    } \n    else {\n        Write-Error \"Module $module does not appear to be installed, Please install and run again.\"\n        Exit 1\n    }\n}  \n\n#Bypass Unsigned Cert for API connections. \nif ($BypassCert -eq \"yes\") {\n    Write-host \"- Ignoring invalid Certificate\" -ForegroundColor Green\n    add-type @\"\n   using System.Net;\n    using System.Security.Cryptography.X509Certificates;\n    public class TrustAllCertsPolicy : ICertificatePolicy {\n        public bool CheckValidationResult(\n            ServicePoint srvPoint, X509Certificate certificate,\n            WebRequest request, int certificateProblem) {\n            return true;\n        }\n    }\n\"@\n[System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy\n[Net.ServicePointManager]::Expect100Continue = $true\n[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12\n}\n \n#Create Credential object for Commvault \n$secpass = ConvertTo-SecureString \"$Password\" -AsPlainText -force\n$Cred= New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ($username,$secpass)\n\n#Connect To Instance\nConnect-CVServer -Credential $Cred -Server $Server\n\nif ($Action -eq \"SetPolicy\") {\n    #Add VM to Backup Policy\n    if(!($Client) -or !($Subclient) -or !($Target)){\n        Write-error \"Please provide commvault backup information\"\n        Exit 1\n    } \n    Write-host \"Running $action for VM $target\"\n    Add-CVVirtualMachine -ClientName $Client -SubclientName $Subclient -EntityType VM -Entity $Target\n\n}\nElseIf ($Action -eq \"RemovePolicy\") {\n    #Remove VM from Backup Policy\n    if(!($Client) -or !($Subclient) -or !($Target)){\n        Write-error \"Please provide commvault backup information\"\n        Exit 1\n    } \n    Write-host \"Running $action for VM $target\"\n    Remove-CVVirtualMachine -ClientName $Client -SubclientName $subclient -EntityType VM -Entity $Target\n\n}\nElseIf ($Action -eq \"RunNow\") {\n    #Backup VM Immediately\n    if(!($Client) -or !($Target)){\n        Write-error \"Please provide commvault backup information\"\n        Exit 1\n    } \n    Write-host \"Running $action for VM $target\"\n    Backup-CVVirtualMachine -ClientName $Client -Name $Target -Force\n}\nElseIf ($Action -eq \"Restore\") {\n    #Backup VM Immediately\n    if(!($Client) -or !($Target)){\n        Write-error \"Please provide commvault backup information\"\n        Exit 1\n    } \n    Write-host \"Running $action for VM $target\"\n    Restore-CVVirtualMachine -ClientName $client -SubclientName $Subclient -Name $Target -PowerOnAfterRestore -OverwriteExisting -Force\n}\nElse{\n    Write-host \"Action $action didn't not match any conditions to run agains the vm $target\"\n    Exit 1\n}",
+        "script_arguments": "",
+        "timeout": 300,
+        "executable": "powershell.exe",
+        "capture_output": true
+      }
+    }
+  ]
+}
