@@ -1,0 +1,50 @@
+{
+  "id": "",
+  "guid": "",
+  "name": "AWS - Enable Security HUB",
+  "description": null,
+  "type": "COMMAND",
+  "change_description": null,
+  "target_type": "MANAGEMENTSERVER",
+  "input_variables": [
+    {
+      "name": "AggregateRegions",
+      "variable": "AggregateRegions",
+      "description": null,
+      "required": false,
+      "default_value": "yes"
+    },
+    {
+      "name": "EnableSecurityHub",
+      "variable": "EnableSecurityHub",
+      "description": null,
+      "required": false,
+      "default_value": "yes"
+    },
+    {
+      "name": "RegionsToEnable",
+      "variable": "RegionsToEnable",
+      "description": null,
+      "required": false,
+      "default_value": null
+    }
+  ],
+  "info_messages": [],
+  "system_version": "9.0.0 (1007160158)",
+  "steps": [
+    {
+      "name": "AWS - Enable Security Hub",
+      "type": "EMBEDDED_SCRIPT",
+      "condition": "#{target.cloudAccount.type} -eq \"amazon_aws\"",
+      "data": {
+        "credentials": null,
+        "failure_action": "FAIL_STEP",
+        "script_contents": "<#\nAWS Security Hub findings report\nYou will need to enable security hub for your AWS Subscription and link the regions and/or other accounts as required.\n\nRequires AWS module - \"AWSPowershell.netcore\" and \n#>\n\n$AccessKey = (Get-Item Env:AWS_ACCESS_KEY_ID).value\n$SecretKey = (Get-Item Env:AWS_SECRET_ACCESS_KEY).value\n$AccountName = \"#{target.cloudAccount.name}\"\n$Account = \"#{target.remoteId}\"\n\nif(!($Accesskey) -or !($SecretKey) -or !($AccountName) -or !($Account)){\n        Write-error \"Please provide AWS Login information\"\n        Exit 1\n        } \n\n#Remove white space for older versions of powershell\n$Accesskey = $Accesskey -replace \"\\s\", \"\"\n$SecretKey = $SecretKey -replace \"\\s\", \"\"\n\n#Check for Module\n$Module = \"AWSPowerShell.NetCore\"\nif (Get-Module -ListAvailable -Name $Module) {\n    Import-Module AWSPowershell.netcore\n    Write-Debug \"Module $Module is installed.\"\n} \nelse {\n    Write-Error \"Module $module does not appear to be installed, Please install and run again.\"\n    Exit 1\n}\n\n# Login\nSet-AWSCredentials -AccessKey $AccessKey -SecretKey $SecretKey -StoreAs SnowCommander\n$Connect = Initialize-AWSDefaults -ProfileName SnowCommander\n\n# Enable Security Hub\n$EnableSecurityHub = \"#{inputVariable['EnableSecurityHub']}\"\n$AggregateRegions = \"#{inputVariable['AggregateRegions']}\"\n$SelectedRegions = \"#{inputVariable['RegionsToEnable']}\"\n$SelectedRegionsUpdate = @()\nif($SelectedRegions -like \"*,*\")\n{\n$SelectedRegionsUpdate += $SelectedRegions.split(\",\")\n}\n\nif($EnableSecurityHub -eq \"yes\")\n    {\n    ##########Set Default Region and enable Security Hub############\n\n    $region = (Get-DefaultAWSRegion).region  \n    Set-DefaultAWSRegion -Region $region \n    write-host \"Default region has been set to : $region\" \n    # enables Security Hub\n    \n    if($SelectedRegionsUpdate -ne $Null)\n        {\n            write-host \"Regions are not Null, Will enable Security HUB across your selections\"\n            foreach ($regionenablement in $SelectedRegionsUpdate)\n                {\n                write-host \"Enabling Security Hub for region [$regionenablement]\"\n                Enable-SHUBSecurityHub -Region $regionenablement\n                }\n        }\n    else\n        {\n            Enable-SHUBSecurityHub\n        }\n    if($AggregateRegions -eq \"yes\")\n        {\n            # Set default region  \n            $region = (Get-DefaultAWSRegion).region  \n            Set-DefaultAWSRegion -Region $region \n            write-host \"Default region has been set to : $region\" \n            # Set the regions to aggregate\n            write-host \"Setting aggregated region to [$region]\"\n            New-SHUBFindingAggregator -RegionLinkingMode ALL_REGIONS\n        }\n            \n        \n    }\n\n\n\n",
+        "script_arguments": "",
+        "timeout": 300,
+        "executable": "powershell.exe",
+        "capture_output": true
+      }
+    }
+  ]
+}
