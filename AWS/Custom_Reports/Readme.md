@@ -18,7 +18,7 @@
  
 
  ## Troubleshooting:
-If the Report Runs but it’s, empty or the workflow fails. Make sure the PowerShell Module is Installed,Report path is correct then Download the Commander diagnostic Package from ```Help > Support``` latest Entries are at the bottom of the file.
+If the Report Runs but it’s, empty or the workflow fails. Make sure the PowerShell Module is Installed, Report path is correct then Download the Commander diagnostic Package from ```Help > Support``` latest Entries are at the bottom of the commander.log file.
 
 _______ 
 
