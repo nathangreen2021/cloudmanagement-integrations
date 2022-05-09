@@ -1,0 +1,178 @@
+{
+  "id": "",
+  "guid": "",
+  "name": "Ansible AWX - Add Host to Inventory",
+  "description": "Adds a VM to the inventory specified in the blueprint",
+  "type": "COMPONENT_COMPLETION",
+  "change_description": null,
+  "target_type": null,
+  "input_variables": [
+    {
+      "name": "AWX Server",
+      "variable": "AWX Server",
+      "description": "ansible.domain.com",
+      "required": false,
+      "default_value": "ansible.domain.com"
+    },
+    {
+      "name": "instance_id",
+      "variable": "instance_id",
+      "description": "unique value to be added to Ansible AWX",
+      "required": true,
+      "default_value": "#{target.remoteId}"
+    },
+    {
+      "name": "description",
+      "variable": "description",
+      "description": null,
+      "required": false,
+      "default_value": "Created by Snow Commander. "
+    },
+    {
+      "name": "name",
+      "variable": "name",
+      "description": "Server Name",
+      "required": false,
+      "default_value": "#{target.deployedName}"
+    },
+    {
+      "name": "Application",
+      "variable": "Application",
+      "description": null,
+      "required": false,
+      "default_value": "WebGroup"
+    },
+    {
+      "name": "inventory",
+      "variable": "inventory",
+      "description": "This is the number value of the inventory to add this host to.",
+      "required": false,
+      "default_value": null
+    }
+  ],
+  "info_messages": [],
+  "system_version": "9.0.0 (1007160158)",
+  "steps": [
+    {
+      "name": "Add VM to Ansible AWX Inventory",
+      "type": "REST",
+      "condition": null,
+      "data": {
+        "success_codes": 201,
+        "credentials": null,
+        "result_filter": "",
+        "failure_action": "FAIL_STEP",
+        "rest_action": "POST",
+        "format": "JSON",
+        "header": "",
+        "body": "{ \n    \"name\":\"#{inputVariable['name']}\", \n    \"description\":\"#{inputVariable['description']}\", \n    \"inventory\":\"#{inputVariable['inventory']}\", \n    \"instance_id\":\"#{inputVariable['instance_id']}\" \n}",
+        "url": "http://#{inputVariable['AWX Server']}/api/v2/hosts/",
+        "capture_output": true
+      }
+    },
+    {
+      "name": "Get the VM Host ID from Ansible AWX",
+      "type": "REST",
+      "condition": null,
+      "data": {
+        "success_codes": 200,
+        "credentials": null,
+        "result_filter": ".*?\"id\"\\s?:\\s?([\\w\\s]+)",
+        "failure_action": "FAIL_STEP",
+        "rest_action": "GET",
+        "format": "JSON",
+        "header": "",
+        "body": "",
+        "url": "http://#{inputVariable['AWX Server']}/api/v2/hosts/?instance_id=#{inputVariable['instance_id']}",
+        "capture_output": true
+      }
+    },
+    {
+      "name": "Assign Host ID to variable",
+      "type": "CUSTOM_ATTRIBUTE",
+      "condition": null,
+      "data": {
+        "attributes": [
+          {
+            "name": "Ansible Host ID",
+            "value": "#{steps[2].output}"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Add Variables to Host",
+      "type": "REST",
+      "condition": null,
+      "data": {
+        "success_codes": 200,
+        "credentials": null,
+        "result_filter": "",
+        "failure_action": "FAIL_STEP",
+        "rest_action": "PUT",
+        "format": "JSON",
+        "header": "",
+        "body": "{\n    \"Owner\":\"#{request.primaryOwner.email}\",\n    \"IP Address\":\"#{target.ipAddress}\",\n    \"Application\":\"#{target.settings.customAttribute['Ansible Applications']}\",\n    \"Cloud Account\":\"#{target.cloudAccount.name}\",\n    \"Cloud Account Type\":\"#{target.cloudAccount.type}\",\n    \"vCPUs\":\"#{target.instanceType.vcpu}\",\n    \"Memory\":\"#{target.instanceType.memory.gb}\",\n    \"Guest OS Family\":\"#{target.osFamily}\"\n    \n}",
+        "url": "http://#{inputVariable['AWX Server']}/api/v2/hosts/#{steps[2].output}/variable_data/",
+        "capture_output": true
+      }
+    },
+    {
+      "name": "Get the Application ID",
+      "type": "REST",
+      "condition": null,
+      "data": {
+        "success_codes": 200,
+        "credentials": null,
+        "result_filter": ".*?\"id\"\\s?:\\s?([\\w\\s]+)",
+        "failure_action": "FAIL_STEP",
+        "rest_action": "GET",
+        "format": "JSON",
+        "header": "",
+        "body": "",
+        "url": "http://#{inputVariable['AWX Server']}/api/v2/job_templates?name=#{target.settings.customAttribute['Ansible Applications']}",
+        "capture_output": true
+      }
+    },
+    {
+      "name": "Assign Application ID to Custom Attribute",
+      "type": "CUSTOM_ATTRIBUTE",
+      "condition": null,
+      "data": {
+        "attributes": [
+          {
+            "name": "Ansible Application ID",
+            "value": "#{steps[5].output}"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Pause for 60 seconds for Server Registration",
+      "type": "WAIT",
+      "condition": null,
+      "data": {
+        "failure_action": "PROCEED_TO_NEXT_STEP",
+        "wait_for_type": "ELAPSED_TIME",
+        "timeout": 60
+      }
+    },
+    {
+      "name": "Add Host to Job Template",
+      "type": "REST",
+      "condition": null,
+      "data": {
+        "success_codes": 201,
+        "credentials": null,
+        "result_filter": "",
+        "failure_action": "FAIL_STEP",
+        "rest_action": "POST",
+        "format": "JSON",
+        "header": "",
+        "body": "{\n    \"limit\":\"#{inputVariable['name']}\"\n}",
+        "url": "http://#{inputVariable['AWX Server']}/api/v2/job_templates/#{steps[5].output}/launch/",
+        "capture_output": true
+      }
+    }
+  ]
+}

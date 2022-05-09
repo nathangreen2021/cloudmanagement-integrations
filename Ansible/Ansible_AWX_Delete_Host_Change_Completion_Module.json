@@ -1,0 +1,46 @@
+{
+  "id": "",
+  "guid": "",
+  "name": "Ansible AWX - Delete host",
+  "description": "Deletes Host from Inventory",
+  "type": "CHANGE_COMPLETION",
+  "change_description": null,
+  "target_type": null,
+  "input_variables": [
+    {
+      "name": "AWX Server",
+      "variable": "AWX Server",
+      "description": null,
+      "required": false,
+      "default_value": "ansible.domain.com"
+    },
+    {
+      "name": "Host ID",
+      "variable": "Host ID",
+      "description": null,
+      "required": true,
+      "default_value": "#{target.customAttribute['Ansible Host ID']}"
+    }
+  ],
+  "info_messages": [],
+  "system_version": "9.0.0 (1007160158)",
+  "steps": [
+    {
+      "name": "Delete VM from Ansible AWX",
+      "type": "REST",
+      "condition": null,
+      "data": {
+        "success_codes": 204,
+        "credentials": null,
+        "result_filter": "",
+        "failure_action": "FAIL_STEP",
+        "rest_action": "DELETE",
+        "format": "JSON",
+        "header": "",
+        "body": "",
+        "url": "http://#{inputVariable['AWX Server']}/api/v2/hosts/#{inputVariable['Host ID']}/",
+        "capture_output": true
+      }
+    }
+  ]
+}
