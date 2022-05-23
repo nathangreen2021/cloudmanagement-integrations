@@ -23,7 +23,7 @@ $OwnerName = "#{request.requester.email}"
 #$DebugPreference="Continue"
 $ErrorActionPreference = "Stop"
 
-if (!($RemedyAddress) -or !($WorkorderID) -or !($UserName) -or !($Password)) {
+if (!($RemedyAddress) -or !($UserName) -or !($Password)) {
     Write-error "Please provide Remedy Login Information"
     Exit 1
 }
