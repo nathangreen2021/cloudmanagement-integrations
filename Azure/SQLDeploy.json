@@ -9,6 +9,13 @@
                 "description": "The name of the VM"
             }
         },
+		"osDiskType": {
+        "defaultValue": "Premium_LRS",
+         "type": "String",
+         "metadata": {
+                "description": "OS Type"
+            }
+        },
         "virtualMachineSize": {
             "defaultValue": "Standard_D8s_v3",
             "type": "String",
@@ -151,6 +158,17 @@
             "name": "[variables('networkInterfaceName')]",
             "location": "[parameters('location')]",
             "dependsOn": [],
+			"tags": {
+            "Name": "[parameters('vmName')]-nic",
+            "Department": "[parameters('tagDept')]",
+            "Environment": "[parameters('tagEnvironment')]",
+            "Project": "[parameters('tagProject')]",
+            "Costcenter": "[parameters('tagCostCenter')]",
+            "OS": "[parameters('tagOs')]",
+            "Software": "[parameters('tagSoftware')]",
+            "Tier": "[parameters('tagTier')]",
+             "Matrix Service Request": "[parameters('tagServiceRequest')]"
+            },
             "properties": {
                 "ipConfigurations": [
                     {
@@ -163,7 +181,8 @@
 							}
                     }
                 ],
-                "enableAcceleratedNetworking": true
+                "enableAcceleratedNetworking": true,
+                "networkSecurityGroup": {}
             }
         },
         {
@@ -174,6 +193,17 @@
             "dependsOn": [
                 "[resourceId('Microsoft.Network/networkInterfaces', variables('networkInterfaceName'))]"
             ],
+			"tags": {
+            "Name": "[parameters('virtualMachineName')]",
+            "Department": "[parameters('tagDept')]",
+            "Environment": "[parameters('tagEnvironment')]",
+            "Project": "[parameters('tagProject')]",
+            "Costcenter": "[parameters('tagCostCenter')]",
+            "OS": "[parameters('tagOs')]",
+            "Software": "[parameters('tagSoftware')]",
+            "Tier": "[parameters('tagTier')]",
+             "Matrix Service Request": "[parameters('tagServiceRequest')]"
+            },
             "properties": {
                 "hardwareProfile": {
                     "vmSize": "[parameters('virtualMachineSize')]"
@@ -198,7 +228,7 @@
                     "osDisk": {
                         "createOption": "FromImage",
                         "managedDisk": {
-                            "storageAccountType": "Premium_LRS"
+                            "storageAccountType": "[parameters('osDiskType')]"
                         }
                     },
                     "imageReference": {
@@ -234,10 +264,28 @@
             "dependsOn": [
                 "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachineName'))]"
             ],
+			"tags": {
+            "Name": "[parameters('virtualMachineName')]",
+            "Department": "[parameters('tagDept')]",
+            "Environment": "[parameters('tagEnvironment')]",
+            "Project": "[parameters('tagProject')]",
+            "Costcenter": "[parameters('tagCostCenter')]",
+            "OS": "[parameters('tagOs')]",
+            "Software": "[parameters('tagSoftware')]",
+            "Tier": "[parameters('tagTier')]",
+             "Matrix Service Request": "[parameters('tagServiceRequest')]"
+            },
             "properties": {
                 "virtualMachineResourceId": "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachineName'))]",
                 "sqlManagement": "Full",
                 "sqlServerLicenseType": "PAYG",
+				"AutoPatchingSettings": {
+                    "Enable": false
+                },
+                "KeyVaultCredentialSettings": {
+                    "Enable": false,
+                    "CredentialName": ""
+                },
                 "storageConfigurationSettings": {
                     "diskConfigurationType": "[variables('diskConfigurationType')]",
                     "storageWorkloadType": "[parameters('storageWorkloadType')]",
@@ -251,7 +299,14 @@
                     },
                     "sqlTempDbSettings": {
                         "defaultFilePath": "[variables('tempDbPath')]"
-                    }
+                    },
+					 "ServerConfigurationsManagementSettings": {
+                    "SQLConnectivityUpdateSettings": {
+                        "ConnectivityType": "[parameters('sqlConnectivityType')]",
+                        "Port": "[parameters('sqlPortNumber')]",
+                        "SQLAuthUpdateUserName": "[parameters('sqlAuthenticationLogin')]",
+                        "SQLAuthUpdatePassword": "[parameters('sqlAuthenticationPassword')]"
+                    },
                 }
             }
         }
