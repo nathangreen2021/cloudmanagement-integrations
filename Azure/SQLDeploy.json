@@ -163,8 +163,7 @@
 							}
                     }
                 ],
-                "enableAcceleratedNetworking": true,
-                "networkSecurityGroup": {}
+                "enableAcceleratedNetworking": true
             }
         },
         {
