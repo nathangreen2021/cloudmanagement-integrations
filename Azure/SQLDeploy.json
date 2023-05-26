@@ -1,0 +1,266 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualMachineName": {
+            "defaultValue": "myVM",
+            "type": "String",
+            "metadata": {
+                "description": "The name of the VM"
+            }
+        },
+        "virtualMachineSize": {
+            "defaultValue": "Standard_D8s_v3",
+            "type": "String",
+            "metadata": {
+                "description": "The virtual machine size."
+            }
+        },
+        "existingVirtualNetworkName": {
+            "type": "String",
+            "metadata": {
+                "description": "Specify the name of an existing VNet in the same resource group"
+            }
+        },
+        "existingVnetResourceGroup": {
+            "defaultValue": "[resourceGroup().name]",
+            "type": "String",
+            "metadata": {
+                "description": "Specify the resrouce group of the existing VNet"
+            }
+        },
+        "existingSubnetName": {
+            "type": "String",
+            "metadata": {
+                "description": "Specify the name of the Subnet Name"
+            }
+        },
+        "imageOffer": {
+            "defaultValue": "sql2019-ws2019",
+            "allowedValues": [
+                "sql2019-ws2019",
+                "sql2017-ws2019",
+                "SQL2017-WS2016",
+                "SQL2016SP1-WS2016",
+                "SQL2016SP2-WS2016",
+                "SQL2014SP3-WS2012R2",
+                "SQL2014SP2-WS2012R2"
+            ],
+            "type": "String",
+            "metadata": {
+                "description": "Windows Server and SQL Offer"
+            }
+        },
+        "sqlSku": {
+            "defaultValue": "Standard",
+            "allowedValues": [
+                "Standard",
+                "Enterprise",
+                "SQLDEV",
+                "Web",
+                "Express"
+            ],
+            "type": "String",
+            "metadata": {
+                "description": "SQL Server Sku"
+            }
+        },
+        "adminUsername": {
+            "type": "String",
+            "metadata": {
+                "description": "The admin user name of the VM"
+            }
+        },
+        "adminPassword": {
+            "type": "SecureString",
+            "metadata": {
+                "description": "The admin password of the VM"
+            }
+        },
+        "storageWorkloadType": {
+            "defaultValue": "General",
+            "allowedValues": [
+                "General",
+                "OLTP",
+                "DW"
+            ],
+            "type": "String",
+            "metadata": {
+                "description": "SQL Server Workload Type"
+            }
+        },
+        "sqlDataDisksCount": {
+            "defaultValue": 1,
+            "minValue": 1,
+            "maxValue": 8,
+            "type": "Int",
+            "metadata": {
+                "description": "Amount of data disks (1TB each) for SQL Data files"
+            }
+        },
+        "dataPath": {
+            "defaultValue": "F:\\SQLData",
+            "type": "String",
+            "metadata": {
+                "description": "Path for SQL Data files. Please choose drive letter from F to Z, and other drives from A to E are reserved for system"
+            }
+        },
+        "sqlLogDisksCount": {
+            "defaultValue": 1,
+            "minValue": 1,
+            "maxValue": 8,
+            "type": "Int",
+            "metadata": {
+                "description": "Amount of data disks (1TB each) for SQL Log files"
+            }
+        },
+        "logPath": {
+            "defaultValue": "G:\\SQLLog",
+            "type": "String",
+            "metadata": {
+                "description": "Path for SQL Log files. Please choose drive letter from F to Z and different than the one used for SQL data. Drive letter from A to E are reserved for system"
+            }
+        },
+        "location": {
+            "defaultValue": "[resourceGroup().location]",
+            "type": "String",
+            "metadata": {
+                "description": "Location for all resources."
+            }
+        }
+    },
+    "variables": {
+        "networkInterfaceName": "[format('{0}-nic', parameters('virtualMachineName'))]",
+        "diskConfigurationType": "NEW",
+        "subnetRef": "[resourceId(parameters('existingVnetResourceGroup'), 'Microsoft.Network/virtualNetWorks/subnets', parameters('existingVirtualNetworkName'), parameters('existingSubnetName'))]",
+        "dataDisksLuns": "[range(0, parameters('sqlDataDisksCount'))]",
+        "logDisksLuns": "[range(parameters('sqlDataDisksCount'), parameters('sqlLogDisksCount'))]",
+        "dataDisks": {
+            "createOption": "Empty",
+            "caching": "ReadOnly",
+            "writeAcceleratorEnabled": false,
+            "storageAccountType": "Premium_LRS",
+            "diskSizeGB": 1023
+        },
+        "tempDbPath": "D:\\SQLTemp"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2022-01-01",
+            "name": "[variables('networkInterfaceName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "subnet": {
+                                "id": "[variables('subnetRef')]"
+                            },
+                            "privateIPAllocationMethod": "Dynamic"
+							}
+                    }
+                ],
+                "enableAcceleratedNetworking": true,
+                "networkSecurityGroup": {}
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2022-03-01",
+            "name": "[parameters('virtualMachineName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkInterfaces', variables('networkInterfaceName'))]"
+            ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[parameters('virtualMachineSize')]"
+                },
+                "storageProfile": {
+                    "copy": [
+                        {
+                            "name": "dataDisks",
+                            "count": "[length(range(0, add(parameters('sqlDataDisksCount'), parameters('sqlLogDisksCount'))))]",
+                            "input": {
+                                "lun": "[range(0, add(parameters('sqlDataDisksCount'), parameters('sqlLogDisksCount')))[copyIndex('dataDisks')]]",
+                                "createOption": "[variables('dataDisks').createOption]",
+                                "caching": "[if(greaterOrEquals(range(0, add(parameters('sqlDataDisksCount'), parameters('sqlLogDisksCount')))[copyIndex('dataDisks')], parameters('sqlDataDisksCount')), 'None', variables('dataDisks').caching)]",
+                                "writeAcceleratorEnabled": "[variables('dataDisks').writeAcceleratorEnabled]",
+                                "diskSizeGB": "[variables('dataDisks').diskSizeGB]",
+                                "managedDisk": {
+                                    "storageAccountType": "[variables('dataDisks').storageAccountType]"
+                                }
+                            }
+                        }
+                    ],
+                    "osDisk": {
+                        "createOption": "FromImage",
+                        "managedDisk": {
+                            "storageAccountType": "Premium_LRS"
+                        }
+                    },
+                    "imageReference": {
+                        "publisher": "MicrosoftSQLServer",
+                        "offer": "[parameters('imageOffer')]",
+                        "sku": "[parameters('sqlSku')]",
+                        "version": "latest"
+                    }
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('networkInterfaceName'))]"
+                        }
+                    ]
+                },
+                "osProfile": {
+                    "computerName": "[parameters('virtualMachineName')]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]",
+                    "windowsConfiguration": {
+                        "enableAutomaticUpdates": true,
+                        "provisionVMAgent": true
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.SqlVirtualMachine/sqlVirtualMachines",
+            "apiVersion": "2022-07-01-preview",
+            "name": "[parameters('virtualMachineName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachineName'))]"
+            ],
+            "properties": {
+                "virtualMachineResourceId": "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachineName'))]",
+                "sqlManagement": "Full",
+                "sqlServerLicenseType": "PAYG",
+                "storageConfigurationSettings": {
+                    "diskConfigurationType": "[variables('diskConfigurationType')]",
+                    "storageWorkloadType": "[parameters('storageWorkloadType')]",
+                    "sqlDataSettings": {
+                        "luns": "[variables('dataDisksLuns')]",
+                        "defaultFilePath": "[parameters('dataPath')]"
+                    },
+                    "sqlLogSettings": {
+                        "luns": "[variables('logDisksLuns')]",
+                        "defaultFilePath": "[parameters('logPath')]"
+                    },
+                    "sqlTempDbSettings": {
+                        "defaultFilePath": "[variables('tempDbPath')]"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "adminUsername": {
+            "type": "String",
+            "value": "[parameters('adminUsername')]"
+        }
+    }
+}
