@@ -143,6 +143,30 @@
                 "description": "Path for SQL Log files. Please choose drive letter from F to Z and different than the one used for SQL data. Drive letter from A to E are reserved for system"
             }
         },
+        "tagDept": {
+            "type": "String"
+        },
+        "tagEnvironment": {
+            "type": "String"
+        },
+        "tagProject": {
+            "type": "String"
+        },
+        "tagCostCenter": {
+            "type": "String"
+        },
+        "tagOs": {
+            "type": "String"
+        },
+        "tagSoftware": {
+            "type": "String"
+        },
+        "tagTier": {
+            "type": "String"
+        },
+        "tagServiceRequest": {
+            "type": "String"
+        },
         "location": {
             "defaultValue": "[resourceGroup().location]",
             "type": "String",
@@ -174,7 +198,7 @@
             "location": "[parameters('location')]",
             "dependsOn": [],
 			"tags": {
-            "Name": "[parameters('vmName')]-nic",
+            "Name": "[variables('networkInterfaceName')]",
             "Department": "[parameters('tagDept')]",
             "Environment": "[parameters('tagEnvironment')]",
             "Project": "[parameters('tagProject')]",
@@ -324,10 +348,11 @@
                         "Port": "[parameters('sqlPortNumber')]",
                         "SQLAuthUpdateUserName": "[parameters('sqlAuthenticationLogin')]",
                         "SQLAuthUpdatePassword": "[parameters('sqlAuthenticationPassword')]"
-                    },
+                    }
                 }
             }
         }
+    }
     ],
     "outputs": {
         "adminUsername": {
