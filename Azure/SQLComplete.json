@@ -232,10 +232,6 @@
             "sku": {
                 "name": "[parameters('dataDiskResources1')[copyIndex()].sku]"
             },
-            "copy": {
-                "name": "managedDiskResources",
-                "count": "[length(parameters('dataDiskResources1'))]"
-            },
             "zones": "[if(contains(parameters('dataDiskResources1')[copyIndex()].sku, '_ZRS'), json('null'), array(parameters('virtualMachine1Zone')))]",
             "tags": {
                 "Matrix Service Request": "",
@@ -280,7 +276,8 @@
                             "name": "dataDisks",
                             "count": "[length(parameters('dataDiskResources1'))]",
                             "input": {
-                                "lun": "[range(0, add(parameters('sqlDataDisksCount'), parameters('sqlLogDisksCount')))[copyIndex('dataDisks')]]",
+                                "lun": "[copyIndex('dataDisks')]",
+                                "name": "[concat(parameters('virtualMachineName1'), '-DataDisk-', copyIndex('dataDisks'))]",
                                 "createOption": "[variables('dataDisks1').createOption]",
                                 "caching": "ReadOnly",
                                 "diskSizeGB": "[parameters('sqlDataDiskSize')]",
