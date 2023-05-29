@@ -152,6 +152,9 @@
         "isLPIMEnabled": {
             "type": "bool"
         },
+        "storageAccountType": {
+            "type": "string"
+        },
         "isIFIEnabled": {
             "type": "bool"
         }
@@ -163,7 +166,7 @@
             "createOption": "Empty",
             "caching": "ReadOnly",
             "writeAcceleratorEnabled": false,
-            "storageAccountType": "[parameters('diagnosticsStorageAccountName')]",
+            "storageAccountType": "[parameters('storageAccountType')]",
         },
         "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]"
     },
