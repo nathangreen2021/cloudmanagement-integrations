@@ -262,7 +262,7 @@
                             "input": {
                                 "lun": 0,
                                 "createOption": "[variables('dataDisks1').createOption]",
-                                "caching": "Read Only",
+                                "caching": "ReadOnly",
                                 "diskSizeGB": "[parameters('sqlDataDiskSize')]",
                                 "managedDisk": {
                                     "storageAccountType": "[variables('dataDisks1').storageAccountType]"
