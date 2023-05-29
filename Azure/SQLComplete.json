@@ -64,7 +64,7 @@
             "type": "string"
         },
          "sqlLogDisksCount": {
-         "type": "string"
+         "type": "int"
         },
         "diagnosticsStorageAccountId": {
             "type": "string"
