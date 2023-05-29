@@ -166,6 +166,7 @@
             "createOption": "Empty",
             "caching": "ReadOnly",
             "writeAcceleratorEnabled": false,
+            "deleteOption": "Detach",
             "storageAccountType": "[parameters('storageAccountType')]",
         },
         "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]"
@@ -266,7 +267,7 @@
                                 "managedDisk": {
                                     "storageAccountType": "[variables('dataDisks1').storageAccountType]"
                                 },
-                                "deleteOption": "[parameters('dataDisks1')[copyIndex('dataDisks')].deleteOption]",
+                                "deleteOption": "[variables('dataDisks1')[copyIndex('dataDisks')].deleteOption]",
                                 "writeAcceleratorEnabled": "[variables('dataDisks1')[copyIndex('dataDisks')].writeAcceleratorEnabled]"
                             }
                         }
