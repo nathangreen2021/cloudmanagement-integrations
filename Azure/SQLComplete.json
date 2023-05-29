@@ -224,27 +224,6 @@
             }
         },
         {
-            "name": "[parameters('dataDiskResources1')[copyIndex()].name]",
-            "type": "Microsoft.Compute/disks",
-            "apiVersion": "2022-03-02",
-            "location": "[parameters('location')]",
-            "properties": "[parameters('dataDiskResources1')[copyIndex()].properties]",
-            "sku": {
-                "name": "[parameters('dataDiskResources1')[copyIndex()].sku]"
-            },
-            "zones": "[if(contains(parameters('dataDiskResources1')[copyIndex()].sku, '_ZRS'), json('null'), array(parameters('virtualMachine1Zone')))]",
-            "tags": {
-                "Matrix Service Request": "",
-                "Costcenter": "",
-                "Department": "",
-                "environment": "",
-                "Project": "",
-                "Software": "",
-                "Tier": "",
-                "OS": ""
-            }
-        },
-        {
             "name": "[parameters('virtualMachineName1')]",
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2022-03-01",
@@ -277,7 +256,6 @@
                             "count": "[length(parameters('dataDiskResources1'))]",
                             "input": {
                                 "lun": "[range(0, add(parameters('sqlDataDisksCount'), parameters('sqlLogDisksCount')))[copyIndex('dataDisks')]]",
-                                "name": "[concat(parameters('virtualMachineName1'), '-DataDisk-', copyIndex('dataDisks'))]",
                                 "createOption": "[variables('dataDisks1').createOption]",
                                 "caching": "ReadOnly",
                                 "diskSizeGB": "[parameters('sqlDataDiskSize')]",
