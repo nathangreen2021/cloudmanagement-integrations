@@ -258,7 +258,7 @@
                                 "name": "[concat(parameters('virtualMachineName1'), '-Disk', padLeft(copyIndex('dataDisks'), 2, '0'))]",
                                 "createOption": "[variables('dataDisks1').createOption]",
                                 "caching": "ReadOnly",
-                                "diskSizeGB": "[parameters('dataDiskResources1')[copyIndex()].properties.diskSizeGB]",
+                                "diskSizeGB": "[parameters('sqlDataDiskSize')]",
                                 "managedDisk": {
                                     "storageAccountType": "[variables('dataDisks1').storageAccountType]"
                                 },
