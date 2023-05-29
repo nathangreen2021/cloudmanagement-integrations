@@ -278,7 +278,7 @@
                     "copy": [
                         {
                             "name": "dataDisks",
-                            "count": "[length(parameters('dataDisks1'))]",
+                            "count": "[length(parameters('dataDiskResources1'))]",
                             "input": {
                                 "lun": "[range(0, add(parameters('sqlDataDisksCount'), parameters('sqlLogDisksCount')))[copyIndex('dataDisks')]]",
                                 "createOption": "[variables('dataDisks1').createOption]",
