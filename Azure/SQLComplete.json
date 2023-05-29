@@ -247,7 +247,7 @@
                             "name": "dataDisks",
                             "count": "[length(parameters('dataDisks1'))]",
                             "input": {
-                                "lun": "[parameters('dataDisks1')[copyIndex('dataDisks')].lun]",
+                                "lun": "[range(0, add(parameters('sqlStorageDisksCount')))[copyIndex('dataDisks')]]",
                                 "createOption": "[parameters('dataDisks1')[copyIndex('dataDisks')].createOption]",
                                 "caching": "[parameters('dataDisks1')[copyIndex('dataDisks')].caching]",
                                 "diskSizeGB": "[parameters('dataDisks1')[copyIndex('dataDisks')].diskSizeGB]",
