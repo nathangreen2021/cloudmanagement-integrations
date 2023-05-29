@@ -224,19 +224,19 @@
             }
         },
         {
-            "name": "[parameters('dataDisks1')[copyIndex()].name]",
+            "name": "[parameters('dataDiskResources1')[copyIndex()].name]",
             "type": "Microsoft.Compute/disks",
             "apiVersion": "2022-03-02",
             "location": "[parameters('location')]",
-            "properties": "[parameters('dataDisks1')[copyIndex()].properties]",
+            "properties": "[parameters('dataDiskResources1')[copyIndex()].properties]",
             "sku": {
-                "name": "[parameters('dataDisks1')[copyIndex()].sku]"
+                "name": "[parameters('dataDiskResources1')[copyIndex()].sku]"
             },
             "copy": {
                 "name": "managedDiskResources",
-                "count": "[length(parameters('dataDisks1'))]"
+                "count": "[length(parameters('dataDiskResources1'))]"
             },
-            "zones": "[if(contains(parameters('dataDisks1')[copyIndex()].sku, '_ZRS'), json('null'), array(parameters('virtualMachine1Zone')))]",
+            "zones": "[if(contains(parameters('dataDiskResources1')[copyIndex()].sku, '_ZRS'), json('null'), array(parameters('virtualMachine1Zone')))]",
             "tags": {
                 "Matrix Service Request": "",
                 "Costcenter": "",
