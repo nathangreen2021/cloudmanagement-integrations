@@ -156,7 +156,7 @@
     "variables": {
         "vnetId": "[parameters('virtualNetworkId')]",
         "vnetName": "[last(split(variables('vnetId'), '/'))]",
-        "dataDisks": {
+        "dataDisks1": {
             "createOption": "Empty",
             "caching": "ReadOnly",
             "writeAcceleratorEnabled": false,
@@ -254,7 +254,7 @@
                             "count": "[length(parameters('dataDisks1'))]",
                             "input": {
                                 "lun": 0,
-                                "createOption": "Empty",
+                                "createOption": "[variables('dataDisks1').createOption]",
                                 "caching": "Read Only",
                                 "diskSizeGB": "[parameters('dataDisks1')[copyIndex('dataDisks')].diskSizeGB]",
                                 "managedDisk": {
