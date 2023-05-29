@@ -267,8 +267,8 @@
                                 "managedDisk": {
                                     "storageAccountType": "[variables('dataDisks1').storageAccountType]"
                                 },
-                                "deleteOption": "[variables('dataDisks1')[copyIndex('dataDisks')].deleteOption]",
-                                "writeAcceleratorEnabled": "[variables('dataDisks1')[copyIndex('dataDisks')].writeAcceleratorEnabled]"
+                                "deleteOption": "[variables('dataDisks1').deleteOption]",
+                                "writeAcceleratorEnabled": "[variables('dataDisks1').writeAcceleratorEnabled]"
                             }
                         }
                     ]
