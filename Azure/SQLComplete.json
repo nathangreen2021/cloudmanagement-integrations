@@ -276,7 +276,7 @@
                             "name": "dataDisks",
                             "count": "[length(parameters('dataDiskResources1'))]",
                             "input": {
-                                "lun": "[copyIndex('dataDisks')]",
+                                "lun": "[range(0, add(parameters('sqlDataDisksCount'), parameters('sqlLogDisksCount')))[copyIndex('dataDisks')]]",
                                 "name": "[concat(parameters('virtualMachineName1'), '-DataDisk-', copyIndex('dataDisks'))]",
                                 "createOption": "[variables('dataDisks1').createOption]",
                                 "caching": "ReadOnly",
