@@ -166,8 +166,8 @@
     "variables": {
         "vnetId": "[parameters('virtualNetworkId')]",
         "vnetName": "[last(split(variables('vnetId'), '/'))]",
-        "dataDisksLuns": "[array(range(0 ,parameters('sqlStorageDisksCount')))]",
-          "logDisksLuns": "[concat(variables('dataDisksLuns'), range(parameters('sqlStorageDisksCount'), add(parameters('sqlStorageDisksCount'), parameters('sqlLogDisksCount'))))]",
+        "dataDisksLuns": "[parameters('dataDisksLuns')]",
+          "logDisksLuns": "[parameters('logDisksLuns')]",
         "dataDisks1": {
             "createOption": "Empty",
             "caching": "ReadOnly",
