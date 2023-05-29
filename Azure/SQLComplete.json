@@ -20,6 +20,7 @@
         "virtualMachineName": {
             "type": "string"
         },
+        
         "virtualMachineName1": {
             "type": "string"
         },
@@ -162,6 +163,8 @@
     "variables": {
         "vnetId": "[parameters('virtualNetworkId')]",
         "vnetName": "[last(split(variables('vnetId'), '/'))]",
+        "dataDisksLuns": "[array(range(0 ,parameters('sqlDataDisksCount')))]",
+        "logDisksLuns": "[array(range(parameters('sqlDataDisksCount'), parameters('sqlLogDisksCount')))]"
         "dataDisks1": {
             "createOption": "Empty",
             "caching": "ReadOnly",
