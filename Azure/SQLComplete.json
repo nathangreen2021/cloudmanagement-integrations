@@ -20,7 +20,24 @@
         "virtualMachineName": {
             "type": "string"
         },
-        
+         "sqlLogDisksCount": {
+            "defaultValue": 1,
+            "minValue": 1,
+            "maxValue": 8,
+            "type": "Int",
+            "metadata": {
+                "description": "Amount of data disks (1TB each) for SQL Log files"
+            }
+        },
+          "sqlDataDisksCount": {
+            "defaultValue": 1,
+            "minValue": 1,
+            "maxValue": 8,
+            "type": "Int",
+            "metadata": {
+                "description": "Amount of data disks (1TB each) for SQL Log files"
+            }
+        },
         "virtualMachineName1": {
             "type": "string"
         },
