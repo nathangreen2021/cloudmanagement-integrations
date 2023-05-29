@@ -46,14 +46,14 @@
             "defaultValue": "sql2019-ws2019",
             "allowedValues": [
                 "sql2019-ws2019",
-		"SQL2019-WS2022",
-		"SQL2016-WS2019",
+		"sql2019-ws2022",
+		"sql2016-ws2019",
                 "sql2017-ws2019",
-                "SQL2017-WS2016",
-                "SQL2016SP1-WS2016",
-                "SQL2016SP2-WS2016",
-                "SQL2014SP3-WS2012R2",
-                "SQL2014SP2-WS2012R2"
+                "sql2017-ws2016",
+                "sql2016SP1-ws2016",
+                "sql2016SP2-ws2016",
+                "sql2014SP3-ws2012R2",
+                "sql2014SP2-ws2012R2"
             ],
             "type": "String",
             "metadata": {
