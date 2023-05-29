@@ -46,6 +46,8 @@
             "defaultValue": "sql2019-ws2019",
             "allowedValues": [
                 "sql2019-ws2019",
+		"SQL2019-WS2022",
+		"SQL2016-WS2019",
                 "sql2017-ws2019",
                 "SQL2017-WS2016",
                 "SQL2016SP1-WS2016",
