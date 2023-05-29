@@ -260,7 +260,7 @@
                             "name": "dataDisks",
                             "count": "[length(parameters('dataDisks1'))]",
                             "input": {
-                                "lun": "[copyIndex(dataDisks)]",
+                                "lun": 0,
                                 "createOption": "[variables('dataDisks1').createOption]",
                                 "caching": "ReadOnly",
                                 "diskSizeGB": "[parameters('sqlDataDiskSize')]",
