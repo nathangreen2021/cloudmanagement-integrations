@@ -288,7 +288,7 @@
                     "adminUsername": "[parameters('adminUsername')]",
                     "adminPassword": "[parameters('adminPassword')]",
                     "windowsConfiguration": {
-                        "enableAutomaticUpdates": true,
+                        "enableAutomaticUpdates": false,
                         "provisionVmAgent": true,
                         "patchSettings": {
                             "enableHotpatching": "[parameters('enableHotpatching')]",
