@@ -338,11 +338,11 @@
                     "DiskConfigurationType": "[parameters('sqlStorageDisksConfigurationType')]",
                     "StorageWorkloadType": "[parameters('sqlStorageWorkloadType')]",
                     "SQLDataSettings": {
-                        "LUNs": "[parameters('dataDisksLUNs')]",
+                        "LUNs": "[variables('dataDisksLUNs')]",
                         "DefaultFilePath": "[parameters('dataPath')]"
                     },
                     "SQLLogSettings": {
-                        "LUNs": "[parameters('logDisksLUNs')]",
+                        "LUNs": "[variables('logDisksLUNs')]",
                         "DefaultFilePath": "[parameters('logPath')]"
                     },
                     "SQLTempDbSettings": {
