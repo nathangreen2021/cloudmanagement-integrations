@@ -264,7 +264,7 @@
                                 "caching": "Read Only",
                                 "diskSizeGB": "[parameters('sqlDataDiskSize')]",
                                 "managedDisk": {
-                                    "storageAccountType": "[parameters('dataDisks1')[copyIndex('dataDisks')].storageAccountType]"
+                                    "storageAccountType": "[parameters('storageAccountType')]"
                                 },
                                 "deleteOption": "[parameters('dataDisks1')[copyIndex('dataDisks')].deleteOption]",
                                 "writeAcceleratorEnabled": "[parameters('dataDisks1')[copyIndex('dataDisks')].writeAcceleratorEnabled]"
