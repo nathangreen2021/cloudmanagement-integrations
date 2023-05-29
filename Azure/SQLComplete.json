@@ -143,6 +143,9 @@
         "minServerMemoryMB": {
             "type": "int"
         },
+        "sqlDataDiskSize": {
+            "type": "int"
+        },
         "maxServerMemoryMB": {
             "type": "int"
         },
@@ -256,7 +259,7 @@
                                 "lun": 0,
                                 "createOption": "[variables('dataDisks1').createOption]",
                                 "caching": "Read Only",
-                                "diskSizeGB": "[parameters('dataDisks1')[copyIndex('dataDisks')].diskSizeGB]",
+                                "diskSizeGB": "[parameters('sqlDataDiskSize')]",
                                 "managedDisk": {
                                     "id": "[coalesce(parameters('dataDisks1')[copyIndex('dataDisks')].id, if(equals(parameters('dataDisks1')[copyIndex('dataDisks')].name, json('null')), json('null'), resourceId('Microsoft.Compute/disks', parameters('dataDisks1')[copyIndex('dataDisks')].name)))]",
                                     "storageAccountType": "[parameters('dataDisks1')[copyIndex('dataDisks')].storageAccountType]"
