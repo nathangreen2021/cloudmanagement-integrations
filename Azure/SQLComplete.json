@@ -156,6 +156,12 @@
     "variables": {
         "vnetId": "[parameters('virtualNetworkId')]",
         "vnetName": "[last(split(variables('vnetId'), '/'))]",
+        "dataDisks": {
+            "createOption": "Empty",
+            "caching": "ReadOnly",
+            "writeAcceleratorEnabled": false,
+            "storageAccountType": "[parameters('diagnosticsStorageAccountName')]",
+        },
         "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]"
     },
     "resources": [
@@ -248,8 +254,8 @@
                             "count": "[length(parameters('dataDisks1'))]",
                             "input": {
                                 "lun": 0,
-                                "createOption": "[parameters('dataDisks1')[copyIndex('dataDisks')].createOption]",
-                                "caching": "[parameters('dataDisks1')[copyIndex('dataDisks')].caching]",
+                                "createOption": "Empty",
+                                "caching": "Read Only",
                                 "diskSizeGB": "[parameters('dataDisks1')[copyIndex('dataDisks')].diskSizeGB]",
                                 "managedDisk": {
                                     "id": "[coalesce(parameters('dataDisks1')[copyIndex('dataDisks')].id, if(equals(parameters('dataDisks1')[copyIndex('dataDisks')].name, json('null')), json('null'), resourceId('Microsoft.Compute/disks', parameters('dataDisks1')[copyIndex('dataDisks')].name)))]",
