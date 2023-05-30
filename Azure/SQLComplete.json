@@ -173,6 +173,27 @@
         "storageAccountType": {
             "type": "string"
         },
+                "tagDept": {
+            "type": "String"
+        },
+        "tagEnvironment": {
+            "type": "String"
+        },
+        "tagProject": {
+            "type": "String"
+        },
+        "tagCostCenter": {
+            "type": "String"
+        },
+        "tagOs": {
+            "type": "String"
+        },
+        "tagSoftware": {
+            "type": "String"
+        },
+        "tagTier": {
+            "type": "String"
+        },
         "isIFIEnabled": {
             "type": "bool"
         }
