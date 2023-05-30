@@ -162,7 +162,7 @@
             "type": "int"
         },
         "sqlDataDiskSize": {
-            "type": "int"
+            "type": "array"
         },
         "maxServerMemoryMB": {
             "type": "int"
@@ -259,7 +259,7 @@
                                 "name": "[concat(parameters('VirtualMachineName1'), '-DataDisk', string(add(copyIndex('dataDisks'),1)))]",
                                 "createOption": "[variables('dataDisks1').createOption]",
                                 "caching": "ReadOnly",
-                                "diskSizeGB": "[parameters('sqlDataDiskSize')]",
+                                "diskSizeGB": "[parameters('sqlDataDiskSize')[copyIndex('dataDisks')]]",
                                 "managedDisk": {
                                     "storageAccountType": "[variables('dataDisks1').storageAccountType]"
                                 },
