@@ -237,6 +237,7 @@
                 },
                 "storageProfile": {
                     "osDisk": {
+                        "name": "[concat(parameters('VirtualMachineName1'), 'osdisk-0')]"
                         "createOption": "fromImage",
                         "managedDisk": {
                             "storageAccountType": "[parameters('osDiskType')]"
