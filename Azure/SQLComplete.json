@@ -277,8 +277,8 @@
                     },
                     "imageReference": {
                         "publisher": "microsoftsqlserver",
-                        "offer": "sql2022-ws2022",
-                        "sku": "standard-gen2",
+                        "offer": "[parameters('sqlVersions')]",
+                        "sku": "[parameters('sqlSKU')]",
                         "version": "latest"
                     },
                     "copy": [
