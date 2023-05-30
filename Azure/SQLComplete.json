@@ -62,6 +62,12 @@
         "virtualMachineSize": {
             "type": "string"
         },
+       "sqlVersions": {
+            "type": "string"
+        },
+        "sqlSKU": {
+            "type": "string"
+        },
         "nicDeleteOption": {
             "type": "string"
         },
