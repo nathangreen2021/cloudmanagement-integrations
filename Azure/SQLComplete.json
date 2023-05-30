@@ -234,14 +234,15 @@
                 "enableAcceleratedNetworking": "[parameters('enableAcceleratedNetworking')]"
             },
             "tags": {
-                "Matrix Service Request": "",
-                "Costcenter": "",
-                "Department": "",
-                "environment": "",
-                "Project": "",
-                "Software": "",
-                "Tier": "",
-                "OS": ""
+              "Name": "[parameters('virtualMachineName')]",
+            "Department": "[parameters('tagDept')]",
+            "Environment": "[parameters('tagEnvironment')]",
+            "Project": "[parameters('tagProject')]",
+            "Costcenter": "[parameters('tagCostCenter')]",
+            "OS": "[parameters('tagOs')]",
+            "Software": "[parameters('tagSoftware')]",
+            "Tier": "[parameters('tagTier')]",
+            "Matrix Service Request": "[parameters('tagServiceRequest')]"
             }
         },
         {
@@ -321,14 +322,15 @@
                 }
             },
             "tags": {
-                "Matrix Service Request": "",
-                "Costcenter": "",
-                "Department": "",
-                "environment": "",
-                "Project": "",
-                "Software": "",
-                "Tier": "",
-                "OS": ""
+             "Name": "[parameters('virtualMachineName')]",
+            "Department": "[parameters('tagDept')]",
+            "Environment": "[parameters('tagEnvironment')]",
+            "Project": "[parameters('tagProject')]",
+            "Costcenter": "[parameters('tagCostCenter')]",
+            "OS": "[parameters('tagOs')]",
+            "Software": "[parameters('tagSoftware')]",
+            "Tier": "[parameters('tagTier')]",
+             "Matrix Service Request": "[parameters('tagServiceRequest')]"
             },
             "zones": [
                 "[parameters('virtualMachine1Zone')]"
@@ -394,14 +396,15 @@
                 "[resourceId('Microsoft.Compute/virtualMachines', parameters('sqlVirtualMachineName'))]"
             ],
             "tags": {
-                "Matrix Service Request": "",
-                "Costcenter": "",
-                "Department": "",
-                "environment": "",
-                "Project": "",
-                "Software": "",
-                "Tier": "",
-                "OS": ""
+            "Name": "[parameters('virtualMachineName')]",
+            "Department": "[parameters('tagDept')]",
+            "Environment": "[parameters('tagEnvironment')]",
+            "Project": "[parameters('tagProject')]",
+            "Costcenter": "[parameters('tagCostCenter')]",
+            "OS": "[parameters('tagOs')]",
+            "Software": "[parameters('tagSoftware')]",
+            "Tier": "[parameters('tagTier')]",
+             "Matrix Service Request": "[parameters('tagServiceRequest')]"
             }
         }
     ],
