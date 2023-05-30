@@ -191,6 +191,9 @@
         "tagSoftware": {
             "type": "String"
         },
+       "tagServiceRequest": {
+       "type": "String"
+        },
         "tagTier": {
             "type": "String"
         },
