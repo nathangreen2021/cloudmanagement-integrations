@@ -98,7 +98,10 @@
         "diagnosticsStorageAccountId": {
             "type": "string"
         },
-        "virtualMachine1Zone": {
+        "virtualMachine2Zone": {
+            "type": "string"
+        },
+                "virtualMachine1Zone": {
             "type": "string"
         },
         "sqlVirtualMachineLocation": {
