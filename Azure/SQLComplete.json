@@ -220,7 +220,10 @@
             "caching": "ReadOnly",
             "writeAcceleratorEnabled": false,
             "deleteOption": "Detach",
-            "storageAccountType": "[parameters('storageAccountType')]","[parameters('logstorageAccountType')]",
+            "storageAccountType": [
+                    "[parameters('storageAccountType')]",
+                    "[parameters('logstorageAccountType')]"
+                ]
         },
         "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]"
     },
