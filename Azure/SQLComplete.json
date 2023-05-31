@@ -179,6 +179,9 @@
         "storageAccountType": {
             "type": "string"
         },
+       "logstorageAccountType": {
+            "type": "string"
+        },
                 "tagDept": {
             "type": "String"
         },
@@ -218,6 +221,13 @@
             "writeAcceleratorEnabled": false,
             "deleteOption": "Detach",
             "storageAccountType": "[parameters('storageAccountType')]",
+        },
+       "dataDisks2": {
+       "createOption": "Empty",
+       "caching": "ReadOnly",
+       "writeAcceleratorEnabled": false,
+       "deleteOption": "Detach",
+        "storageAccountType": "[parameters('logstorageAccountType')]",
         },
         "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]"
     },
@@ -292,8 +302,11 @@
                                 "caching": "ReadOnly",
                                 "diskSizeGB": "[parameters('sqlDataDiskSize')[copyIndex('dataDisks')]]",
                                 "managedDisk": {
-                                    "storageAccountType": "[variables('dataDisks1').storageAccountType]"
-                                },
+                                    "storageAccountType": [
+                                    "[variables('dataDisks1').storageAccountType]",
+                                    "[variables('dataDisks2').storageAccountType]"
+                                    ]
+                                   },
                                 "deleteOption": "[variables('dataDisks1').deleteOption]",
                                 "writeAcceleratorEnabled": "[variables('dataDisks1').writeAcceleratorEnabled]"
                             }
