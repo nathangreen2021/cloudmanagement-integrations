@@ -551,7 +551,7 @@
              "Matrix Service Request": "[parameters('tagServiceRequest')]"
             },
             "zones": [
-                "[parameters('virtualMachine1Zone')]"
+                "[parameters('virtualMachine2Zone')]"
             ]
         },
         {
