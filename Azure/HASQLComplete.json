@@ -35,6 +35,15 @@
                 "description": "Amount of data disks (1TB each) for SQL Log files"
             }
         },
+          "sqltempDisksCount": {
+            "defaultValue": 1,
+            "minValue": 1,
+            "maxValue": 8,
+            "type": "Int",
+            "metadata": {
+                "description": "Amount of data disks (1TB each) for SQL Log files"
+            }
+        },
           "sqlDataDisksCount": {
             "defaultValue": 1,
             "minValue": 1,
@@ -146,6 +155,9 @@
         "logDisksLUNs": {
             "type": "array"
         },
+        "tempDisksLUNs": {
+         "type": "array"
+        },
         "tempDbPath": {
             "type": "string"
         },
@@ -197,6 +209,9 @@
         "logstorageAccountType": {
             "type": "string"
         },
+        "tempstorageAccountType": {
+            "type": "string"
+        },
                 "tagDept": {
             "type": "String"
         },
@@ -230,6 +245,7 @@
         "vnetName": "[last(split(variables('vnetId'), '/'))]",
         "dataDisksLuns": "[parameters('dataDisksLuns')]",
           "logDisksLuns": "[parameters('logDisksLuns')]",
+         "tempDisksLuns": "[parameters('tempDisksLuns')]",
         "dataDisks1": {
             "createOption": "Empty",
             "caching": "ReadOnly",
@@ -237,7 +253,8 @@
             "deleteOption": "Detach",
              "storageAccountType": [
                     "[parameters('storageAccountType')]",
-                    "[parameters('logstorageAccountType')]"
+                    "[parameters('logstorageAccountType')]",
+                    "[parameters('tempstorageAccountType')]"
                 ]
         },
         "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]"
@@ -339,7 +356,7 @@
                             "name": "dataDisks",
                             "count": "[length(parameters('dataDiskResources1'))]",
                             "input": {
-                                "lun": "[range(0, add(parameters('sqlDataDisksCount'), parameters('sqlLogDisksCount')))[copyIndex('dataDisks')]]",
+                                "lun": "[range(0, add(add(parameters('sqlDataDisksCount'), parameters('sqlLogDisksCount')), parameters('sqltempDisksCount')))[copyIndex('dataDisks')]]",
                                 "name": "[concat(parameters('VirtualMachineName1'), '-DataDisk', string(add(copyIndex('dataDisks'),1)))]",
                                 "createOption": "[variables('dataDisks1').createOption]",
                                 "caching": "ReadOnly",
@@ -424,6 +441,7 @@
                         "DefaultFilePath": "[parameters('logPath')]"
                     },
                     "SQLTempDbSettings": {
+                        "LUNs": "[variables('tempDisksLUNs')]",
                         "DefaultFilePath": "[parameters('tempDbPath')]",
                         "DataFileCount": "[parameters('dataFileCount')]",
                         "DataFileSize": "[parameters('dataFileSize')]",
@@ -501,7 +519,7 @@
                             "name": "dataDisks",
                             "count": "[length(parameters('dataDiskResources1'))]",
                             "input": {
-                                "lun": "[range(0, add(parameters('sqlDataDisksCount'), parameters('sqlLogDisksCount')))[copyIndex('dataDisks')]]",
+                                "lun": "[range(0, add(add(parameters('sqlDataDisksCount'), parameters('sqlLogDisksCount')), parameters('sqltempDisksCount')))[copyIndex('dataDisks')]]",
                                 "name": "[concat(parameters('VirtualMachineName2'), '-DataDisk', string(add(copyIndex('dataDisks'),1)))]",
                                 "createOption": "[variables('dataDisks1').createOption]",
                                 "caching": "ReadOnly",
@@ -586,6 +604,7 @@
                         "DefaultFilePath": "[parameters('logPath')]"
                     },
                     "SQLTempDbSettings": {
+                        "LUNs": "[variables('tempDisksLUNs')]",
                         "DefaultFilePath": "[parameters('tempDbPath')]",
                         "DataFileCount": "[parameters('dataFileCount')]",
                         "DataFileSize": "[parameters('dataFileSize')]",
