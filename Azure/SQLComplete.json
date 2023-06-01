@@ -29,6 +29,15 @@
                 "description": "Amount of data disks (1TB each) for SQL Log files"
             }
         },
+          "sqltempDisksCount": {
+            "defaultValue": 1,
+            "minValue": 1,
+            "maxValue": 8,
+            "type": "Int",
+            "metadata": {
+                "description": "Amount of data disks (1TB each) for SQL Log files"
+            }
+        },
           "sqlDataDisksCount": {
             "defaultValue": 1,
             "minValue": 1,
@@ -296,7 +305,7 @@
                             "name": "dataDisks",
                             "count": "[length(parameters('dataDiskResources1'))]",
                             "input": {
-                                "lun": "[range(0, add(parameters('sqlDataDisksCount'), parameters('sqlLogDisksCount')))[copyIndex('dataDisks')]]",
+                                "lun": "[range(0, add(add(parameters('sqlDataDisksCount'), parameters('sqlLogDisksCount')), parameters('sqltempDisksCount')))[copyIndex('dataDisks')]]",
                                 "name": "[concat(parameters('VirtualMachineName1'), '-DataDisk', string(add(copyIndex('dataDisks'),1)))]",
                                 "createOption": "[variables('dataDisks1').createOption]",
                                 "caching": "ReadOnly",
