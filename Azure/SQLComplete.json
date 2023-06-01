@@ -194,6 +194,9 @@
         "logstorageAccountType": {
             "type": "string"
         },
+       "tempstorageAccountType": {
+            "type": "string"
+        },
                 "tagDept": {
             "type": "String"
         },
@@ -235,7 +238,8 @@
             "deleteOption": "Detach",
             "storageAccountType": [
                     "[parameters('storageAccountType')]",
-                    "[parameters('logstorageAccountType')]"
+                    "[parameters('logstorageAccountType')]",
+                    "[parameters('tempstorageAccountType')]"
                 ]
         },
         "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]"
