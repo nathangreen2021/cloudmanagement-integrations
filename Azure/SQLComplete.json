@@ -131,6 +131,9 @@
         "logDisksLUNs": {
             "type": "array"
         },
+        "tempDisksLUNs": {
+            "type": "array"
+        },
         "tempDbPath": {
             "type": "string"
         },
@@ -214,7 +217,8 @@
         "vnetId": "[parameters('virtualNetworkId')]",
         "vnetName": "[last(split(variables('vnetId'), '/'))]",
         "dataDisksLuns": "[parameters('dataDisksLuns')]",
-          "logDisksLuns": "[parameters('logDisksLuns')]",
+         "logDisksLuns": "[parameters('logDisksLuns')]",
+         "tempDisksLuns": "[parameters('tempDisksLuns')]",
         "dataDisks1": {
             "createOption": "Empty",
             "caching": "ReadOnly",
@@ -377,6 +381,7 @@
                         "DefaultFilePath": "[parameters('logPath')]"
                     },
                     "SQLTempDbSettings": {
+                        "LUNs": "[variables('tempDisksLUNs')]",
                         "DefaultFilePath": "[parameters('tempDbPath')]",
                         "DataFileCount": "[parameters('dataFileCount')]",
                         "DataFileSize": "[parameters('dataFileSize')]",
