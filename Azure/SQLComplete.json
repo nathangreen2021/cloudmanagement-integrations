@@ -310,7 +310,7 @@
                             "count": "[length(parameters('dataDiskResources1'))]",
                             "input": {
                                 "lun": "[range(0, add(add(parameters('sqlDataDisksCount'), parameters('sqlLogDisksCount')), parameters('sqltempDisksCount')))[copyIndex('dataDisks')]]",
-                                "name": "[concat(parameters('VirtualMachineName1'), '-DataDisk', string(add(copyIndex('dataDisks'),0)))]",
+                                "name": "[concat(parameters('VirtualMachineName1'), '-DataDisk', string(add(copyIndex('dataDisks'),1)))]",
                                 "createOption": "[variables('dataDisks1').createOption]",
                                 "caching": "ReadOnly",
                                 "diskSizeGB": "[parameters('sqlDataDiskSize')[copyIndex('dataDisks')]]",
