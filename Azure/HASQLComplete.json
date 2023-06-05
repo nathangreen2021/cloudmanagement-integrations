@@ -281,7 +281,7 @@
                 "enableAcceleratedNetworking": "[parameters('enableAcceleratedNetworking')]"
             },
             "tags": {
-              "Name": "[parameters('virtualMachineName')]",
+              "Name": "[parameters('networkInterfaceName1')]",
             "Department": "[parameters('tagDept')]",
             "Environment": "[parameters('tagEnvironment')]",
             "Project": "[parameters('tagProject')]",
@@ -313,7 +313,7 @@
                 "enableAcceleratedNetworking": "[parameters('enableAcceleratedNetworking')]"
             },
             "tags": {
-              "Name": "[parameters('virtualMachineName')]",
+              "Name": "[parameters('networkInterfaceName2')]",
             "Department": "[parameters('tagDept')]",
             "Environment": "[parameters('tagEnvironment')]",
             "Project": "[parameters('tagProject')]",
@@ -401,7 +401,7 @@
                 }
             },
             "tags": {
-             "Name": "[parameters('virtualMachineName')]",
+             "Name": "[parameters('virtualMachineName1')]",
             "Department": "[parameters('tagDept')]",
             "Environment": "[parameters('tagEnvironment')]",
             "Project": "[parameters('tagProject')]",
@@ -476,7 +476,7 @@
                 "[resourceId('Microsoft.Compute/virtualMachines', parameters('sqlVirtualMachineName'))]"
             ],
             "tags": {
-            "Name": "[parameters('virtualMachineName')]",
+            "Name": "[parameters('sqlVirtualMachineName')]",
             "Department": "[parameters('tagDept')]",
             "Environment": "[parameters('tagEnvironment')]",
             "Project": "[parameters('tagProject')]",
